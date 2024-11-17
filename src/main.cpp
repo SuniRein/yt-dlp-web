@@ -7,6 +7,9 @@ namespace fs = std::filesystem;
 
 fs::path const INDEX_PATH = YT_DLP_WEB_PATH;
 
+// Process submitted URL
+void handle_submit_url(webui::window::event* event) {}
+
 int main(int argc, char* argv[])
 {
     // Check if the index.html file exists
@@ -24,5 +27,6 @@ int main(int argc, char* argv[])
     webui::window win;
     win.set_root_folder(INDEX_PATH.string());
     win.show("index.html");
+    win.bind("submit_url", handle_submit_url);
     webui::wait();
 }
