@@ -1,5 +1,6 @@
 #include "handle.h"
 
+#include "boost/algorithm/string.hpp"
 #include "boost/asio.hpp"
 #include "boost/process.hpp"
 #include "nlohmann/json.hpp"
@@ -89,6 +90,16 @@ void run_yt_dlp_async(std::string_view yt_dlp_path, std::vector<std::string> con
 
 void handle_submit_url(webui::window::event* event)
 {
-    auto args = parse_request(event->get_string_view());
-    run_yt_dlp_async("/home/SuniRein/Apps/bin/yt-dlp", args, [&](std::string_view responce) { event->return_string(responce); });
+    std::string command = "/home/SuniRein/Apps/bin/yt-dlp";
+    auto        args    = parse_request(event->get_string_view());
+
+    // Logging the running command
+    send_log(event, "Run command: " + command + " " + boost::algorithm::join(args, " "));
+
+    run_yt_dlp_async(command, args, [&](std::string_view responce) { event->return_string(responce); });
+}
+
+void send_log(webui::window::event* event, std::string const& message)
+{
+    event->get_window().run("logMessage(\"" + message + "\")");
 }

@@ -1,74 +1,65 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <title>yt-dlp WebUI</title>
     <script src="webui.js"></script>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-      }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
 
-      .section {
-        margin-bottom: 10px;
-      }
+        .section {
+            margin-bottom: 10px;
+        }
 
-      label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-      }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
     <form onsubmit="handleFormSubmit(event, 'download')" id="yt-dlp_form">
-      <!-- Input Url -->
-      <div class="section">
-        <label for="url_input">URL:</label>
-        <input
-          type="url"
-          id="url_input"
-          name="url_input"
-          placeholder="https://www.bilibili.com/video/BV1hK4y1C7Uw"
-          required
-        />
-      </div>
+        <!-- Input Url -->
+        <div class="section">
+            <label for="url_input">URL:</label>
+            <input type="url" id="url_input" name="url_input" placeholder="https://www.bilibili.com/video/BV1hK4y1C7Uw"
+                required />
+        </div>
 
-      <!-- Download Options -->
-      <h3>Options</h3>
+        <!-- Download Options -->
+        <h3>Options</h3>
 
-      <div class="section">
-        <label><input type="checkbox" name="audio_only" />Audio Only</label>
-      </div>
+        <div class="section">
+            <label><input type="checkbox" name="audio_only" />Audio Only</label>
+        </div>
 
-      <div class="section">
-        <label for="quality_select">Video Quality:</label>
-        <select id="quality_select" name="quality">
-          <option value="bestvideo+bestaudio">Best Video and Audio</option>
-        </select>
-      </div>
+        <div class="section">
+            <label for="quality_select">Video Quality:</label>
+            <select id="quality_select" name="quality">
+                <option value="bestvideo+bestaudio">Best Video and Audio</option>
+            </select>
+        </div>
 
-      <div class="section">
-        <label for="output_path">Output Path:</label>
-        <input
-          type="text"
-          id="output_path"
-          name="output_path"
-          placeholder="/path/to/output"
-        />
-      </div>
+        <div class="section">
+            <label for="output_path">Output Path:</label>
+            <input type="text" id="output_path" name="output_path" placeholder="/path/to/output" />
+        </div>
 
-      <!-- Operations -->
-      <h3>Actions</h3>
+        <!-- Operations -->
+        <h3>Actions</h3>
 
-      <button type="submit">Download</button>
+        <button type="submit">Download</button>
 
-      <button type="button" onclick="handleFormSubmit(event, 'preview')">
-        Preview
-      </button>
+        <button type="button" onclick="handleFormSubmit(event, 'preview')">
+            Preview
+        </button>
 
-      <button type="button" onclick="clearLog()">Clear Log</button>
+        <button type="button" onclick="clearLog()">Clear Log</button>
     </form>
 
     <!-- Output -->
@@ -79,41 +70,46 @@
     <textarea id="log_output" rows="10" style="width: 100%" readonly></textarea>
 
     <script>
-      function handleFormSubmit(event, actionType) {
-        event.preventDefault();
+        function handleFormSubmit(event, actionType) {
+            event.preventDefault();
 
-        const form = document.getElementById("yt-dlp_form");
+            const form = document.getElementById("yt-dlp_form");
 
-        // convert form data to JSON
-        const data = { action: actionType };
-        Array.from(form.elements).forEach((element) => {
-          // skip elements without a name
-          if (!element.name) {
-            return;
-          }
+            // convert form data to JSON
+            const data = {action: actionType};
+            Array.from(form.elements).forEach((element) => {
+                // skip elements without a name
+                if (!element.name) {
+                    return;
+                }
 
-          if (element.type === "checkbox" || element.type === "radio") {
-            // checkbox and radio are processed as boolean
-            data[element.name] = element.checked;
-          } else {
-            data[element.name] = element.value;
-          }
-        });
+                if (element.type === "checkbox" || element.type === "radio") {
+                    // checkbox and radio are processed as boolean
+                    data[element.name] = element.checked;
+                } else {
+                    data[element.name] = element.value;
+                }
+            });
 
-        // Logging
-        const log_output = document.getElementById("log_output");
-        log_output.value += "Request: " + JSON.stringify(data, null, 2) + "\n";
+            // Logging
+            logMessage("Request: " + JSON.stringify(data, null, 2));
 
-        // Backend call
-        webui.call("submit_url", JSON.stringify(data)).then((response) => {
-            console.log(response);
-        });
-      }
+            // Backend call
+            webui.call("submit_url", JSON.stringify(data)).then((response) => {
+                console.log(response);
+            });
+        }
 
-      function clearLog() {
-        const log_output = document.getElementById("log_output");
-        log_output.value = "";
-      }
+        function logMessage(message) {
+            const log_output = document.getElementById("log_output");
+            log_output.value += message + "\n";
+        }
+
+        function clearLog() {
+            const log_output = document.getElementById("log_output");
+            log_output.value = "";
+        }
     </script>
-  </body>
+</body>
+
 </html>
