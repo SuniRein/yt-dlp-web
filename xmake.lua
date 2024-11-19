@@ -5,6 +5,7 @@ add_rules("mode.debug", "mode.release")
 
 add_requires("webui")
 add_requires("nlohmann_json") -- json parser
+add_requires("boost") -- boost.process, boost.asio
 
 target("main", function(target)
 	set_kind("binary")
@@ -12,4 +13,5 @@ target("main", function(target)
 	add_defines('YT_DLP_WEB_PATH="$(projectdir)/web"')
 	add_packages("webui")
 	add_packages("nlohmann_json")
+	add_packages("boost")
 end)

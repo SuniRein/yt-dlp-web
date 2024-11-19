@@ -1,0 +1,6 @@
+Diagnostics:
+  Includes:
+    IgnoreHeader:
+      - boost/.* # boost header cannot be processed properly
+  Suppress:
+    - readability-identifier-length

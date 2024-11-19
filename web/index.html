@@ -105,7 +105,9 @@
         log_output.value += "Request: " + JSON.stringify(data, null, 2) + "\n";
 
         // Backend call
-        webui.call("submit_url", JSON.stringify(data));
+        webui.call("submit_url", JSON.stringify(data)).then((response) => {
+            console.log(response);
+        });
       }
 
       function clearLog() {
