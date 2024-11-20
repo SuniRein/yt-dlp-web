@@ -12,3 +12,9 @@ label {
     margin-bottom: 5px;
     font-weight: bold;
 }
+
+/* Format Table */
+table.formats {
+    text-align: center;
+    border-spacing: 10px;
+}
