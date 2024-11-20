@@ -57,7 +57,7 @@ function previewMediaInfo(data) {
     // Show thumbnail
     const thumbnail = document.createElement("img");
     thumbnail.src = data.thumbnail;
-    thumbnail.referrerpolicy = "no-referrer"; // Some sites block requests with referrer
+    thumbnail.referrerPolicy = "no-referrer"; // Some sites block requests with referrer
     preview_area.appendChild(thumbnail);
 }
 
