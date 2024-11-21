@@ -16,31 +16,50 @@ namespace asio = boost::asio;
 namespace
 {
 
-auto parse_request(std::string_view json) -> std::vector<std::string>
+struct Request
 {
+    enum class Action
+    {
+        Preview,
+        Download,
+    } action{};
+
+    std::string yt_dlp_path;
+
+    std::vector<std::string> args;
+};
+
+Request parse_request(std::string_view json)
+{
+    Request request;
+
     // parse the JSON data
     auto data = Json::parse(json);
 
-    std::string action      = data["action"];
-    std::string url_input   = data["url_input"];
-    bool        audio_only  = data["audio_only"];
-    std::string quality     = data["quality"];
-    std::string output_path = data["output_path"];
+    // if yt_dlp_path is not provided, run yt-dlp from the PATH
+    request.yt_dlp_path = data.value("yt_dlp_path", "yt-dlp");
+
+    request.action = data.at("action") == "preview" ? Request::Action::Preview : Request::Action::Download;
+
+    std::string url_input   = data.at("url_input");
+    bool        audio_only  = data.value("audio_only", false);
+    std::string quality     = data.value("quality", "");
+    std::string output_path = data.value("output_path", "");
 
     // generate arguments for yt-dlp
-    std::vector<std::string> args{url_input};
+    request.args.push_back(url_input);
 
-    if (action == "preview")
+    if (request.action == Request::Action::Preview)
     {
-        args.emplace_back("-j");
+        request.args.emplace_back("-j");
     }
-    else if (action == "download")
+    else
     {
         // TODO(SuniRein): Implement the download action
-        args.emplace_back("-j");
+        request.args.emplace_back("-j");
     }
 
-    return args;
+    return request;
 }
 
 void run_yt_dlp_async(std::string_view yt_dlp_path, std::vector<std::string> const& args, std::function<void(std::string_view response)> on_complete)
@@ -90,8 +109,7 @@ void run_yt_dlp_async(std::string_view yt_dlp_path, std::vector<std::string> con
 
 void handle_submit_url(webui::window::event* event)
 {
-    std::string command = "/home/SuniRein/Apps/bin/yt-dlp";
-    auto        args    = parse_request(event->get_string_view());
+    auto [action, command, args] = parse_request(event->get_string_view());
 
     // Logging the running command
     send_log(event, "Run command: " + command + " " + boost::algorithm::join(args, " "));
