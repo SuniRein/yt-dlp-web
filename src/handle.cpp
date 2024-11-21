@@ -6,7 +6,7 @@
 #include "nlohmann/json.hpp"
 #include "webui.hpp"
 
-#include <iostream>
+#include <functional>
 
 using Json = nlohmann::json;
 
@@ -55,14 +55,18 @@ Request parse_request(std::string_view json)
     }
     else
     {
-        // TODO(SuniRein): Implement the download action
-        request.args.emplace_back("-j");
+        // set downloading progress shown in a new line
+        request.args.emplace_back("--newline");
+
+        // set downloading progress as json format
+        request.args.emplace_back("--progress-template");
+        request.args.emplace_back("download:[YT-DLP-UI-download] %(progress)j");
     }
 
     return request;
 }
 
-void run_yt_dlp_async(std::string_view yt_dlp_path, std::vector<std::string> const& args, std::function<void(std::string_view response)> on_complete)
+void run_yt_dlp_async(webui::window::event* event, Request const& request)
 {
     // Create asynchronously environment.
     asio::io_context io_context;
@@ -70,35 +74,72 @@ void run_yt_dlp_async(std::string_view yt_dlp_path, std::vector<std::string> con
     bp::async_pipe   out_pipe(io_context);
 
     // Call yt-dlp with the given URL and options
-    bp::child yt_dlp_process(std::string(yt_dlp_path), args, bp::std_out > out_pipe, io_context);
+    bp::child yt_dlp_process(request.yt_dlp_path, request.args, bp::std_out > out_pipe, io_context);
 
     // Read the output of yt-dlp asynchronously
+    std::function<void()> async_read;
+
     std::string response;
 
-    std::function<void()> async_read = [&]()
+    if (request.action == Request::Action::Preview)
     {
-        asio::async_read(out_pipe, buffer,
-            [&](boost::system::error_code const& ec, std::size_t bytes_transferred)
-            {
-                if (!ec)
+        async_read = [&]()
+        {
+            asio::async_read(out_pipe, buffer,
+                [&](boost::system::error_code const& ec, std::size_t bytes_transferred)
                 {
-                    response += std::string(buffers_begin(buffer.data()), buffers_begin(buffer.data()) + bytes_transferred);
-                    buffer.consume(bytes_transferred);
-                    async_read();
-                }
-                else if (ec == asio::error::eof)
+                    if (!ec)
+                    {
+                        response += std::string(buffers_begin(buffer.data()), buffers_begin(buffer.data()) + bytes_transferred);
+                        buffer.consume(bytes_transferred);
+                        async_read();
+                    }
+                    else if (ec == asio::error::eof)
+                    {
+                        response += std::string(buffers_begin(buffer.data()), buffers_end(buffer.data()));
+                        buffer.consume(bytes_transferred);
+                        event->return_string(response);
+                    }
+                    else
+                    {
+                        send_log(event, "Error: " + ec.message());
+                    }
+                });
+        };
+    }
+    else
+    {
+        constexpr std::string_view DOWNLOAD_PREFIX = "[YT-DLP-UI-download]";
+
+        async_read = [&]()
+        {
+            asio::async_read_until(out_pipe, buffer, '\n',
+                [&](boost::system::error_code const& ec, std::size_t bytes_transferred)
                 {
-                    response += std::string(buffers_begin(buffer.data()), buffers_end(buffer.data()));
-                    buffer.consume(bytes_transferred);
-                    on_complete(response);
-                }
-                else
-                {
-                    std::cerr << "Error: " << ec.message() << std::endl;
-                    on_complete("");
-                }
-            });
-    };
+                    if (!ec)
+                    {
+                        response = std::string(buffers_begin(buffer.data()), buffers_begin(buffer.data()) + bytes_transferred);
+                        buffer.consume(bytes_transferred);
+                        if (boost::algorithm::starts_with(response, DOWNLOAD_PREFIX.data()))
+                        {
+                            // +1 to skip the space after the prefix
+                            response = response.substr(DOWNLOAD_PREFIX.size() + 1);
+                            event->get_window().send_raw("showDownloadProgress", response.data(), response.size());
+                        }
+                        async_read();
+                    }
+                    else if (ec == asio::error::eof)
+                    {
+                        buffer.consume(bytes_transferred);
+                        event->return_bool(true);
+                    }
+                    else
+                    {
+                        send_log(event, "Error: " + ec.message());
+                    }
+                });
+        };
+    }
     async_read();
 
     io_context.run();
@@ -109,12 +150,9 @@ void run_yt_dlp_async(std::string_view yt_dlp_path, std::vector<std::string> con
 
 void handle_submit_url(webui::window::event* event)
 {
-    auto [action, command, args] = parse_request(event->get_string_view());
-
-    // Logging the running command
-    send_log(event, "Run command: " + command + " " + boost::algorithm::join(args, " "));
-
-    run_yt_dlp_async(command, args, [&](std::string_view responce) { event->return_string(responce); });
+    auto request = parse_request(event->get_string_view());
+    send_log(event, "Run command: " + request.yt_dlp_path + " " + boost::algorithm::join(request.args, " "));
+    run_yt_dlp_async(event, request);
 }
 
 void send_log(webui::window::event* event, std::string const& message)

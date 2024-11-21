@@ -24,7 +24,13 @@ function handleFormSubmit(event, actionType) {
 
     // Backend call
     webui.call("submit_url", JSON.stringify(data)).then((response) => {
-        previewMediaInfo(JSON.parse(response));
+        if (actionType === "preview") {
+            previewMediaInfo(JSON.parse(response));
+        } else {
+            logMessage(
+                response ? "Downloaded successfully" : "Download failed",
+            );
+        }
     });
 }
 
@@ -124,6 +130,8 @@ function analyzeFormats(formats) {
 }
 
 function bytesToSize(bytes) {
+    if (!bytes) bytes = 0;
+
     const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
     let i = 0;
     while (bytes > 1024 && i < sizes.length) {
@@ -140,4 +148,21 @@ function hideIfEmpty(value) {
 function clearPreview() {
     const preview_area = document.getElementById("preview_area");
     preview_area.innerHTML = "";
+}
+
+function showDownloadProgress(rawData) {
+    const data = new TextDecoder()
+        .decode(rawData)
+        .replace(/^gress\0/, "")
+        .replace(/\0$/, "");
+    const json = JSON.parse(data);
+
+    const filename = json.filename;
+    const downloaded_bytes = bytesToSize(json.downloaded_bytes);
+    const total_bytes = bytesToSize(json.total_bytes);
+    const speed = bytesToSize(json.speed);
+    const progress = (json.downloaded_bytes / json.total_bytes) * 100;
+    logMessage(
+        `Downloading ${filename}: ${downloaded_bytes} / ${total_bytes} (${progress.toFixed(2)}%) Speed: ${speed}/s`,
+    );
 }
