@@ -37,6 +37,7 @@ function handleFormSubmit(event, actionType) {
 function logMessage(message) {
     const log_output = document.getElementById("log_output");
     log_output.value += message + "\n";
+    log_output.scrollTop = log_output.scrollHeight; // Auto scroll to bottom
 }
 
 function clearLog() {
