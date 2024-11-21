@@ -152,10 +152,7 @@ function clearPreview() {
 }
 
 function showDownloadProgress(rawData) {
-    const data = new TextDecoder()
-        .decode(rawData)
-        .replace(/^gress\0/, "")
-        .replace(/\0$/, "");
+    const data = new TextDecoder().decode(rawData);
     const json = JSON.parse(data);
 
     const filename = json.filename;

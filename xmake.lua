@@ -3,7 +3,7 @@ set_version("0.0.1")
 
 add_rules("mode.debug", "mode.release")
 
-add_requires("webui")
+add_requires("webui nightly")
 add_requires("nlohmann_json") -- json parser
 add_requires("boost") -- boost.process, boost.asio
 

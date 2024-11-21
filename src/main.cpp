@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 
     webui::window win;
     win.set_root_folder(INDEX_PATH.string());
-    win.show("index.html");
+    win.show_browser("index.html", AnyBrowser);
     win.bind("submit_url", handle_submit_url);
     webui::wait();
 }
