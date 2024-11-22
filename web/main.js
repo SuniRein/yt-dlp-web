@@ -26,7 +26,7 @@ function handleFormSubmit(event, actionType) {
     webui.call("submit_url", JSON.stringify(data)).then((response) => {
         if (actionType === "preview") {
             previewMediaInfo(JSON.parse(response));
-        } else {
+        } else if (actionType === "download") {
             logMessage(
                 response ? "Downloaded successfully" : "Download failed",
             );
