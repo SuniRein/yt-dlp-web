@@ -17,31 +17,7 @@ namespace asio = boost::asio;
 namespace
 {
 
-class RequestHandler
-{
-  public:
-    static RequestHandler& get_instance()
-    {
-        static RequestHandler instance;
-        return instance;
-    }
-
-    void handle(webui::window::event* event);
-
-  private:
-    RequestHandler() = default;
-
-    // Parse the received request
-    struct Request;
-
-    std::atomic_flag running_{};
-    std::atomic_flag interrupted_{};
-
-    bool check_interrupt(webui::window::event* event, asio::io_context& io_context, bp::child& yt_dlp_process);
-    void run_yt_dlp(webui::window::event* event, Request const& request);
-};
-
-struct RequestHandler::Request
+struct Request
 {
     enum class Action
     {
@@ -97,147 +73,152 @@ struct RequestHandler::Request
     }
 };
 
-void RequestHandler::handle(webui::window::event* event)
+class AsyncProcess
 {
-    Request request(event->get_string_view());
-
-    // set interrupted flag
-    if (request.action == Request::Action::Interrupt)
+  public:
+    static AsyncProcess& get_instance()
     {
-        interrupted_.test_and_set();
-        return;
+        static AsyncProcess instance;
+        return instance;
     }
 
-    // only one request can be run at a time
-    if (running_.test_and_set())
-    {
-        send_log(event, "Another request is running. Please wait.");
-        return;
-    }
+    void launch(Request const& request, std::function<void(std::string_view)> on_linebreak, std::function<void()> on_eof);
 
-    run_yt_dlp(event, request);
-}
+    void wait();
 
-bool RequestHandler::check_interrupt(webui::window::event* event, asio::io_context& io_context, bp::child& yt_dlp_process)
+    void interrupt() { interrupted_ = true; }
+
+    bool running() const { return yt_dlp_process_ != nullptr; }
+
+  private:
+    AsyncProcess() = default;
+
+    asio::io_context                io_context_;
+    asio::streambuf                 buffer_;
+    std::unique_ptr<bp::async_pipe> pipe_;
+    std::unique_ptr<bp::child>      yt_dlp_process_;
+
+    // callback functions when reading output
+    std::function<void(std::string_view)> on_linebreak_;
+    std::function<void()>                 on_eof_;
+
+    // flag to check if the process is interrupted
+    std::atomic<bool> interrupted_{};
+
+    void read_output();
+};
+
+void AsyncProcess::launch(Request const& request, std::function<void(std::string_view)> on_linebreak, std::function<void()> on_eof)
 {
-    if (interrupted_.test_and_set())
-    {
-        io_context.stop();
-        yt_dlp_process.terminate();
-        send_log(event, "Interrupted the current request.");
-        interrupted_.clear();
-        return true;
-    }
-    interrupted_.clear();
-    return false;
-}
+    // Reset asynchronously environment
+    io_context_.restart();
+    buffer_.consume(buffer_.size());
+    pipe_ = std::make_unique<bp::async_pipe>(io_context_);
 
-void RequestHandler::run_yt_dlp(webui::window::event* event, Request const& request)
-{
-    // Set flags
-    running_.test_and_set();
-    interrupted_.clear();
-
-    // Log the command that will be run
-    send_log(event, "Run command: " + request.yt_dlp_path + " " + boost::algorithm::join(request.args, " "));
-
-    // Create asynchronously environment.
-    asio::io_context io_context;
-    asio::streambuf  buffer;
-    bp::async_pipe   out_pipe{io_context};
+    // Reset the interrupted flag
+    interrupted_ = false;
 
     // Call yt-dlp with the given URL and options
-    bp::child yt_dlp_process(request.yt_dlp_path, request.args, bp::std_out > out_pipe, io_context);
+    yt_dlp_process_ = std::make_unique<bp::child>(request.yt_dlp_path, request.args, bp::std_out > *pipe_, io_context_);
 
-    // Read the output of yt-dlp asynchronously
-    std::function<void()> async_read;
+    // Set callback functions
+    on_linebreak_ = std::move(on_linebreak);
+    on_eof_       = std::move(on_eof);
 
-    std::string response;
+    // Start reading output
+    read_output();
+}
 
-    if (request.action == Request::Action::Preview)
-    {
-        async_read = [&]()
+void AsyncProcess::read_output()
+{
+    asio::async_read_until(*pipe_, buffer_, '\n',
+        [this](boost::system::error_code const& ec, std::size_t bytes_transferred)
         {
-            asio::async_read(out_pipe, buffer,
-                [&](boost::system::error_code const& ec, std::size_t bytes_transferred)
-                {
-                    if (check_interrupt(event, io_context, yt_dlp_process))
-                    {
-                        return;
-                    }
+            if (interrupted_)
+            {
+                io_context_.stop();
+                yt_dlp_process_->terminate();
+                yt_dlp_process_.reset();
+                return;
+            }
 
-                    if (!ec)
-                    {
-                        response += std::string(buffers_begin(buffer.data()), buffers_begin(buffer.data()) + bytes_transferred);
-                        buffer.consume(bytes_transferred);
-                        async_read();
-                    }
-                    else if (ec == asio::error::eof)
-                    {
-                        response += std::string(buffers_begin(buffer.data()), buffers_end(buffer.data()));
-                        buffer.consume(bytes_transferred);
-                        event->return_string(response);
-                    }
-                    else
-                    {
-                        send_log(event, "Error: " + ec.message());
-                    }
-                });
-        };
-    }
-    else
+            if (!ec)
+            {
+                on_linebreak_(std::string(buffers_begin(buffer_.data()), buffers_begin(buffer_.data()) + bytes_transferred));
+                buffer_.consume(bytes_transferred);
+                read_output();
+            }
+            else if (ec == asio::error::eof)
+            {
+                on_linebreak_(std::string(buffers_begin(buffer_.data()), buffers_end(buffer_.data())));
+                on_eof_();
+            }
+            else
+            {
+                send_log(nullptr, "Error: " + ec.message());
+            }
+        });
+}
+
+void AsyncProcess::wait()
+{
+    io_context_.run();
+    if (yt_dlp_process_)
     {
-        constexpr std::string_view DOWNLOAD_PREFIX = "[YT-DLP-UI-download]";
-
-        async_read = [&]()
-        {
-            asio::async_read_until(out_pipe, buffer, '\n',
-                [&](boost::system::error_code const& ec, std::size_t bytes_transferred)
-                {
-                    if (check_interrupt(event, io_context, yt_dlp_process))
-                    {
-                        return;
-                    }
-
-                    if (!ec)
-                    {
-                        response = std::string(buffers_begin(buffer.data()), buffers_begin(buffer.data()) + bytes_transferred);
-                        buffer.consume(bytes_transferred);
-                        if (boost::algorithm::starts_with(response, DOWNLOAD_PREFIX.data()))
-                        {
-                            // +1 to skip the space after the prefix
-                            response = response.substr(DOWNLOAD_PREFIX.size() + 1);
-                            event->get_window().send_raw("showDownloadProgress", response.data(), response.size());
-                        }
-                        async_read();
-                    }
-                    else if (ec == asio::error::eof)
-                    {
-                        buffer.consume(bytes_transferred);
-                        event->return_bool(true);
-                    }
-                    else
-                    {
-                        send_log(event, "Error: " + ec.message());
-                    }
-                });
-        };
+        yt_dlp_process_->wait();
+        yt_dlp_process_.reset();
     }
-    async_read();
-
-    io_context.run();
-    yt_dlp_process.wait();
-
-    // Reset the running flag
-    running_.clear();
 }
 
 }  // anonymous namespace
 
 void handle_submit_url(webui::window::event* event)
 {
-    RequestHandler& handler = RequestHandler::get_instance();
-    handler.handle(event);
+    AsyncProcess& process = AsyncProcess::get_instance();
+
+    Request request(event->get_string_view());
+
+    // set interrupted flag
+    if (request.action == Request::Action::Interrupt)
+    {
+        send_log(event, "Interrupt the current request.");
+        process.interrupt();
+        return;
+    }
+
+    // only one request can be run at a time
+    if (process.running())
+    {
+        send_log(event, "Another request is running. Please wait.");
+        return;
+    }
+
+    // Log the command that will be run
+    send_log(event, "Run command: " + request.yt_dlp_path + " " + boost::algorithm::join(request.args, " "));
+
+    std::string response;  // Put here to keep it alive until the end of the function
+    if (request.action == Request::Action::Preview)
+    {
+        process.launch(request, [&](std::string_view line) { response += line; }, [&]() { event->return_string(response); });
+    }
+    else
+    {
+        constexpr std::string_view DOWNLOAD_PREFIX = "[YT-DLP-UI-download]";
+        process.launch(
+            request,
+            [&](std::string_view line)
+            {
+                if (line.substr(0, DOWNLOAD_PREFIX.length()) == DOWNLOAD_PREFIX)
+                {
+                    // +1 to skip the space after the prefix
+                    line.remove_prefix(DOWNLOAD_PREFIX.size() + 1);
+                    event->get_window().send_raw("showDownloadProgress", line.data(), line.size());
+                }
+            },
+            [&]() { send_log(event, "Download finished."); });
+    }
+
+    process.wait();
 }
 
 void send_log(webui::window::event* event, std::string const& message)
