@@ -63,13 +63,44 @@ struct Request
         }
         else
         {
-            // set downloading progress shown in a new line
-            args.emplace_back("--newline");
-
-            // set downloading progress as json format
-            args.emplace_back("--progress-template");
-            args.emplace_back("download:[YT-DLP-UI-download] %(progress)j");
+            set_download_output_format();
         }
+    }
+
+  private:
+    void set_download_output_format()
+    {
+        // set output information
+        args.emplace_back("-O");
+        args.emplace_back("pre_process:Extract URL: %(webpage_url)s");
+
+        args.emplace_back("-O");
+        args.emplace_back("video:[%(extractor)s] %(id)s: %(format_id)q with format %(format)q");
+
+        args.emplace_back("-O");
+        args.emplace_back("before_dl:Start download...");
+
+        args.emplace_back("-O");
+        args.emplace_back("post_process:Finished downloading");
+
+        args.emplace_back("-O");
+        args.emplace_back("post_process:Start post processing...");
+
+        args.emplace_back("-O");
+        args.emplace_back("after_move:Finished post processing");
+
+        args.emplace_back("-O");
+        args.emplace_back("after_move:Save video to %(filepath)q");
+
+        // show downloading progress even in quiet mode
+        args.emplace_back("--progress");
+
+        // show downloading progress in a single line
+        args.emplace_back("--newline");
+
+        // show downloading progress as json format
+        args.emplace_back("--progress-template");
+        args.emplace_back("download:[Progress]%(progress)j");
     }
 };
 
@@ -144,7 +175,8 @@ void AsyncProcess::read_output()
 
             if (!ec)
             {
-                on_linebreak_(std::string(buffers_begin(buffer_.data()), buffers_begin(buffer_.data()) + bytes_transferred));
+                on_linebreak_(
+                    std::string(buffers_begin(buffer_.data()), buffers_begin(buffer_.data()) + bytes_transferred - 1));  // -1 to exclude '\n'
                 buffer_.consume(bytes_transferred);
                 read_output();
             }
@@ -203,16 +235,21 @@ void handle_submit_url(webui::window::event* event)
     }
     else
     {
-        constexpr std::string_view DOWNLOAD_PREFIX = "[YT-DLP-UI-download]";
+        constexpr std::string_view PROGRESS_PREFIX = "[Progress]";
         process.launch(
             request,
             [&](std::string_view line)
             {
-                if (line.substr(0, DOWNLOAD_PREFIX.length()) == DOWNLOAD_PREFIX)
+                // progress information
+                if (line.substr(0, PROGRESS_PREFIX.length()) == PROGRESS_PREFIX)
                 {
-                    // +1 to skip the space after the prefix
-                    line.remove_prefix(DOWNLOAD_PREFIX.size() + 1);
+                    line.remove_prefix(PROGRESS_PREFIX.size());
                     event->get_window().send_raw("showDownloadProgress", line.data(), line.size());
+                }
+                // other information
+                else
+                {
+                    event->get_window().send_raw("showDownloadInfo", line.data(), line.size());
                 }
             },
             [&]() { send_log(event, "Download finished."); });

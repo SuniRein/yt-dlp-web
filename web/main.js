@@ -106,7 +106,9 @@ function analyzeFormats(formats, requested_formats) {
     // Create table body
     const tbody = document.createElement("tbody");
 
-    const requested_format_ids = requested_formats.map((format) => format.format_id);
+    const requested_format_ids = requested_formats.map(
+        (format) => format.format_id,
+    );
 
     formats.forEach((format) => {
         const row = document.createElement("tr");
@@ -168,4 +170,9 @@ function showDownloadProgress(rawData) {
     logMessage(
         `Downloading ${filename}: ${downloaded_bytes} / ${total_bytes} (${progress.toFixed(2)}%) Speed: ${speed}/s`,
     );
+}
+
+function showDownloadInfo(rawData) {
+    const data = new TextDecoder().decode(rawData);
+    logMessage(data);
 }
