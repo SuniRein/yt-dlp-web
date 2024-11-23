@@ -1,5 +1,6 @@
 #include "request.h"
 
+#include "boost/process/v1/search_path.hpp"
 #include "nlohmann/json.hpp"
 
 namespace ytweb
@@ -54,7 +55,7 @@ Request::Request(std::string_view json)
     auto data = Json::parse(json);
 
     // If `yt_dlp_path` is not provided, run yt-dlp from `$PATH`
-    yt_dlp_path = data.value("yt_dlp_path", "yt-dlp");
+    yt_dlp_path = data.value("yt_dlp_path", boost::process::search_path("yt-dlp").string());
 
     // Parse the action.
     std::string action_str = data.at("action");

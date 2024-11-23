@@ -14,7 +14,7 @@ function handleFormSubmit(event, actionType) {
         if (element.type === "checkbox" || element.type === "radio") {
             // checkbox and radio are processed as boolean
             data[element.name] = element.checked;
-        } else {
+        } else if (element.value !== "") {
             data[element.name] = element.value;
         }
     });
