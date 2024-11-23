@@ -64,11 +64,16 @@ function previewMediaInfo(data) {
     preview_area.appendChild(thumbnail);
 
     // Show formats
-    const formats = analyzeFormats(data.formats);
+    const formats = analyzeFormats(data.formats, data.requested_formats);
     preview_area.appendChild(formats);
+
+    // Show destination
+    const destination = document.createElement("p");
+    destination.innerHTML = `<b>Destination</b>: ${data.filename}`;
+    preview_area.appendChild(destination);
 }
 
-function analyzeFormats(formats) {
+function analyzeFormats(formats, requested_formats) {
     // Create format table
     const formats_table = document.createElement("table");
     formats_table.classList.add("formats");
@@ -78,7 +83,7 @@ function analyzeFormats(formats) {
 
     const header_row = document.createElement("tr");
     const headers = [
-        "Format",
+        "ID",
         "Extension",
         "Resolution",
         "FPS",
@@ -89,6 +94,7 @@ function analyzeFormats(formats) {
         "VBR",
         "ACodec",
         "ABR",
+        "Chosen",
     ];
     header_row.innerHTML = headers
         .map((header) => `<th>${header}</th>`)
@@ -99,6 +105,8 @@ function analyzeFormats(formats) {
 
     // Create table body
     const tbody = document.createElement("tbody");
+
+    const requested_format_ids = requested_formats.map((format) => format.format_id);
 
     formats.forEach((format) => {
         const row = document.createElement("tr");
@@ -115,6 +123,7 @@ function analyzeFormats(formats) {
             hideIfEmpty(format.vbr),
             hideIfEmpty(format.acodec),
             hideIfEmpty(format.abr),
+            requested_format_ids.includes(format.format_id) ? "Yes" : "",
         ];
         row.innerHTML = data.map((value) => `<td>${value || ""}</td>`).join("");
 
