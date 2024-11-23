@@ -5,13 +5,29 @@ add_rules("mode.debug", "mode.release")
 
 add_requires("webui nightly")
 add_requires("nlohmann_json") -- json parser
-add_requires("boost") -- boost.process, boost.asio
+add_requires("boost[cmake=false]") -- boost.process, boost.asio
 
-target("main", function(target)
-	set_kind("binary")
-	add_files("src/*.cpp")
-	add_defines('YT_DLP_WEB_PATH="$(projectdir)/web"')
-	add_packages("webui")
-	add_packages("nlohmann_json")
-	add_packages("boost")
+target("main", function()
+    set_kind("binary")
+    add_files("src/*.cpp")
+    add_defines('YT_DLP_WEB_PATH="$(projectdir)/web"')
+    add_packages("webui", "nlohmann_json", "boost")
 end)
+
+option("enable_test", function()
+    set_default(false)
+end)
+
+if has_config("enable_test") then
+    add_requires("gtest[main]")
+
+    target("test", function()
+        set_default(false)
+        set_kind("binary")
+        add_files("src/*.cpp|main.cpp") -- exclude main.cpp
+        add_files("test/*.cpp")
+        add_includedirs("src")
+        add_packages("webui", "nlohmann_json", "boost")
+        add_packages("gtest")
+    end)
+end
