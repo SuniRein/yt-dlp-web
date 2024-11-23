@@ -24,10 +24,17 @@ if has_config("enable_test") then
     target("test", function()
         set_default(false)
         set_kind("binary")
+
         add_files("src/*.cpp|main.cpp") -- exclude main.cpp
-        add_files("test/*.cpp")
         add_includedirs("src")
+
+        add_files("test/*.cpp")
+
         add_packages("webui", "nlohmann_json", "boost")
         add_packages("gtest")
+
+        -- fake yt-dlp executable for testing
+        -- python is required
+        add_defines('YT_DLP_WEB_FAKE_BIN="$(projectdir)/test/yt-dlp-test.py"')
     end)
 end
