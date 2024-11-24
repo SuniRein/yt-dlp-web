@@ -69,14 +69,8 @@ Request::Request(std::string_view json)
 
     action = action_str == "preview" ? Action::Preview : Action::Download;
 
-    // Parse other fields.
-    std::string url_input   = data.at("url_input");
-    bool        audio_only  = data.value("audio_only", false);
-    std::string quality     = data.value("quality", "");
-    std::string output_path = data.value("output_path", "");
-
     // Generate arguments for yt-dlp
-    args.push_back(url_input);
+    args.push_back(data.at("url_input").get<std::string>());
 
     if (action == Request::Action::Preview)
     {
@@ -85,6 +79,19 @@ Request::Request(std::string_view json)
     else
     {
         set_download_output_format(args);
+
+        // Set the output path.
+        if (data.find("output_path") != data.end())
+        {
+            args.emplace_back("-P");
+            args.emplace_back(data.at("output_path").get<std::string>());
+        }
+
+        // Only download audio.
+        if (data.find("audio_only") != data.end())
+        {
+            args.emplace_back("--extract-audio");
+        }
     }
 }
 
