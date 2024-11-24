@@ -7,10 +7,33 @@ body {
     margin-bottom: 10px;
 }
 
+.section_description {
+    font-size: 0.875em;
+    font-style: italic;
+    color: #555;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    display: block;
+}
+
 label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+}
+
+fieldset {
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+legend {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
 }
 
 /* Format Table */

@@ -45,10 +45,43 @@
             <input type="text" id="output_path" name="output_path" placeholder="/path/to/output" />
         </div>
 
+        <!-- cookies -->
+        <fieldset>
+            <legend>Cookies Source</legend>
+
+            <div class="section">
+                <label for="cookies_from_browser">From Browser</label>
+                <span class="section_description">
+                    The name of the browser to load cookies from.
+                </span>
+                <select id="cookies_from_browser" name="cookies_from_browser">
+                    <option value="none">None</option>
+                    <option value="brave">Brave</option>
+                    <option value="firefox">Firefox</option>
+                    <option value="chrome">Chrome</option>
+                    <option value="chromium">Chromium</option>
+                    <option value="edge">Edge</option>
+                    <option value="opera">Opera</option>
+                    <option value="safari">Safari</option>
+                    <option value="vivaldi">Vivaldi</option>
+                    <option value="whale">Whale</option>
+                </select>
+            </div>
+
+            <div class="section">
+                <label for="cookies_from_file">From File</label>
+                <span class="section_description">
+                    Netscape formatted file to read cookies from and dump
+                    cookie jar in.
+                </span>
+                <input type="file" id="cookies_from_file" name="cookies_from_file" accept="text/plain" />
+            </div>
+        </fieldset>
+
         <!-- Operations -->
         <h3>Actions</h3>
 
-        <button type="submit">Download</button>
+        <button type=" submit">Download</button>
 
         <button type="button" onclick="handleFormSubmit(event, 'preview')">
             Preview

@@ -72,6 +72,18 @@ Request::Request(std::string_view json)
     // Generate arguments for yt-dlp
     args.push_back(data.at("url_input").get<std::string>());
 
+    // Set cookies options.
+    if (data.find("cookies_from_browser") != data.end())
+    {
+        args.emplace_back("--cookies-from-browser");
+        args.emplace_back(data.at("cookies_from_browser").get<std::string>());
+    }
+    if (data.find("cookies_from_file") != data.end())
+    {
+        args.emplace_back("--cookies");
+        args.emplace_back(data.at("cookies_from_file").get<std::string>());
+    }
+
     if (action == Request::Action::Preview)
     {
         args.emplace_back("-j");
