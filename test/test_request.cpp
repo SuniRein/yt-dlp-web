@@ -1,3 +1,4 @@
+#include "boost/process/v1/search_path.hpp"
 #include "request.h"
 
 #include "gtest/gtest.h"
@@ -38,7 +39,7 @@ TEST(Request, MissingFields)
     Request request(json);
 
     EXPECT_EQ(request.action, Request::Action::Download);
-    EXPECT_EQ(request.yt_dlp_path, "yt-dlp");
+    EXPECT_EQ(request.yt_dlp_path, boost::process::search_path("yt-dlp"));
     EXPECT_EQ(request.args[0], "https://example.com/video");
 }
 
@@ -58,4 +59,25 @@ TEST(Request, InvalidJSON)
 {
     std::string json = "invalid_json";
     EXPECT_THROW(Request request(json), Json::parse_error);
+}
+
+TEST(Request, Cookies)
+{
+    std::string json = R"({
+        "action": "proview",
+        "yt_dlp_path": "/usr/bin/yt-dlp",
+        "url_input": "https://example.com/video",
+        "cookies_from_browser": "chrome",
+        "cookies_from_file": "/tmp/cookies.txt"
+    })";
+
+    Request request(json);
+
+    auto cookies_from_browser = std::find(request.args.begin(), request.args.end(), "--cookies-from-browser");
+    EXPECT_NE(cookies_from_browser, request.args.end());
+    EXPECT_EQ(*(cookies_from_browser + 1), "chrome");
+
+    auto cookies_from_file = std::find(request.args.begin(), request.args.end(), "--cookies");
+    EXPECT_NE(cookies_from_file, request.args.end());
+    EXPECT_EQ(*(cookies_from_file + 1), "/tmp/cookies.txt");
 }
