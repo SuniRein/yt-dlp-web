@@ -12,14 +12,14 @@ function handleFormSubmit(event, actionType) {
         }
 
         // Here only send meaningful values.
-        // Empty values ("" or false) are not sent to backend.
+        // Empty values (false, "", "none") are not sent to backend.
         if (element.type === "checkbox" || element.type === "radio") {
             // checkbox and radio are processed as boolean
             // only send true values
             if (element.checked) {
                 data[element.name] = true;
             }
-        } else if (element.value !== "") {
+        } else if (element.value !== "" && element.value !== "none") {
             data[element.name] = element.value;
         }
     });
