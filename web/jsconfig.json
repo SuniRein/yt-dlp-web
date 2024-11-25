@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "ESNext",
+        "strict": true,
+        "baseUrl": ".",
+        "allowJs": true,
+        "checkJs": true
+    },
+    "include": [],
+    "exclude": []
+}
