@@ -11,6 +11,23 @@ using Json = nlohmann::json;
 namespace
 {
 
+void check_argument_option(Json const& data, std::vector<std::string>& args, std::string_view key, std::string_view option)
+{
+    if (data.find(key) != data.end())
+    {
+        args.emplace_back(option);
+        args.emplace_back(data.at(key).get<std::string>());
+    }
+}
+
+void check_option(Json const& data, std::vector<std::string>& args, std::string_view key, std::string_view option)
+{
+    if (data.find(key) != data.end())
+    {
+        args.emplace_back(option);
+    }
+}
+
 void set_download_output_format(std::vector<std::string>& args)
 {
     // Set common output information.
@@ -49,37 +66,15 @@ void set_download_output_format(std::vector<std::string>& args)
 
 void set_cookies_options(Json const& data, std::vector<std::string>& args)
 {
-    if (data.find("cookies_from_browser") != data.end())
-    {
-        args.emplace_back("--cookies-from-browser");
-        args.emplace_back(data.at("cookies_from_browser").get<std::string>());
-    }
-    if (data.find("cookies_from_file") != data.end())
-    {
-        args.emplace_back("--cookies");
-        args.emplace_back(data.at("cookies_from_file").get<std::string>());
-    }
+    check_argument_option(data, args, "cookies_from_browser", "--cookies-from-browser");
+    check_argument_option(data, args, "cookies_from_file", "--cookies");
 }
 
 void set_network_options(Json const& data, std::vector<std::string>& args)
 {
-    if (data.find("proxy") != data.end())
-    {
-        args.emplace_back("--proxy");
-        args.emplace_back(data.at("proxy").get<std::string>());
-    }
-
-    if (data.find("socket_timeout") != data.end())
-    {
-        args.emplace_back("--socket-timeout");
-        args.emplace_back(data.at("socket_timeout").get<std::string>());
-    }
-
-    if (data.find("source_address") != data.end())
-    {
-        args.emplace_back("--source-address");
-        args.emplace_back(data.at("source_address").get<std::string>());
-    }
+    check_argument_option(data, args, "proxy", "--proxy");
+    check_argument_option(data, args, "socket_timeout", "--socket-timeout");
+    check_argument_option(data, args, "source_address", "--source-address");
 
     if (data.find("force_ip_protocol") != data.end())
     {
@@ -94,10 +89,7 @@ void set_network_options(Json const& data, std::vector<std::string>& args)
         }
     }
 
-    if (data.find("enable_file_urls") != data.end())
-    {
-        args.emplace_back("--enable-file-urls");
-    }
+    check_option(data, args, "enable_file_urls", "--enable-file-urls");
 }
 
 }  // anonymous namespace
@@ -137,17 +129,10 @@ Request::Request(std::string_view json)
         set_download_output_format(args);
 
         // Set the output path.
-        if (data.find("output_path") != data.end())
-        {
-            args.emplace_back("-P");
-            args.emplace_back(data.at("output_path").get<std::string>());
-        }
+        check_argument_option(data, args, "output_path", "-P");
 
         // Only download audio.
-        if (data.find("audio_only") != data.end())
-        {
-            args.emplace_back("--extract-audio");
-        }
+        check_option(data, args, "audio_only", "--extract-audio");
     }
 }
 
