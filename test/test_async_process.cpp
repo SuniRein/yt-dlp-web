@@ -19,7 +19,6 @@ class AsyncProcess: public ::testing::Test
 
     inline static std::unique_ptr<Request> request_;
 
-  private:
     static void SetUpTestSuite()
     {
         Json json;
