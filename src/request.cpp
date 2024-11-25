@@ -47,6 +47,59 @@ void set_download_output_format(std::vector<std::string>& args)
     args.emplace_back("download:[Progress]%(progress)j");
 }
 
+void set_cookies_options(Json const& data, std::vector<std::string>& args)
+{
+    if (data.find("cookies_from_browser") != data.end())
+    {
+        args.emplace_back("--cookies-from-browser");
+        args.emplace_back(data.at("cookies_from_browser").get<std::string>());
+    }
+    if (data.find("cookies_from_file") != data.end())
+    {
+        args.emplace_back("--cookies");
+        args.emplace_back(data.at("cookies_from_file").get<std::string>());
+    }
+}
+
+void set_network_options(Json const& data, std::vector<std::string>& args)
+{
+    if (data.find("proxy") != data.end())
+    {
+        args.emplace_back("--proxy");
+        args.emplace_back(data.at("proxy").get<std::string>());
+    }
+
+    if (data.find("socket_timeout") != data.end())
+    {
+        args.emplace_back("--socket-timeout");
+        args.emplace_back(data.at("socket_timeout").get<std::string>());
+    }
+
+    if (data.find("source_address") != data.end())
+    {
+        args.emplace_back("--source-address");
+        args.emplace_back(data.at("source_address").get<std::string>());
+    }
+
+    if (data.find("force_ip_protocol") != data.end())
+    {
+        auto force_ip_protocol = data.at("force_ip_protocol").get<std::string>();
+        if (force_ip_protocol == "ipv4")
+        {
+            args.emplace_back("--force-ipv4");
+        }
+        else if (force_ip_protocol == "ipv6")
+        {
+            args.emplace_back("--force-ipv6");
+        }
+    }
+
+    if (data.find("enable_file_urls") != data.end())
+    {
+        args.emplace_back("--enable-file-urls");
+    }
+}
+
 }  // anonymous namespace
 
 Request::Request(std::string_view json)
@@ -72,17 +125,8 @@ Request::Request(std::string_view json)
     // Generate arguments for yt-dlp
     args.push_back(data.at("url_input").get<std::string>());
 
-    // Set cookies options.
-    if (data.find("cookies_from_browser") != data.end())
-    {
-        args.emplace_back("--cookies-from-browser");
-        args.emplace_back(data.at("cookies_from_browser").get<std::string>());
-    }
-    if (data.find("cookies_from_file") != data.end())
-    {
-        args.emplace_back("--cookies");
-        args.emplace_back(data.at("cookies_from_file").get<std::string>());
-    }
+    set_cookies_options(data, args);
+    set_network_options(data, args);
 
     if (action == Request::Action::Preview)
     {

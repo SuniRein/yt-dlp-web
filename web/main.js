@@ -1,3 +1,17 @@
+// Number input only accept numbers
+function verifyNumberInput() {
+    const numberInputs = document.querySelectorAll("input[type=number]");
+    numberInputs.forEach((numberInput) => {
+        numberInput.addEventListener("keypress", (event) => {
+            const char = String.fromCharCode(event.which);
+            if (!/[\d.]/.test(char)) {
+                event.preventDefault();
+            }
+        });
+    });
+}
+verifyNumberInput();
+
 function handleFormSubmit(event, actionType) {
     event.preventDefault();
 
@@ -12,15 +26,44 @@ function handleFormSubmit(event, actionType) {
         }
 
         // Here only send meaningful values.
-        // Empty values (false, "", "none") are not sent to backend.
-        if (element.type === "checkbox" || element.type === "radio") {
-            // checkbox and radio are processed as boolean
-            // only send true values
-            if (element.checked) {
-                data[element.name] = true;
-            }
-        } else if (element.value !== "" && element.value !== "none") {
-            data[element.name] = element.value;
+        // Empty values are not sent to backend.
+        switch (element.type) {
+            case "checkbox":
+                // Checkbox are processed as boolean only send true values.
+                if (element.checked) {
+                    data[element.name] = true;
+                }
+                break;
+
+            case "radio":
+                if (
+                    element.checked &&
+                    element.value !== "none" &&
+                    element.value !== ""
+                ) {
+                    data[element.name] = element.value;
+                }
+                break;
+
+            case "number":
+                if (isNaN(element.valueAsNumber)) {
+                    logMessage(
+                        `Invalid number input at "${element.labels[0].textContent}".`,
+                    );
+                    break;
+                }
+
+                // Send origin string value for number input
+                if (element.value !== "") {
+                    data[element.name] = element.value;
+                }
+                break;
+
+            default:
+                if (element.value !== "" && element.value !== "none") {
+                    data[element.name] = element.value;
+                }
+                break;
         }
     });
 

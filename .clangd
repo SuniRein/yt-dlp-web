@@ -15,3 +15,4 @@ Diagnostics:
   Suppress:
     - hicpp-avoid-goto
     - cppcoreguidelines-avoid-goto
+    - cppcoreguidelines-avoid-const-or-ref-data-members
