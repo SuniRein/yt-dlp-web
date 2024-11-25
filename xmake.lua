@@ -1,5 +1,5 @@
 set_project("yt-dlp-web")
-set_version("0.0.1")
+set_version("0.1.0")
 
 add_rules("mode.debug", "mode.release")
 
