@@ -1,115 +1,182 @@
 <!doctype html>
 <html>
+    <head>
+        <title>yt-dlp WebUI</title>
+        <script src="webui.js"></script>
+        <link rel="stylesheet" href="style.css" />
+    </head>
 
-<head>
-    <title>yt-dlp WebUI</title>
-    <script src="webui.js"></script>
-    <link rel="stylesheet" href="style.css" />
-</head>
+    <body>
+        <form onsubmit="handleFormSubmit(event)" id="yt-dlp_form">
+            <!-- Input Url -->
+            <form-item
+                label="URL"
+                description=""
+                type="url"
+                key="url_input"
+                placeholder="https://www.bilibili.com/video/BV1hK4y1C7Uw"
+                required
+            ></form-item>
 
-<body>
-    <form onsubmit="handleFormSubmit(event)" id="yt-dlp_form">
-        <!-- Input Url -->
-        <form-item label="URL" description="" type="url" key="url_input"
-            placeholder="https://www.bilibili.com/video/BV1hK4y1C7Uw" required></form-item>
+            <!-- Download Options -->
+            <h3>Options</h3>
 
-        <!-- Download Options -->
-        <h3>Options</h3>
+            <form-item
+                label="Audio Only"
+                description=""
+                type="checkbox"
+                key="audio_only"
+            ></form-item>
 
-        <form-item label="Audio Only" description="" type="checkbox" key="audio_only"></form-item>
+            <form-item
+                label="yt-dlp Path"
+                description="Path to the yt-dlp executable."
+                type="text"
+                key="yt_dlp_path"
+                placeholder="/path/to/yt-dlp"
+            ></form-item>
 
-        <form-item label="yt-dlp Path" description="Path to the yt-dlp executable." type="text" key="yt_dlp_path"
-            placeholder="/path/to/yt-dlp"></form-item>
-
-        <form-item label="Video Quality" description="" type="select" key="quality">
-            <option value="bestvideo+bestaudio">
-                Best Video and Audio
-            </option>
-        </form-item>
-
-        <form-item label="Output Path" description="Set the output path for the downloaded file." type="text"
-            key="output_path" placeholder="/path/to/output"></form-item>
-
-        <!-- Cookies Options -->
-        <fieldset>
-            <legend>Cookies Source</legend>
-
-            <form-item label="From Browser" description="The name of The name of the browser to load cookies from."
-                type="select" key="cookies_from_browser">
-                <option value="none">None</option>
-                <option value="brave">Brave</option>
-                <option value="firefox">Firefox</option>
-                <option value="chrome">Chrome</option>
-                <option value="chromium">Chromium</option>
-                <option value="edge">Edge</option>
-                <option value="opera">Opera</option>
-                <option value="safari">Safari</option>
-                <option value="vivaldi">Vivaldi</option>
-                <option value="whale">Whale</option>
+            <form-item
+                label="Video Quality"
+                description=""
+                type="select"
+                key="quality"
+            >
+                <option value="bestvideo+bestaudio">
+                    Best Video and Audio
+                </option>
             </form-item>
 
-            <form-item label="From File"
-                description="Netscape formatted file to read cookies from and dump cookie jar in."
-                key="cookies_from_file" type="text" accept="text/plain"></form-item>
-        </fieldset>
+            <form-item
+                label="Output Path"
+                description="Set the output path for the downloaded file."
+                type="text"
+                key="output_path"
+                placeholder="/path/to/output"
+            ></form-item>
 
-        <!-- Network Options -->
-        <fieldset>
-            <legend>Network Options</legend>
+            <!-- Cookies Options -->
+            <fieldset>
+                <legend>Cookies Source</legend>
 
-            <form-item label="Proxy" description="
+                <form-item
+                    label="From Browser"
+                    description="The name of The name of the browser to load cookies from."
+                    type="select"
+                    key="cookies_from_browser"
+                >
+                    <option value="none">None</option>
+                    <option value="brave">Brave</option>
+                    <option value="firefox">Firefox</option>
+                    <option value="chrome">Chrome</option>
+                    <option value="chromium">Chromium</option>
+                    <option value="edge">Edge</option>
+                    <option value="opera">Opera</option>
+                    <option value="safari">Safari</option>
+                    <option value="vivaldi">Vivaldi</option>
+                    <option value="whale">Whale</option>
+                </form-item>
+
+                <form-item
+                    label="From File"
+                    description="Netscape formatted file to read cookies from and dump cookie jar in."
+                    key="cookies_from_file"
+                    type="text"
+                    accept="text/plain"
+                ></form-item>
+            </fieldset>
+
+            <!-- Network Options -->
+            <fieldset>
+                <legend>Network Options</legend>
+
+                <form-item
+                    label="Proxy"
+                    description="
                         Use the specified HTTP/HTTPS/SOCKS proxy.
                         To enable SOCKS proxy, specify a proper scheme, e.g. socks5://user:pass@127.0.0.1:1080/.
                         Keep empty for direct connection.
-                    " type="text" key="proxy" placeholder="http://localhost:8080"></form-item>
+                    "
+                    type="text"
+                    key="proxy"
+                    placeholder="http://localhost:8080"
+                ></form-item>
 
-            <form-item label="Socket Timeout" description="Time to wait before giving up, in seconds." type="number"
-                key="socket_timeout"></form-item>
+                <form-item
+                    label="Socket Timeout"
+                    description="Time to wait before giving up, in seconds."
+                    type="number"
+                    key="socket_timeout"
+                ></form-item>
 
-            <form-item label="Source Address" description="Client-side IP address to bind to." type="text"
-                key="source_address"></form-item>
+                <form-item
+                    label="Source Address"
+                    description="Client-side IP address to bind to."
+                    type="text"
+                    key="source_address"
+                ></form-item>
 
-            <fieldset>
-                <legend>IP Protocol</legend>
+                <fieldset>
+                    <legend>IP Protocol</legend>
 
-                <form-item label="Default" description="Use the default IP protocol settings." type="radio"
-                    key="force_ip_protocol" value="none" checked></form-item>
+                    <form-item
+                        label="Default"
+                        description="Use the default IP protocol settings."
+                        type="radio"
+                        key="force_ip_protocol"
+                        value="none"
+                        checked
+                    ></form-item>
 
-                <form-item label="Force IPv4" description="Make all connections via IPv4." type="radio"
-                    key="force_ip_protocol" value="ipv4"></form-item>
+                    <form-item
+                        label="Force IPv4"
+                        description="Make all connections via IPv4."
+                        type="radio"
+                        key="force_ip_protocol"
+                        value="ipv4"
+                    ></form-item>
 
-                <form-item label="Force IPv6" description="Make all connections via IPv6." type="radio"
-                    key="force_ip_protocol" value="ipv6"></form-item>
+                    <form-item
+                        label="Force IPv6"
+                        description="Make all connections via IPv6."
+                        type="radio"
+                        key="force_ip_protocol"
+                        value="ipv6"
+                    ></form-item>
+                </fieldset>
+
+                <form-item
+                    label="Enable File Urls"
+                    description="Enable file:// URLs. This is disabled by default for security reasons."
+                    type="checkbox"
+                    key="enable_file_urls"
+                ></form-item>
             </fieldset>
 
-            <form-item label="Enable File Urls"
-                description="Enable file:// URLs. This is disabled by default for security reasons." type="checkbox"
-                key="enable_file_urls"></form-item>
-        </fieldset>
+            <button type="submit" value="download">Download</button>
+            <button type="submit" value="preview">Preview</button>
+            <button type="submit" value="interrupt">Interrupt</button>
 
-        <!-- Operations -->
-        <h3>Actions</h3>
+            <button type="button" onclick="clearLog()">Clear Log</button>
+            <button type="button" onclick="clearPreview()">
+                Clear Preview
+            </button>
+        </form>
 
-        <button type="submit" value="download">Download</button>
-        <button type="submit" value="preview">Preview</button>
-        <button type="submit" value="interrupt">Interrupt</button>
+        <!-- Output -->
+        <h3>Preview</h3>
+        <div id="preview_area"></div>
 
-        <button type="button" onclick="clearLog()">Clear Log</button>
-        <button type="button" onclick="clearPreview()">
-            Clear Preview
-        </button>
-    </form>
+        <h3>Log</h3>
+        <textarea
+            id="log_output"
+            rows="10"
+            style="width: 100%"
+            readonly
+        ></textarea>
 
-    <!-- Output -->
-    <h3>Preview</h3>
-    <div id="preview_area"></div>
-
-    <h3>Log</h3>
-    <textarea id="log_output" rows="10" style="width: 100%" readonly></textarea>
-
-    <!-- Scripts -->
-    <script src="assets/js/form_item.js"></script>
-    <script src="main.js"></script>
-</body>
-
+        <!-- Scripts -->
+        <script src="assets/js/form_item.js"></script>
+        <script src="main.js"></script>
+    </body>
 </html>
