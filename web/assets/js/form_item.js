@@ -69,6 +69,13 @@ class FormItem extends HTMLElement {
         ];
     }
 
+    // Supported custom types.
+    static customTypes = {};
+    static registerCustomType(customType) {
+        const { type, ...rest } = customType;
+        FormItem.customTypes[type] = rest;
+    }
+
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
             case "label":
@@ -113,7 +120,7 @@ class FormItem extends HTMLElement {
         }
 
         // Custom types are set as text inputs.
-        if (type.startsWith("C-")) {
+        if (type in FormItem.customTypes) {
             this.inputElement.type = "text";
         }
 
@@ -165,20 +172,6 @@ class FormItem extends HTMLElement {
         }
     }
 
-    // Filesize input should only accept numbers and units.
-    static handleFilesizeInput(event) {
-        // Attention: This regex is not perfect.
-        // It allows numbers ending with a dot to accept typed dot.
-        const filesizeFormat = /^[\d]+(\.[\d]*)?[KMGTP]?$/;
-        if (
-            event.target.value !== "" &&
-            !filesizeFormat.test(event.target.value)
-        ) {
-            event.target.setCustomValidity("Invalid filesize format.");
-            event.target.reportValidity();
-        }
-    }
-
     addEventListener() {
         if (this.type === "number") {
             this.inputElement.addEventListener(
@@ -189,11 +182,6 @@ class FormItem extends HTMLElement {
             this.inputElement.addEventListener(
                 "change",
                 FormItem.handleRadioChange,
-            );
-        } else if (this.type === "C-filesize") {
-            this.inputElement.addEventListener(
-                "input",
-                FormItem.handleFilesizeInput,
             );
         }
     }
@@ -238,24 +226,11 @@ class FormItem extends HTMLElement {
             return false;
         }
 
-        // Check custrom filesize type.
-        if (this.type === "C-filesize") {
-            if (
-                this.value !== "" &&
-                !/^[\d]+(.\d)?[\d]*[KMGTP]?$/.test(this.value)
-            ) {
-                this.inputElement.setCustomValidity("Invalid filesize format.");
-                this.inputElement.reportValidity();
-                return false;
-            }
-        }
-
-        // Check custom date types.
-        if (this.type === "C-date") {
-            const dateFormat =
-                /^((\d{8})|((now|today|yesterday)?(-\d+(day|week|month|year))?))$/;
-            if (this.value !== "" && !dateFormat.test(this.value)) {
-                this.inputElement.setCustomValidity("Invalid date format.");
+        // Check custom types.
+        if (this.type in FormItem.customTypes) {
+            const customType = FormItem.customTypes[this.type];
+            if (!customType.validator(this.value)) {
+                this.inputElement.setCustomValidity(customType.validityMessage);
                 this.inputElement.reportValidity();
                 return false;
             }
