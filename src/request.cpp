@@ -92,6 +92,12 @@ void set_network_options(Json const& data, std::vector<std::string>& args)
     check_option(data, args, "enable_file_urls", "--enable-file-urls");
 }
 
+void set_video_selection_options(Json const& data, std::vector<std::string>& args)
+{
+    check_argument_option(data, args, "filesize_min", "--min-filesize");
+    check_argument_option(data, args, "filesize_max", "--max-filesize");
+}
+
 }  // anonymous namespace
 
 Request::Request(std::string_view json)
@@ -119,6 +125,7 @@ Request::Request(std::string_view json)
 
     set_cookies_options(data, args);
     set_network_options(data, args);
+    set_video_selection_options(data, args);
 
     if (action == Request::Action::Preview)
     {

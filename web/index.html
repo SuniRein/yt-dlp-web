@@ -153,6 +153,25 @@
                 ></form-item>
             </fieldset>
 
+            <!-- Video Selection Options -->
+            <fieldset>
+                <legend>Video Selection Options</legend>
+
+                <form-item
+                    label="Min Filesize"
+                    description="Only download file with a size greater than this value. Format: 100, 10K, 1.2M"
+                    type="C-filesize"
+                    key="filesize_min"
+                ></form-item>
+
+                <form-item
+                    label="Max Filesize"
+                    description="Only download file with a size less than this value. Format: 100, 10K, 1.2M"
+                    type="C-filesize"
+                    key="filesize_max"
+                ></form-item>
+            </fieldset>
+
             <button type="submit" value="download">Download</button>
             <button type="submit" value="preview">Preview</button>
             <button type="submit" value="interrupt">Interrupt</button>

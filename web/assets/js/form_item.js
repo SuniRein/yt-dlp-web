@@ -112,6 +112,11 @@ class FormItem extends HTMLElement {
             this.inputElement.type = type || "text";
         }
 
+        // Type `C-filesize`.
+        if (type === "C-filesize") {
+            this.inputElement.type = "text";
+        }
+
         // Initialize the input element.
         this.inputElement.setAttribute("name", this.getAttribute("key"));
         this.addEventListener();
@@ -160,6 +165,20 @@ class FormItem extends HTMLElement {
         }
     }
 
+    // Filesize input should only accept numbers and units.
+    static handleFilesizeInput(event) {
+        // Attention: This regex is not perfect.
+        // It allows numbers ending with a dot to accept typed dot.
+        const filesizeFormat = /^[\d]+(\.[\d]*)?[KMGTP]?$/;
+        if (
+            event.target.value !== "" &&
+            !filesizeFormat.test(event.target.value)
+        ) {
+            event.target.setCustomValidity("Invalid filesize format.");
+            event.target.reportValidity();
+        }
+    }
+
     addEventListener() {
         if (this.type === "number") {
             this.inputElement.addEventListener(
@@ -170,6 +189,11 @@ class FormItem extends HTMLElement {
             this.inputElement.addEventListener(
                 "change",
                 FormItem.handleRadioChange,
+            );
+        } else if (this.type === "C-filesize") {
+            this.inputElement.addEventListener(
+                "input",
+                FormItem.handleFilesizeInput,
             );
         }
     }
@@ -183,11 +207,11 @@ class FormItem extends HTMLElement {
     }
 
     get type() {
-        return this.inputElement.type;
+        return this.getAttribute("type");
     }
 
     get key() {
-        return this.inputElement.name;
+        return this.getAttribute("key");
     }
 
     get value() {
@@ -212,6 +236,18 @@ class FormItem extends HTMLElement {
             this.inputElement.setCustomValidity("This field must be a number.");
             this.inputElement.reportValidity();
             return false;
+        }
+
+        // Check filesize fields.
+        if (this.type === "C-filesize") {
+            if (
+                this.value !== "" &&
+                !/^[\d]+(.\d)?[\d]*[KMGTP]?$/.test(this.value)
+            ) {
+                this.inputElement.setCustomValidity("Invalid filesize format.");
+                this.inputElement.reportValidity();
+                return false;
+            }
         }
 
         return true;

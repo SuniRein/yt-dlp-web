@@ -130,3 +130,18 @@ TEST(Request, NetworkOptions)
     EXPECT_THAT(request.args, HasOption("--force-ipv6"));
     EXPECT_THAT(request.args, HasOption("--enable-file-urls"));
 }
+
+TEST(Request, VideoSelectionOptions)
+{
+    std::string json = R"({
+        "action": "preview",
+        "url_input": "https://example.com/video",
+        "filesize_min": "100K",
+        "filesize_max": "0.2M"
+    })";
+
+    Request request(json);
+
+    EXPECT_THAT(request.args, HasArgumentOption("--min-filesize", "100K"));
+    EXPECT_THAT(request.args, HasArgumentOption("--max-filesize", "0.2M"));
+}
