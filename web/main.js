@@ -1,27 +1,20 @@
-// Number input only accept numbers
-function verifyNumberInput() {
-    const numberInputs = document.querySelectorAll("input[type=number]");
-    numberInputs.forEach((numberInput) => {
-        numberInput.addEventListener("keypress", (event) => {
-            const char = String.fromCharCode(event.which);
-            if (!/[\d.]/.test(char)) {
-                event.preventDefault();
-            }
-        });
-    });
-}
-verifyNumberInput();
-
-function handleFormSubmit(event, actionType) {
+function handleFormSubmit(event) {
     event.preventDefault();
 
-    const form = document.getElementById("yt-dlp_form");
+    const actionType = event.submitter.value;
 
-    // convert form data to JSON
+    const formItems = event.target.querySelectorAll("form-item");
+
+    // Convert form data to JSON.
     const data = { action: actionType };
-    Array.from(form.elements).forEach((element) => {
-        // skip elements without a name
-        if (!element.name) {
+    for (const element of formItems) {
+        // Skip elements without a key.
+        if (!element.key) {
+            continue;
+        }
+
+        // If input is invalid, show error message and stop.
+        if (!element.checkValidity()) {
             return;
         }
 
@@ -31,7 +24,7 @@ function handleFormSubmit(event, actionType) {
             case "checkbox":
                 // Checkbox are processed as boolean only send true values.
                 if (element.checked) {
-                    data[element.name] = true;
+                    data[element.key] = true;
                 }
                 break;
 
@@ -41,31 +34,17 @@ function handleFormSubmit(event, actionType) {
                     element.value !== "none" &&
                     element.value !== ""
                 ) {
-                    data[element.name] = element.value;
-                }
-                break;
-
-            case "number":
-                if (isNaN(element.valueAsNumber)) {
-                    logMessage(
-                        `Invalid number input at "${element.labels[0].textContent}".`,
-                    );
-                    break;
-                }
-
-                // Send origin string value for number input
-                if (element.value !== "") {
-                    data[element.name] = element.value;
+                    data[element.key] = element.value;
                 }
                 break;
 
             default:
                 if (element.value !== "" && element.value !== "none") {
-                    data[element.name] = element.value;
+                    data[element.key] = element.value;
                 }
                 break;
         }
-    });
+    }
 
     // Logging
     logMessage("Request: " + JSON.stringify(data, null, 2));
