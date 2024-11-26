@@ -112,8 +112,8 @@ class FormItem extends HTMLElement {
             this.inputElement.type = type || "text";
         }
 
-        // Type `C-filesize`.
-        if (type === "C-filesize") {
+        // Custom types are set as text inputs.
+        if (type.startsWith("C-")) {
             this.inputElement.type = "text";
         }
 
@@ -230,7 +230,7 @@ class FormItem extends HTMLElement {
             return false;
         }
 
-        // Check number fields.
+        // Check number type.
         // Accepts empty strings, but not bad inputs.
         if (this.type === "number" && this.inputElement.validity.badInput) {
             this.inputElement.setCustomValidity("This field must be a number.");
@@ -238,13 +238,24 @@ class FormItem extends HTMLElement {
             return false;
         }
 
-        // Check filesize fields.
+        // Check custrom filesize type.
         if (this.type === "C-filesize") {
             if (
                 this.value !== "" &&
                 !/^[\d]+(.\d)?[\d]*[KMGTP]?$/.test(this.value)
             ) {
                 this.inputElement.setCustomValidity("Invalid filesize format.");
+                this.inputElement.reportValidity();
+                return false;
+            }
+        }
+
+        // Check custom date types.
+        if (this.type === "C-date") {
+            const dateFormat =
+                /^((\d{8})|((now|today|yesterday)?(-\d+(day|week|month|year))?))$/;
+            if (this.value !== "" && !dateFormat.test(this.value)) {
+                this.inputElement.setCustomValidity("Invalid date format.");
                 this.inputElement.reportValidity();
                 return false;
             }

@@ -96,6 +96,9 @@ void set_video_selection_options(Json const& data, std::vector<std::string>& arg
 {
     check_argument_option(data, args, "filesize_min", "--min-filesize");
     check_argument_option(data, args, "filesize_max", "--max-filesize");
+    check_argument_option(data, args, "date", "--date");
+    check_argument_option(data, args, "date_before", "--datebefore");
+    check_argument_option(data, args, "date_after", "--dateafter");
 }
 
 }  // anonymous namespace

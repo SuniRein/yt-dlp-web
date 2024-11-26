@@ -170,6 +170,29 @@
                     type="C-filesize"
                     key="filesize_max"
                 ></form-item>
+
+                <form-item
+                    label="Date"
+                    description='Download only videos uploaded on this date.
+                                The date can be "YYYYMMDD" or in the format 
+                                [now|today|yesterday][-N[day|week|month|year]].'
+                    type="C-date"
+                    key="date"
+                ></form-item>
+
+                <form-item
+                    label="Date Before"
+                    description="Download only videos uploaded on or before this date"
+                    type="C-date"
+                    key="date_before"
+                ></form-item>
+
+                <form-item
+                    label="Date After"
+                    description="Download only videos uploaded on or after this date"
+                    type="C-date"
+                    key="date_after"
+                ></form-item>
             </fieldset>
 
             <button type="submit" value="download">Download</button>

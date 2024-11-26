@@ -137,11 +137,17 @@ TEST(Request, VideoSelectionOptions)
         "action": "preview",
         "url_input": "https://example.com/video",
         "filesize_min": "100K",
-        "filesize_max": "0.2M"
+        "filesize_max": "0.2M",
+        "date": "20220101",
+        "date_before": "now",
+        "date_after": "today-2week"
     })";
 
     Request request(json);
 
     EXPECT_THAT(request.args, HasArgumentOption("--min-filesize", "100K"));
     EXPECT_THAT(request.args, HasArgumentOption("--max-filesize", "0.2M"));
+    EXPECT_THAT(request.args, HasArgumentOption("--date", "20220101"));
+    EXPECT_THAT(request.args, HasArgumentOption("--datebefore", "now"));
+    EXPECT_THAT(request.args, HasArgumentOption("--dateafter", "today-2week"));
 }
