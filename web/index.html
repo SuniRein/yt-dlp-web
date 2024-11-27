@@ -204,6 +204,23 @@
                     type="C-date"
                     key="date_after"
                 ></form-item>
+
+                <form-item
+                    label="Filters"
+                    description='Generic video filter. Any "OUTPUT TEMPLATE" field can be compared with a number or a string
+                                 using the operators defined in "Filtering Formats".'
+                    type="text"
+                    key="filters"
+                    multiple
+                ></form-item>
+
+                <form-item
+                    label="Stop Filters"
+                    description="Stop the download process when a video doesn't match the filters."
+                    type="text"
+                    key="stop_filters"
+                    multiple
+                ></form-item>
             </fieldset>
 
             <button type="submit" value="download">Download</button>

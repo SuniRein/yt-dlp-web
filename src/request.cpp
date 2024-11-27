@@ -1,5 +1,7 @@
 #include "request.h"
 
+#include <string_view>
+
 #include "boost/process/search_path.hpp"
 #include "nlohmann/json.hpp"
 
@@ -17,6 +19,19 @@ void check_argument_option(Json const& data, std::vector<std::string>& args, std
     {
         args.emplace_back(option);
         args.emplace_back(data.at(key).get<std::string>());
+    }
+}
+
+// The value is an array => make multiple argument options.
+void check_multiple_argument_option(Json const& data, std::vector<std::string>& args, std::string_view key, std::string_view option)
+{
+    if (data.find(key) != data.end())
+    {
+        for (auto const& value : data.at(key))
+        {
+            args.emplace_back(option);
+            args.emplace_back(value.get<std::string>());
+        }
     }
 }
 
@@ -100,6 +115,8 @@ void set_video_selection_options(Json const& data, std::vector<std::string>& arg
     check_argument_option(data, args, "date", "--date");
     check_argument_option(data, args, "date_before", "--datebefore");
     check_argument_option(data, args, "date_after", "--dateafter");
+    check_multiple_argument_option(data, args, "filters", "--match-filters");
+    check_multiple_argument_option(data, args, "stop_filters", "--break-match-filters");
 }
 
 }  // anonymous namespace

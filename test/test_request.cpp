@@ -20,25 +20,15 @@ MATCHER_P(HasOption, name, "has argument \""s + name + "\"")
 MATCHER_P2(HasArgumentOption, name, value, "has argument option \""s + name + "\" with value \"" + value + "\"")
 {
     auto it = std::find(arg.begin(), arg.end(), name);
-    if (it == arg.end())
+    while (it != arg.end())
     {
-        *result_listener << "where argument not found: \"" << name << "\"";
-        return false;
+        if (it + 1 != arg.end() && *(it + 1) == value)
+        {
+            return true;
+        }
+        it = std::find(it + 1, arg.end(), name);
     }
-
-    if (it + 1 == arg.end())
-    {
-        *result_listener << "where argument \"" << name << "\" has no value";
-        return false;
-    }
-
-    if (*(it + 1) != value)
-    {
-        *result_listener << "where argument \"" << name << "\" has wrong value: \"" << *(it + 1) << "\"";
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 TEST(Request, ParseValidJSON)
@@ -141,7 +131,15 @@ TEST(Request, VideoSelectionOptions)
         "filesize_max": "0.2M",
         "date": "20220101",
         "date_before": "now",
-        "date_after": "today-2week"
+        "date_after": "today-2week",
+        "filters": [
+            "!is_live",
+            "like_count>?100 & description~='(?i)\\bcats \\& dogs\\b'"
+        ],
+        "stop_filters": [
+            "duration > 600",
+            "duration < 3600"
+        ]
     })";
 
     Request request(json);
@@ -152,4 +150,8 @@ TEST(Request, VideoSelectionOptions)
     EXPECT_THAT(request.args, HasArgumentOption("--date", "20220101"));
     EXPECT_THAT(request.args, HasArgumentOption("--datebefore", "now"));
     EXPECT_THAT(request.args, HasArgumentOption("--dateafter", "today-2week"));
+    EXPECT_THAT(request.args, HasArgumentOption("--match-filters", "!is_live"));
+    EXPECT_THAT(request.args, HasArgumentOption("--match-filters", R"(like_count>?100 & description~='(?i)\bcats \& dogs\b')"));
+    EXPECT_THAT(request.args, HasArgumentOption("--break-match-filters", "duration > 600"));
+    EXPECT_THAT(request.args, HasArgumentOption("--break-match-filters", "duration < 3600"));
 }
