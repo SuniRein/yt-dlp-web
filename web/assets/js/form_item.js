@@ -115,18 +115,60 @@ export class FormItem extends HTMLElement {
                 }
             });
         } else {
-            this.inputElement = document.createElement("input");
-            this.inputElement.type = type || "text";
-        }
+            // Initialize the input element.
+            const input = document.createElement("input");
 
-        // Custom types are set as text inputs.
-        if (type in FormItem.customTypes) {
-            this.inputElement.type = "text";
-        }
+            // Custom types are set as text inputs.
+            if (type in FormItem.customTypes) {
+                input.type = "text";
+            } else {
+                input.type = type || "text";
+            }
 
-        // Initialize the input element.
-        this.inputElement.setAttribute("name", this.getAttribute("key"));
-        this.addEventListener();
+            input.name = this.key;
+
+            this.addEventListener(input);
+
+            // Attribute `multiple` allows multiple inputs.
+            if (this.hasAttribute("multiple")) {
+                this.inputElement = document.createElement("div");
+                this.inputElement.classList.add("form-item-input-multiple");
+
+                this.inputElement.appendChild(input);
+
+                const addButton = document.createElement("button");
+                addButton.textContent = "+";
+                addButton.type = "button";
+                addButton.onclick = () => {
+                    const input = this.inputElement
+                        .querySelector("input")
+                        .cloneNode();
+                    input.value = ""; // Clear the value.
+                    this.inputElement.appendChild(document.createElement("br")); // Add a line break.
+                    this.inputElement.appendChild(input.cloneNode());
+                };
+                this.inputElement.appendChild(addButton);
+
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "-";
+                removeButton.type = "button";
+                removeButton.onclick = () => {
+                    const inputs = this.inputElement.querySelectorAll("input");
+                    // Ensure there is always at least one input.
+                    if (inputs.length > 1) {
+                        this.inputElement.removeChild(
+                            this.inputElement.lastChild,
+                        ); // Remove the last input.
+                        this.inputElement.removeChild(
+                            this.inputElement.lastChild,
+                        ); // Remove the line break.
+                    }
+                };
+                this.inputElement.appendChild(removeButton);
+            } else {
+                this.inputElement = input;
+            }
+        }
 
         // Place the input element in correct position.
         if (type === "radio" || type === "checkbox") {
@@ -172,17 +214,11 @@ export class FormItem extends HTMLElement {
         }
     }
 
-    addEventListener() {
+    addEventListener(input) {
         if (this.type === "number") {
-            this.inputElement.addEventListener(
-                "keypress",
-                FormItem.hendleNumberInput,
-            );
+            input.addEventListener("keypress", FormItem.hendleNumberInput);
         } else if (this.type === "radio") {
-            this.inputElement.addEventListener(
-                "change",
-                FormItem.handleRadioChange,
-            );
+            input.addEventListener("change", FormItem.handleRadioChange);
         }
     }
 
@@ -203,6 +239,13 @@ export class FormItem extends HTMLElement {
     }
 
     get value() {
+        if (this.hasAttribute("multiple")) {
+            const inputs = this.inputElement.querySelectorAll("input");
+            const values = Array.from(inputs)
+                .filter((input) => !FormItem.inputIsEmpty(input))
+                .map((input) => input.value);
+            return values;
+        }
         return this.inputElement.value;
     }
 
@@ -210,33 +253,66 @@ export class FormItem extends HTMLElement {
         return this.inputElement.checked;
     }
 
-    checkValidity() {
+    #inputIsValidity(input) {
         // Check required fields.
-        if (this.hasAttribute("required") && this.value === "") {
-            this.inputElement.setCustomValidity("This field is required.");
-            this.inputElement.reportValidity();
+        if (this.hasAttribute("required") && input.value === "") {
+            input.setCustomValidity("This field is required.");
+            input.reportValidity();
             return false;
         }
 
         // Check number type.
         // Accepts empty strings, but not bad inputs.
-        if (this.type === "number" && this.inputElement.validity.badInput) {
-            this.inputElement.setCustomValidity("This field must be a number.");
-            this.inputElement.reportValidity();
+        if (this.type === "number" && input.validity.badInput) {
+            input.setCustomValidity("This field must be a number.");
+            input.reportValidity();
             return false;
         }
 
         // Check custom types.
         if (this.type in FormItem.customTypes) {
             const customType = FormItem.customTypes[this.type];
-            if (!customType.validator(this.value)) {
-                this.inputElement.setCustomValidity(customType.validityMessage);
-                this.inputElement.reportValidity();
+            if (!customType.validator(input.value)) {
+                input.setCustomValidity(customType.validityMessage);
+                input.reportValidity();
                 return false;
             }
         }
 
         return true;
+    }
+
+    checkValidity() {
+        if (this.hasAttribute("multiple")) {
+            const inputs = this.inputElement.querySelectorAll("input");
+            for (const input of inputs) {
+                if (!this.#inputIsValidity(input)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return this.#inputIsValidity(this.inputElement);
+    }
+
+    static inputIsEmpty(input) {
+        if (input.type === "checkbox") {
+            return !input.checked;
+        }
+        if (input.type === "radio") {
+            return (
+                !input.checked || input.value === "none" || input.value === ""
+            );
+        }
+        return input.value === "none" || input.value === "";
+    }
+
+    empty() {
+        if (this.hasAttribute("multiple")) {
+            return this.value.length === 0;
+        }
+        return FormItem.inputIsEmpty(this.inputElement);
     }
 }
 

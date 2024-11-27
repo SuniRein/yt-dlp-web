@@ -20,29 +20,8 @@ function handleFormSubmit(event) {
 
         // Here only send meaningful values.
         // Empty values are not sent to backend.
-        switch (element.type) {
-            case "checkbox":
-                // Checkbox are processed as boolean only send true values.
-                if (element.checked) {
-                    data[element.key] = true;
-                }
-                break;
-
-            case "radio":
-                if (
-                    element.checked &&
-                    element.value !== "none" &&
-                    element.value !== ""
-                ) {
-                    data[element.key] = element.value;
-                }
-                break;
-
-            default:
-                if (element.value !== "" && element.value !== "none") {
-                    data[element.key] = element.value;
-                }
-                break;
+        if (!element.empty()) {
+            data[element.key] = element.value;
         }
     }
 
