@@ -158,6 +158,17 @@
                 <legend>Video Selection Options</legend>
 
                 <form-item
+                    label="Playlist Index Filter"
+                    description='
+                        Comma separated playlist_index of the items to download.
+                        You can specify a range using "[START]:[STOP][:STEP]".
+                        Use negative indices to count from the right and negative STEP to download in reverse order.
+                        E.g. "-I 1:3,7,-5::2" used on a playlist of size 15 will download the items at index 1,2,3,7,11,13,15'
+                    type="C-item-spec"
+                    key="playlist_indices"
+                ></form-item>
+
+                <form-item
                     label="Min Filesize"
                     description="Only download file with a size greater than this value. Format: 100, 10K, 1.2M"
                     type="C-filesize"

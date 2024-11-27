@@ -94,6 +94,7 @@ void set_network_options(Json const& data, std::vector<std::string>& args)
 
 void set_video_selection_options(Json const& data, std::vector<std::string>& args)
 {
+    check_argument_option(data, args, "playlist_indices", "--playlist-items");
     check_argument_option(data, args, "filesize_min", "--min-filesize");
     check_argument_option(data, args, "filesize_max", "--max-filesize");
     check_argument_option(data, args, "date", "--date");

@@ -1,4 +1,4 @@
-class FormItem extends HTMLElement {
+export class FormItem extends HTMLElement {
     constructor() {
         super();
 

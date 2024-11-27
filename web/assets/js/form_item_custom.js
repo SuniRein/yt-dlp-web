@@ -1,3 +1,5 @@
+import { FormItem } from "./form_item.js";
+
 class FormItemCustomType {
     constructor({ type, validator, validityMessage }) {
         this.type = type;
@@ -24,3 +26,17 @@ const dateType = new FormItemCustomType({
     validityMessage: "Invalid date format.",
 });
 FormItem.registerCustomType(dateType);
+
+// Accepts a string of comma-separated integers, or ranges of integers.
+// Ranges are of the form "[start]:[end]:[step]", where negative values are allowed.
+// Examples: "1,2,3", "1:3", "1:10:2", "-10:0", "1:3,7,-5::2".
+const itemSpecType = new FormItemCustomType({
+    type: "C-item-spec",
+    validator: (value) =>
+        value === "" ||
+        /^(?:-?\d+|(?:-?\d*):(?:-?\d*):?(?:-?\d*)?)(?:,(?:-?\d+|(?:-?\d*):(?:-?\d*):?(?:-?\d*)?))*$/.test(
+            value,
+        ),
+    validityMessage: "Invalid item spec format.",
+});
+FormItem.registerCustomType(itemSpecType);

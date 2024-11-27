@@ -136,6 +136,7 @@ TEST(Request, VideoSelectionOptions)
     std::string json = R"({
         "action": "preview",
         "url_input": "https://example.com/video",
+        "playlist_indices": "1,2:3,-6:-1,-5::0",
         "filesize_min": "100K",
         "filesize_max": "0.2M",
         "date": "20220101",
@@ -145,6 +146,7 @@ TEST(Request, VideoSelectionOptions)
 
     Request request(json);
 
+    EXPECT_THAT(request.args, HasArgumentOption("--playlist-items", "1,2:3,-6:-1,-5::0"));
     EXPECT_THAT(request.args, HasArgumentOption("--min-filesize", "100K"));
     EXPECT_THAT(request.args, HasArgumentOption("--max-filesize", "0.2M"));
     EXPECT_THAT(request.args, HasArgumentOption("--date", "20220101"));
