@@ -232,6 +232,59 @@
                     <option value="no">No</option>
                     <option value="yes">Yes</option>
                 </form-item>
+
+                <form-item
+                    label="Age Limit"
+                    description="Download only videos suitable for the given age."
+                    type="number"
+                    key="age_limit"
+                ></form-item>
+
+                <form-item
+                    label="Max Download Number"
+                    description="Abort after downloading NUMBER files."
+                    type="number"
+                    key="max_download_number"
+                ></form-item>
+
+                <form-item
+                    label="Download Archive"
+                    description="
+                        Download only videos not listed in the archive file.
+                        Record the IDs of all downloaded videos in it.
+                    "
+                    type="text"
+                    key="download_archive"
+                ></form-item>
+
+                <form-item
+                    label="Break On Existing"
+                    description='
+                        Stop the download process when encountering an already downloaded file
+                        that is in the archive supplied by the "Download Archive" option.
+                    '
+                    type="checkbox"
+                    key="break_on_existing"
+                ></form-item>
+
+                <form-item
+                    label="Break Per Input"
+                    description='
+                        Reset per input for options "Stop Filters", "Max Download Number" and "Break On Existing",
+                        or else they will terminate the whole download process.
+                    '
+                    type="checkbox"
+                    key="break_per_input"
+                ></form-item>
+
+                <form-item
+                    label="Skip Playlist After Errors"
+                    description="
+                        Number of allowed failures until the rest of the playlist is skipped.
+                    "
+                    type="number"
+                    key="skip_playlist_after_errors"
+                ></form-item>
             </fieldset>
 
             <button type="submit" value="download">Download</button>

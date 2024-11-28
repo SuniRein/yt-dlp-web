@@ -126,6 +126,12 @@ void set_video_selection_options(Json const& data, std::vector<std::string>& arg
             {"yes", "--yes-playlist"},
             { "no",  "--no-playlist"}
     });
+    check_argument_option(data, args, "age_limit", "--age-limit");
+    check_argument_option(data, args, "max_download_number", "--max-downloads");
+    check_argument_option(data, args, "download_archive", "--download-archive");
+    check_option(data, args, "break_on_existing", "--break-on-existing");
+    check_option(data, args, "break_per_input", "--break-per-input");
+    check_argument_option(data, args, "skip_playlist_after_errors", "--skip-playlist-after-errors");
 }
 
 }  // anonymous namespace

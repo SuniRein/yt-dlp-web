@@ -132,9 +132,25 @@ TEST(Request, ForceIpProtocolOption)
     EXPECT_THAT(make_args(R"({"force_ip_protocol": "ipv6"})"), HasOption("--force-ipv6"));
 }
 
-TEST(Request, PlaylistItemsOption)
+TEST(Request, CommonVideoSelectionOptions)
 {
-    EXPECT_THAT(make_args(R"({"playlist_indices": "1,2:3,-6:-1,-5::0"})"), HasArgumentOption("--playlist-items", "1,2:3,-6:-1,-5::0"));
+    auto args = make_args(R"({
+        "playlist_indices": "1,2:3,-6:-1,-5::0",
+        "age_limit": "18",
+        "max_download_number": "10",
+        "download_archive": "/tmp/downloaded.txt",
+        "break_on_existing": true,
+        "break_per_input": true,
+        "skip_playlist_after_errors": "8"
+    })");
+
+    EXPECT_THAT(args, HasArgumentOption("--playlist-items", "1,2:3,-6:-1,-5::0"));
+    EXPECT_THAT(args, HasArgumentOption("--age-limit", "18"));
+    EXPECT_THAT(args, HasArgumentOption("--max-downloads", "10"));
+    EXPECT_THAT(args, HasArgumentOption("--download-archive", "/tmp/downloaded.txt"));
+    EXPECT_THAT(args, HasOption("--break-on-existing"));
+    EXPECT_THAT(args, HasOption("--break-per-input"));
+    EXPECT_THAT(args, HasArgumentOption("--skip-playlist-after-errors", "8"));
 }
 
 TEST(Request, FilesizeOption)
