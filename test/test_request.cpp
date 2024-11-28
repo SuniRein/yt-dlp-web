@@ -139,7 +139,8 @@ TEST(Request, VideoSelectionOptions)
         "stop_filters": [
             "duration > 600",
             "duration < 3600"
-        ]
+        ],
+        "is_playlist": "no"
     })";
 
     Request request(json);
@@ -154,4 +155,17 @@ TEST(Request, VideoSelectionOptions)
     EXPECT_THAT(request.args, HasArgumentOption("--match-filters", R"(like_count>?100 & description~='(?i)\bcats \& dogs\b')"));
     EXPECT_THAT(request.args, HasArgumentOption("--break-match-filters", "duration > 600"));
     EXPECT_THAT(request.args, HasArgumentOption("--break-match-filters", "duration < 3600"));
+    EXPECT_THAT(request.args, HasOption("--no-playlist"));
+}
+
+TEST(Request, IsPlaylistOption)
+{
+    {
+        Request request(R"({"action": "preview", "url_input": "https://example.com/playlist", "is_playlist": "no"})");
+        EXPECT_THAT(request.args, HasOption("--no-playlist"));
+    }
+    {
+        Request request(R"({"action": "preview", "url_input": "https://example.com/playlist", "is_playlist": "yes"})");
+        EXPECT_THAT(request.args, HasOption("--yes-playlist"));
+    }
 }

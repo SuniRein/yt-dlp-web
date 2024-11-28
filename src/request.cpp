@@ -1,5 +1,6 @@
 #include "request.h"
 
+#include <map>
 #include <string_view>
 
 #include "boost/process/search_path.hpp"
@@ -40,6 +41,18 @@ void check_option(Json const& data, std::vector<std::string>& args, std::string_
     if (data.find(key) != data.end())
     {
         args.emplace_back(option);
+    }
+}
+
+void map_option(Json const& data, std::vector<std::string>& args, std::string_view key, std::map<std::string, std::string> const& options)
+{
+    if (data.find(key) != data.end())
+    {
+        auto value = data.at(key).get<std::string>();
+        if (options.find(value) != options.end())
+        {
+            args.emplace_back(options.at(value));
+        }
     }
 }
 
@@ -90,20 +103,11 @@ void set_network_options(Json const& data, std::vector<std::string>& args)
     check_argument_option(data, args, "proxy", "--proxy");
     check_argument_option(data, args, "socket_timeout", "--socket-timeout");
     check_argument_option(data, args, "source_address", "--source-address");
-
-    if (data.find("force_ip_protocol") != data.end())
-    {
-        auto force_ip_protocol = data.at("force_ip_protocol").get<std::string>();
-        if (force_ip_protocol == "ipv4")
+    map_option(data, args, "force_ip_protocol",
         {
-            args.emplace_back("--force-ipv4");
-        }
-        else if (force_ip_protocol == "ipv6")
-        {
-            args.emplace_back("--force-ipv6");
-        }
-    }
-
+            {"ipv4", "--force-ipv4"},
+            {"ipv6", "--force-ipv6"}
+    });
     check_option(data, args, "enable_file_urls", "--enable-file-urls");
 }
 
@@ -117,6 +121,11 @@ void set_video_selection_options(Json const& data, std::vector<std::string>& arg
     check_argument_option(data, args, "date_after", "--dateafter");
     check_multiple_argument_option(data, args, "filters", "--match-filters");
     check_multiple_argument_option(data, args, "stop_filters", "--break-match-filters");
+    map_option(data, args, "is_playlist",
+        {
+            {"yes", "--yes-playlist"},
+            { "no",  "--no-playlist"}
+    });
 }
 
 }  // anonymous namespace
