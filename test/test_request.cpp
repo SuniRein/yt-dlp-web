@@ -197,3 +197,64 @@ TEST(Request, IsPlaylistOption)
     EXPECT_THAT(make_args(R"({"is_playlist": "no" })"), HasOption("--no-playlist"));
     EXPECT_THAT(make_args(R"({"is_playlist": "yes"})"), HasOption("--yes-playlist"));
 }
+
+TEST(Request, DownloadOptions)
+{
+    auto args = make_args(R"({
+        "concurrent_fragments": "4",
+        "limit_rate": "1M",
+        "throttle_rate": "100",
+        "retries": "15",
+        "file_access_retries": "5",
+        "fragment_retries": "infinite",
+        "retry_sleep": [
+            "linear=1::2",
+            "fragment:exp=1:20"
+        ],
+        "abort_on_unavailable_fragment": true,
+        "keep_fragments": true,
+        "buffer_size": "10M",
+        "no_resize_buffer": true,
+        "http_chunk_size": "1M",
+        "playlist_random": true,
+        "lazy_playlist": true,
+        "xattr_set_filesize": true,
+        "hls_use_mpegts": "no",
+        "download_sections": [
+            "*10:15-inf",
+            "intro"
+        ],
+        "downloader": [
+            "aria2c",
+            "dash,m3u8:native"
+        ],
+        "download_args": [
+            "aria2c:--max-connection-per-server=5",
+            "curl:--proxy socks5://127.0.0.1:7890"
+        ]
+    })");
+
+    EXPECT_THAT(args, HasArgumentOption("--concurrent-fragments", "4"));
+    EXPECT_THAT(args, HasArgumentOption("--limit-rate", "1M"));
+    EXPECT_THAT(args, HasArgumentOption("--throttle-rate", "100"));
+    EXPECT_THAT(args, HasArgumentOption("--retries", "15"));
+    EXPECT_THAT(args, HasArgumentOption("--file-access-retries", "5"));
+    EXPECT_THAT(args, HasArgumentOption("--fragment-retries", "infinite"));
+    EXPECT_THAT(args, HasArgumentOption("--retry-sleep", "linear=1::2"));
+    EXPECT_THAT(args, HasArgumentOption("--retry-sleep", "fragment:exp=1:20"));
+    EXPECT_THAT(args, HasOption("--abort-on-unavailable-fragment"));
+    EXPECT_THAT(args, HasOption("--keep-fragments"));
+    EXPECT_THAT(args, HasArgumentOption("--buffer-size", "10M"));
+    EXPECT_THAT(args, HasOption("--no-resize-buffer"));
+    EXPECT_THAT(args, HasArgumentOption("--http-chunk-size", "1M"));
+    EXPECT_THAT(args, HasOption("--playlist-random"));
+    EXPECT_THAT(args, HasOption("--lazy-playlist"));
+    EXPECT_THAT(args, HasOption("--xattr-set-filesize"));
+    EXPECT_THAT(args, HasOption("--no-hls-use-mpegts"));
+    EXPECT_THAT(args, HasArgumentOption("--download-section", "*10:15-inf"));
+    EXPECT_THAT(args, HasArgumentOption("--download-section", "intro"));
+    EXPECT_THAT(args, HasArgumentOption("--downloader", "aria2c"));
+    EXPECT_THAT(args, HasArgumentOption("--downloader", "dash,m3u8:native"));
+    EXPECT_THAT(args, HasArgumentOption("--downloader-args", "aria2c:--max-connection-per-server=5"));
+    EXPECT_THAT(args, HasArgumentOption("--downloader-args", "curl:--proxy socks5://127.0.0.1:7890"));
+}

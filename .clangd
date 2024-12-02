@@ -16,3 +16,4 @@ Diagnostics:
     - hicpp-avoid-goto
     - cppcoreguidelines-avoid-goto
     - cppcoreguidelines-avoid-const-or-ref-data-members
+    - readability-function-cognitive-complexity

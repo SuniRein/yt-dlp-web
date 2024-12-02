@@ -134,6 +134,33 @@ void set_video_selection_options(Json const& data, std::vector<std::string>& arg
     check_argument_option(data, args, "skip_playlist_after_errors", "--skip-playlist-after-errors");
 }
 
+void set_download_options(Json const& data, std::vector<std::string>& args)
+{
+    check_argument_option(data, args, "concurrent_fragments", "--concurrent-fragments");
+    check_argument_option(data, args, "limit_rate", "--limit-rate");
+    check_argument_option(data, args, "throttle_rate", "--throttle-rate");
+    check_argument_option(data, args, "retries", "--retries");
+    check_argument_option(data, args, "file_access_retries", "--file-access-retries");
+    check_argument_option(data, args, "fragment_retries", "--fragment-retries");
+    check_multiple_argument_option(data, args, "retry_sleep", "--retry-sleep");
+    check_option(data, args, "abort_on_unavailable_fragment", "--abort-on-unavailable-fragment");
+    check_option(data, args, "keep_fragments", "--keep-fragments");
+    check_argument_option(data, args, "buffer_size", "--buffer-size");
+    check_option(data, args, "no_resize_buffer", "--no-resize-buffer");
+    check_argument_option(data, args, "http_chunk_size", "--http-chunk-size");
+    check_option(data, args, "playlist_random", "--playlist-random");
+    check_option(data, args, "lazy_playlist", "--lazy-playlist");
+    check_option(data, args, "xattr_set_filesize", "--xattr-set-filesize");
+    map_option(data, args, "hls_use_mpegts",
+        {
+            {"yes",    "--hls-use-mpegts"},
+            { "no", "--no-hls-use-mpegts"}
+    });
+    check_multiple_argument_option(data, args, "download_sections", "--download-section");
+    check_multiple_argument_option(data, args, "downloader", "--downloader");
+    check_multiple_argument_option(data, args, "download_args", "--downloader-args");
+}
+
 }  // anonymous namespace
 
 Request::Request(std::string_view json)
@@ -162,6 +189,7 @@ Request::Request(std::string_view json)
     set_cookies_options(data, args);
     set_network_options(data, args);
     set_video_selection_options(data, args);
+    set_download_options(data, args);
 
     if (action == Request::Action::Preview)
     {
