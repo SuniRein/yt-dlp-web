@@ -40,3 +40,12 @@ const itemSpecType = new FormItemCustomType({
     validityMessage: "Invalid item spec format.",
 });
 FormItem.registerCustomType(itemSpecType);
+
+const intergerOrInfinityType = new FormItemCustomType({
+    type: "C-interger-or-infinite",
+    validator: (value) =>
+        value === "" || value === "infinite" || /^\d+$/.test(value),
+    validityMessage:
+        "Invalid input format. Expected a positive integer or 'infinite'.",
+});
+FormItem.registerCustomType(intergerOrInfinityType);
