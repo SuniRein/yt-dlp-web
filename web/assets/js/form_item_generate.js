@@ -6,15 +6,15 @@ function generateFormItem(formItemGroup) {
     const items = formItemGroup.items
         .map((item) => {
             const formItemAttribute = `
-            label="${item.label}"
-            description="${item.description}"
-            type="${item.type}"
-            key="${item.key}"
-            ${item.required ? "required" : ""}
-            ${item.multiple ? "multiple" : ""}
-            ${item.accept ? `accept="${item.accept}"` : ""}
-            ${item.placeholder ? `placeholder="${item.placeholder}"` : ""}
-        `;
+                label="${item.label}"
+                description="${item.description.replace(/"/g, "&quot;")}"
+                type="${item.type}"
+                key="${item.key}"
+                ${item.required ? "required" : ""}
+                ${item.multiple ? "multiple" : ""}
+                ${item.accept ? `accept="${item.accept}"` : ""}
+                ${item.placeholder ? `placeholder="${item.placeholder}"` : ""}
+            `;
 
             const formItemContent =
                 item.type === "select"
