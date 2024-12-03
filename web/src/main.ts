@@ -1,5 +1,11 @@
 /// @ts-nocheck
 
+import { registerFormItem } from "./assets/js/form_item.js";
+import { registerCustomFormItems } from "./assets/js/form_item_custom.js";
+
+registerFormItem();
+registerCustomFormItems();
+
 function handleFormSubmit(event) {
     event.preventDefault();
 
@@ -37,17 +43,20 @@ function handleFormSubmit(event) {
         }
     });
 }
+window.handleFormSubmit = handleFormSubmit;
 
 function logMessage(message) {
     const log_output = document.getElementById("log_output");
     log_output.value += message + "\n";
     log_output.scrollTop = log_output.scrollHeight; // Auto scroll to bottom
 }
+window.logMessage = logMessage;
 
 function clearLog() {
     const log_output = document.getElementById("log_output");
     log_output.value = "";
 }
+window.clearLog = clearLog;
 
 function previewMediaInfo(data) {
     const preview_area = document.getElementById("preview_area");
@@ -104,9 +113,7 @@ function analyzeFormats(formats, requested_formats) {
         "ABR",
         "Chosen",
     ];
-    header_row.innerHTML = headers
-        .map((header) => `<th>${header}</th>`)
-        .join("");
+    header_row.innerHTML = headers.map((header) => `<th>${header}</th>`).join("");
 
     thead.appendChild(header_row);
     formats_table.appendChild(thead);
@@ -114,9 +121,7 @@ function analyzeFormats(formats, requested_formats) {
     // Create table body
     const tbody = document.createElement("tbody");
 
-    const requested_format_ids = requested_formats.map(
-        (format) => format.format_id,
-    );
+    const requested_format_ids = requested_formats.map((format) => format.format_id);
 
     formats.forEach((format) => {
         const row = document.createElement("tr");

@@ -1,33 +1,42 @@
-/// @ts-nocheck
+export interface FormItemCustomType {
+    type: string;
+    validator: (value: string) => boolean;
+    validityMessage: string;
+}
 
 export class FormItem extends HTMLElement {
+    #labelElement: HTMLLabelElement;
+    #labelContentElement: HTMLSpanElement;
+    #descriptionElement: HTMLSpanElement;
+    #inputElement: HTMLInputElement | HTMLSelectElement | HTMLDivElement | null;
+
     constructor() {
         super();
 
-        this.attachShadow({ mode: "open" });
+        const shadowRoot = this.attachShadow({ mode: "open" });
 
         // Create the main container.
         const container = document.createElement("div");
         container.classList.add("form-item");
 
         // Create the label.
-        this.labelElement = document.createElement("label");
-        this.labelContentElement = document.createElement("span");
-        this.labelContentElement.classList.add("form-item-label-content");
-        this.labelElement.appendChild(this.labelContentElement);
+        this.#labelElement = document.createElement("label");
+        this.#labelContentElement = document.createElement("span");
+        this.#labelContentElement.classList.add("form-item-label-content");
+        this.#labelElement.appendChild(this.#labelContentElement);
 
         // Create the description.
-        this.descriptionElement = document.createElement("span");
-        this.descriptionElement.classList.add("form-item-description");
+        this.#descriptionElement = document.createElement("span");
+        this.#descriptionElement.classList.add("form-item-description");
 
         // Input element will be created in the attributeChangedCallback.
-        this.inputElement = null;
+        this.#inputElement = null;
 
         // Assemble the elements.
-        container.appendChild(this.labelElement);
-        container.appendChild(this.descriptionElement);
+        container.appendChild(this.#labelElement);
+        container.appendChild(this.#descriptionElement);
 
-        this.shadowRoot.appendChild(container);
+        shadowRoot.appendChild(container);
 
         // Apply styles.
         const style = document.createElement("style");
@@ -55,65 +64,57 @@ export class FormItem extends HTMLElement {
                 margin-bottom: 5px;
             }
         `;
-        this.shadowRoot.appendChild(style);
+        shadowRoot.appendChild(style);
     }
 
     static get observedAttributes() {
-        return [
-            "label",
-            "description",
-            "type",
-            "key",
-            "value",
-            "checked",
-            "placeholder",
-            "accept",
-        ];
+        return ["label", "description", "type", "key", "value", "checked", "placeholder", "accept"];
     }
 
     // Supported custom types.
-    static customTypes = {};
-    static registerCustomType(customType) {
+    static #customTypes: {
+        [key: string]: Omit<FormItemCustomType, "type">;
+    } = {};
+
+    static registerCustomType(customType: FormItemCustomType) {
         const { type, ...rest } = customType;
-        FormItem.customTypes[type] = rest;
+        FormItem.#customTypes[type] = rest;
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
+    attributeChangedCallback(name: string, _oldValue: string | null, newValue: string | null) {
         switch (name) {
             case "label":
-                this.labelContentElement.textContent = newValue || "";
+                this.#labelContentElement.textContent = newValue;
                 break;
 
             case "description":
-                this.descriptionElement.textContent = newValue || "";
+                this.#descriptionElement.textContent = newValue;
                 break;
 
             case "type":
-                this.updateInputType(newValue);
+                this.#updateInputType(newValue ?? "text");
                 break;
 
             case "key":
-                if (this.inputElement) {
-                    this.inputElement.setAttribute("name", newValue);
+                if (this.#inputElement) {
+                    this.#inputElement.setAttribute("name", newValue ?? "");
                 }
                 break;
 
             default:
-                this.updateInputAttributes(name, newValue);
+                this.#updateInputAttributes(name, newValue);
         }
     }
 
-    updateInputType(type) {
-        if (this.inputElement) {
-            this.inputElement.remove(); // Remove the old input element.
-        }
+    #updateInputType(type: string) {
+        this.#inputElement?.remove();
 
         // Select inputs should be created with options.
         if (type === "select") {
-            this.inputElement = document.createElement("select");
+            this.#inputElement = document.createElement("select");
             Array.from(this.children).forEach((child) => {
                 if (child.tagName === "OPTION") {
-                    this.inputElement.appendChild(child.cloneNode(true));
+                    this.#inputElement!.appendChild(child.cloneNode(true));
                 }
             });
         } else {
@@ -121,82 +122,79 @@ export class FormItem extends HTMLElement {
             const input = document.createElement("input");
 
             // Custom types are set as text inputs.
-            if (type in FormItem.customTypes) {
+            if (type in FormItem.#customTypes) {
                 input.type = "text";
             } else {
-                input.type = type || "text";
+                input.type = type;
             }
 
-            input.name = this.key;
+            input.name = this.key ?? "";
 
-            this.addEventListener(input);
+            this.#addEventListener(input);
 
             // Attribute `multiple` allows multiple inputs.
             if (this.hasAttribute("multiple")) {
-                this.inputElement = document.createElement("div");
-                this.inputElement.classList.add("form-item-input-multiple");
+                this.#inputElement = document.createElement("div");
+                this.#inputElement.classList.add("form-item-input-multiple");
 
-                this.inputElement.appendChild(input);
+                this.#inputElement.appendChild(input);
 
                 const addButton = document.createElement("button");
                 addButton.textContent = "+";
                 addButton.type = "button";
                 addButton.onclick = () => {
-                    const input = this.inputElement
-                        .querySelector("input")
-                        .cloneNode();
-                    input.value = ""; // Clear the value.
-                    this.inputElement.appendChild(document.createElement("br")); // Add a line break.
-                    this.inputElement.appendChild(input.cloneNode());
+                    if (this.#inputElement) {
+                        const input = this.#inputElement.querySelector("input")?.cloneNode() as HTMLInputElement;
+
+                        input.value = ""; // Clear the value.
+                        this.#inputElement.appendChild(document.createElement("br")); // Add a line break.
+                        this.#inputElement.appendChild(input.cloneNode());
+                    }
                 };
-                this.inputElement.appendChild(addButton);
+                this.#inputElement.appendChild(addButton);
 
                 const removeButton = document.createElement("button");
                 removeButton.textContent = "-";
                 removeButton.type = "button";
                 removeButton.onclick = () => {
-                    const inputs = this.inputElement.querySelectorAll("input");
-                    // Ensure there is always at least one input.
-                    if (inputs.length > 1) {
-                        this.inputElement.removeChild(
-                            this.inputElement.lastChild,
-                        ); // Remove the last input.
-                        this.inputElement.removeChild(
-                            this.inputElement.lastChild,
-                        ); // Remove the line break.
+                    if (this.#inputElement) {
+                        const inputs = this.#inputElement.querySelectorAll("input");
+
+                        // Ensure there is always at least one input.
+                        if (inputs.length > 1) {
+                            this.#inputElement.removeChild(this.#inputElement!.lastChild!); // Remove the last input.
+                            this.#inputElement.removeChild(this.#inputElement!.lastChild!); // Remove the line break.
+                        }
                     }
                 };
-                this.inputElement.appendChild(removeButton);
+                this.#inputElement.appendChild(removeButton);
             } else {
-                this.inputElement = input;
+                this.#inputElement = input;
             }
         }
 
         // Place the input element in correct position.
         if (type === "radio" || type === "checkbox") {
             // Checkbox and radio inputs should be placed before the label content.
-            this.labelElement.insertBefore(
-                this.inputElement,
-                this.labelContentElement,
-            );
+            this.#labelElement.insertBefore(this.#inputElement, this.#labelContentElement);
         } else {
             // Other inputs should be placed after the label content.
-            this.labelElement.appendChild(this.inputElement);
+            this.#labelElement.appendChild(this.#inputElement);
         }
     }
 
-    updateInputAttributes(name, value) {
-        if (this.inputElement) {
+    #updateInputAttributes(name: string, value: string | null) {
+        if (this.#inputElement) {
             if (value === null) {
-                this.inputElement.removeAttribute(name);
+                this.#inputElement.removeAttribute(name);
             } else {
-                this.inputElement.setAttribute(name, value);
+                this.#inputElement.setAttribute(name, value);
             }
         }
     }
 
     // Number input should only accept numbers and dots.
-    static hendleNumberInput(event) {
+    static #hendleNumberInput(event: KeyboardEvent) {
         const char = event.key;
         if (!/[\d.]/.test(char)) {
             event.preventDefault();
@@ -204,36 +202,40 @@ export class FormItem extends HTMLElement {
     }
 
     // Radio inputs with same name can only have one checked.
-    static handleRadioChange(event) {
-        if (event.target.checked) {
-            const radios = document.querySelectorAll(
-                `form-item[type="radio"][key="${event.target.name}"]`,
-            );
-            radios.forEach((radio) => {
-                radio.inputElement.checked = false;
+    static #handleRadioChange(event: Event) {
+        const radio = event.target as HTMLInputElement;
+
+        if (radio.checked) {
+            const radioFormItems = document.querySelectorAll(
+                `form-item[type="radio"][key="${radio.name}"]`,
+            ) as NodeListOf<FormItem>;
+
+            radioFormItems.forEach((radioFormItem) => {
+                (radioFormItem.#inputElement as HTMLInputElement).checked = false;
             });
-            event.target.checked = true;
+
+            radio.checked = true;
         }
     }
 
-    addEventListener(input) {
+    #addEventListener(input: HTMLInputElement) {
         if (this.type === "number") {
-            input.addEventListener("keypress", FormItem.hendleNumberInput);
+            input.addEventListener("keypress", FormItem.#hendleNumberInput);
         } else if (this.type === "radio") {
-            input.addEventListener("change", FormItem.handleRadioChange);
+            input.addEventListener("change", FormItem.#handleRadioChange);
         }
     }
 
     get label() {
-        return this.labelContentElement.textContent;
+        return this.#labelContentElement.textContent;
     }
 
     get description() {
-        return this.descriptionElement.textContent;
+        return this.#descriptionElement.textContent;
     }
 
     get type() {
-        return this.getAttribute("type");
+        return this.getAttribute("type")!;
     }
 
     get key() {
@@ -241,21 +243,27 @@ export class FormItem extends HTMLElement {
     }
 
     get value() {
-        if (this.hasAttribute("multiple")) {
-            const inputs = this.inputElement.querySelectorAll("input");
-            const values = Array.from(inputs)
-                .filter((input) => !FormItem.inputIsEmpty(input))
-                .map((input) => input.value);
-            return values;
+        if (this.#inputElement !== null) {
+            if (this.#inputElement instanceof HTMLDivElement) {
+                const inputs = this.#inputElement.querySelectorAll("input");
+                const values = Array.from(inputs)
+                    .filter((input) => !FormItem.#inputIsEmpty(input))
+                    .map((input) => input.value);
+                return values;
+            }
+            return this.#inputElement.value;
         }
-        return this.inputElement.value;
+        return null;
     }
 
     get checked() {
-        return this.inputElement.checked;
+        if (this.#inputElement instanceof HTMLInputElement) {
+            return this.#inputElement.checked;
+        }
+        return null;
     }
 
-    #inputIsValidity(input) {
+    #inputIsValidity(input: HTMLInputElement) {
         // Check required fields.
         if (this.hasAttribute("required") && input.value === "") {
             input.setCustomValidity("This field is required.");
@@ -272,8 +280,8 @@ export class FormItem extends HTMLElement {
         }
 
         // Check custom types.
-        if (this.type in FormItem.customTypes) {
-            const customType = FormItem.customTypes[this.type];
+        if (this.type in FormItem.#customTypes) {
+            const customType = FormItem.#customTypes[this.type];
             if (input.value !== "" && !customType.validator(input.value)) {
                 input.setCustomValidity(customType.validityMessage);
                 input.reportValidity();
@@ -285,8 +293,8 @@ export class FormItem extends HTMLElement {
     }
 
     checkValidity() {
-        if (this.hasAttribute("multiple")) {
-            const inputs = this.inputElement.querySelectorAll("input");
+        if (this.#inputElement instanceof HTMLDivElement) {
+            const inputs = this.#inputElement.querySelectorAll("input");
             for (const input of inputs) {
                 if (!this.#inputIsValidity(input)) {
                     return false;
@@ -295,27 +303,35 @@ export class FormItem extends HTMLElement {
             return true;
         }
 
-        return this.#inputIsValidity(this.inputElement);
+        if (this.#inputElement instanceof HTMLInputElement) {
+            return this.#inputIsValidity(this.#inputElement);
+        }
+
+        return true;
     }
 
-    static inputIsEmpty(input) {
+    static #inputIsEmpty(input: HTMLSelectElement | HTMLInputElement | null) {
+        if (input === null) {
+            return true;
+        }
+
         if (input.type === "checkbox") {
             return !input.checked;
         }
         if (input.type === "radio") {
-            return (
-                !input.checked || input.value === "none" || input.value === ""
-            );
+            return !input.checked || input.value === "none" || input.value === "";
         }
         return input.value === "none" || input.value === "";
     }
 
     empty() {
-        if (this.hasAttribute("multiple")) {
-            return this.value.length === 0;
+        if (this.#inputElement instanceof HTMLDivElement) {
+            return this.value!.length === 0;
         }
-        return FormItem.inputIsEmpty(this.inputElement);
+        return FormItem.#inputIsEmpty(this.#inputElement);
     }
 }
 
-customElements.define("form-item", FormItem);
+export function registerFormItem() {
+    customElements.define("form-item", FormItem);
+}
