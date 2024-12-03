@@ -3,7 +3,8 @@
     "version": "0.1.0",
     "description": "The Web Frontend for yt-dlp-web",
     "scripts": {
-        "build": "tsc && copyfiles -u 1 public/**/* dist/"
+        "build": "tsc && copyfiles -u 1 public/**/* dist/",
+        "watch": "tsc -w"
     },
     "devDependencies": {
         "copyfiles": "^2.4.1",
