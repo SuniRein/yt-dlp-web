@@ -1,6 +1,6 @@
-/// @ts-nocheck
+declare let webui: any;
 
-import { registerFormItem } from "./assets/js/form_item.js";
+import { registerFormItem, FormItem } from "./assets/js/form_item.js";
 import { registerCustomFormItems } from "./assets/js/form_item_custom.js";
 import { generateFormItems } from "./assets/js/form_item_generate.js";
 
@@ -8,15 +8,28 @@ registerFormItem();
 registerCustomFormItems();
 generateFormItems();
 
-function handleFormSubmit(event) {
+declare global {
+    interface Window {
+        handleFormSubmit: typeof handleFormSubmit;
+        logMessage: typeof logMessage;
+        clearLog: typeof clearLog;
+        clearPreview: typeof clearPreview;
+        showDownloadProgress: typeof showDownloadProgress;
+        showDownlaodInfo: typeof showDownloadInfo;
+    }
+}
+
+function handleFormSubmit(event: SubmitEvent) {
     event.preventDefault();
 
-    const actionType = event.submitter.value;
+    const actionType = (event.submitter as HTMLButtonElement).value;
 
-    const formItems = event.target.querySelectorAll("form-item");
+    const formItems = (event.target as HTMLFormElement).querySelectorAll("form-item") as NodeListOf<FormItem>;
 
     // Convert form data to JSON.
-    const data = { action: actionType };
+    const data: {
+        [key: string]: string | string[];
+    } = { action: actionType };
     for (const element of formItems) {
         // Skip elements without a key.
         if (!element.key) {
@@ -31,7 +44,7 @@ function handleFormSubmit(event) {
         // Here only send meaningful values.
         // Empty values are not sent to backend.
         if (!element.empty()) {
-            data[element.key] = element.value;
+            data[element.key] = element.value!;
         }
     }
 
@@ -39,7 +52,7 @@ function handleFormSubmit(event) {
     logMessage("Request: " + JSON.stringify(data, null, 2));
 
     // Backend call
-    webui.call("submit_url", JSON.stringify(data)).then((response) => {
+    webui.call("submit_url", JSON.stringify(data)).then((response: string) => {
         if (actionType === "preview") {
             previewMediaInfo(JSON.parse(response));
         }
@@ -47,21 +60,30 @@ function handleFormSubmit(event) {
 }
 window.handleFormSubmit = handleFormSubmit;
 
-function logMessage(message) {
-    const log_output = document.getElementById("log_output");
+function logMessage(message: string) {
+    const log_output = document.getElementById("log_output") as HTMLTextAreaElement;
     log_output.value += message + "\n";
     log_output.scrollTop = log_output.scrollHeight; // Auto scroll to bottom
 }
 window.logMessage = logMessage;
 
 function clearLog() {
-    const log_output = document.getElementById("log_output");
+    const log_output = document.getElementById("log_output") as HTMLTextAreaElement;
     log_output.value = "";
 }
 window.clearLog = clearLog;
 
-function previewMediaInfo(data) {
-    const preview_area = document.getElementById("preview_area");
+interface UrlDataInfo {
+    title: string;
+    description: string;
+    thumbnail: string;
+    formats: UrlFormatInfo[];
+    requested_formats: { format_id: string }[];
+    filename: string;
+}
+
+function previewMediaInfo(data: UrlDataInfo) {
+    const preview_area = document.getElementById("preview_area") as HTMLDivElement;
 
     // Clear old preview
     preview_area.innerHTML = "";
@@ -92,7 +114,21 @@ function previewMediaInfo(data) {
     preview_area.appendChild(destination);
 }
 
-function analyzeFormats(formats, requested_formats) {
+interface UrlFormatInfo {
+    format_id: string;
+    ext: string;
+    resolution: string;
+    fps: string;
+    filesize_approx: number;
+    protocol: string;
+    vcodec: string;
+    acodec: string;
+    tbr: number;
+    vbr: number;
+    abr: number;
+}
+
+function analyzeFormats(formats: UrlFormatInfo[], requested_formats: { format_id: string }[]) {
     // Create format table
     const formats_table = document.createElement("table");
     formats_table.classList.add("formats");
@@ -152,7 +188,7 @@ function analyzeFormats(formats, requested_formats) {
     return formats_table;
 }
 
-function bytesToSize(bytes) {
+function bytesToSize(bytes: number) {
     if (!bytes) bytes = 0;
 
     const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -164,16 +200,17 @@ function bytesToSize(bytes) {
     return `${bytes.toFixed(2)} ${sizes[i]}`;
 }
 
-function hideIfEmpty(value) {
+function hideIfEmpty(value: string | number) {
     return value == 0 || value == "none" ? "" : value;
 }
 
 function clearPreview() {
-    const preview_area = document.getElementById("preview_area");
+    const preview_area = document.getElementById("preview_area") as HTMLDivElement;
     preview_area.innerHTML = "";
 }
+window.clearPreview = clearPreview;
 
-function showDownloadProgress(rawData) {
+function showDownloadProgress(rawData: Uint8Array) {
     const data = new TextDecoder().decode(rawData);
     const json = JSON.parse(data);
 
@@ -186,8 +223,10 @@ function showDownloadProgress(rawData) {
         `Downloading ${filename}: ${downloaded_bytes} / ${total_bytes} (${progress.toFixed(2)}%) Speed: ${speed}/s`,
     );
 }
+window.showDownloadProgress = showDownloadProgress;
 
-function showDownloadInfo(rawData) {
+function showDownloadInfo(rawData: Uint8Array) {
     const data = new TextDecoder().decode(rawData);
     logMessage(data);
 }
+window.showDownlaodInfo = showDownloadInfo;
