@@ -10,8 +10,7 @@ class FormItemCustomType {
 
 const filesizeType = new FormItemCustomType({
     type: "C-filesize",
-    validator: (value) =>
-        value === "" || /^[\d]+(.\d)?[\d]*[KMGTP]?$/.test(value),
+    validator: (value) => /^[\d]+(.\d)?[\d]*[KMGTP]?$/.test(value),
     validityMessage: "Invalid filesize format.",
 });
 FormItem.registerCustomType(filesizeType);
@@ -19,7 +18,6 @@ FormItem.registerCustomType(filesizeType);
 const dateType = new FormItemCustomType({
     type: "C-date",
     validator: (value) =>
-        value === "" ||
         /^((\d{8})|((now|today|yesterday)?(-\d+(day|week|month|year))?))$/.test(
             value,
         ),
@@ -33,7 +31,6 @@ FormItem.registerCustomType(dateType);
 const itemSpecType = new FormItemCustomType({
     type: "C-item-spec",
     validator: (value) =>
-        value === "" ||
         /^(?:-?\d+|(?:-?\d*):(?:-?\d*):?(?:-?\d*)?)(?:,(?:-?\d+|(?:-?\d*):(?:-?\d*):?(?:-?\d*)?))*$/.test(
             value,
         ),
@@ -43,8 +40,7 @@ FormItem.registerCustomType(itemSpecType);
 
 const intergerOrInfinityType = new FormItemCustomType({
     type: "C-interger-or-infinite",
-    validator: (value) =>
-        value === "" || value === "infinite" || /^\d+$/.test(value),
+    validator: (value) => value === "infinite" || /^\d+$/.test(value),
     validityMessage:
         "Invalid input format. Expected a positive integer or 'infinite'.",
 });

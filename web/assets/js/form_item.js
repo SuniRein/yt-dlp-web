@@ -272,7 +272,7 @@ export class FormItem extends HTMLElement {
         // Check custom types.
         if (this.type in FormItem.customTypes) {
             const customType = FormItem.customTypes[this.type];
-            if (!customType.validator(input.value)) {
+            if (input.value !== "" && !customType.validator(input.value)) {
                 input.setCustomValidity(customType.validityMessage);
                 input.reportValidity();
                 return false;
