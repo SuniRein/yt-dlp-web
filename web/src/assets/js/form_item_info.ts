@@ -1,6 +1,21 @@
-/// @ts-nocheck
+export interface FormItemInfoGroup {
+    name: string;
+    items: FormItemInfo[];
+}
 
-const globalInput = {
+interface FormItemInfo {
+    label: string;
+    description: string;
+    type: string;
+    key: string;
+    required?: boolean;
+    multiple?: boolean;
+    accept?: string;
+    placeholder?: string;
+    options?: { value: string; label: string }[];
+}
+
+const globalInput: FormItemInfoGroup = {
     name: "Global",
     items: [
         {
@@ -46,7 +61,7 @@ const globalInput = {
     ],
 };
 
-const cookiesOptions = {
+const cookiesOptions: FormItemInfoGroup = {
     name: "Cookies Option",
     items: [
         {
@@ -69,8 +84,7 @@ const cookiesOptions = {
         },
         {
             label: "From File",
-            description:
-                "Netscape formatted file to read cookies from and dump cookie jar in.",
+            description: "Netscape formatted file to read cookies from and dump cookie jar in.",
             type: "text",
             key: "cookies_from_file",
             accept: "text/plain",
@@ -78,7 +92,7 @@ const cookiesOptions = {
     ],
 };
 
-const networdOptions = {
+const networdOptions: FormItemInfoGroup = {
     name: "Network Option",
     items: [
         {
@@ -117,15 +131,14 @@ const networdOptions = {
         },
         {
             label: "Enable File Urls",
-            description:
-                "Enable file:// URLs. This is disabled by default for security reasons.",
+            description: "Enable file:// URLs. This is disabled by default for security reasons.",
             type: "checkbox",
             key: "enable_file_urls",
         },
     ],
 };
 
-const videoSelectionOptions = {
+const videoSelectionOptions: FormItemInfoGroup = {
     name: "Video Selection Option",
     items: [
         {
@@ -141,15 +154,13 @@ const videoSelectionOptions = {
         },
         {
             label: "Min Filesize",
-            description:
-                "Only download file with a size greater than this value. Format: 100, 10K, 1.2M",
+            description: "Only download file with a size greater than this value. Format: 100, 10K, 1.2M",
             type: "C-filesize",
             key: "filesize_min",
         },
         {
             label: "Max Filesize",
-            description:
-                "Only download file with a size less than this value. Format: 100, 10K, 1.2M",
+            description: "Only download file with a size less than this value. Format: 100, 10K, 1.2M",
             type: "C-filesize",
             key: "filesize_max",
         },
@@ -186,8 +197,7 @@ const videoSelectionOptions = {
         },
         {
             label: "Stop Filters",
-            description:
-                "Stop the download process when a video doesn't match the filters.",
+            description: "Stop the download process when a video doesn't match the filters.",
             type: "text",
             key: "stop_filters",
             multiple: true,
@@ -242,15 +252,14 @@ const videoSelectionOptions = {
         },
         {
             label: "Skip Playlist After Errors",
-            description:
-                "Number of allowed failures until the rest of the playlist is skipped.",
+            description: "Number of allowed failures until the rest of the playlist is skipped.",
             type: "number",
             key: "skip_playlist_after_errors",
         },
     ],
 };
 
-const downloadOptions = {
+const downloadOptions: FormItemInfoGroup = {
     name: "Download Option",
     items: [
         {
@@ -281,15 +290,13 @@ const downloadOptions = {
         },
         {
             label: "File Accress Retries",
-            description:
-                'Number of times to retry on file access error (default is 3), or "infinite".',
+            description: 'Number of times to retry on file access error (default is 3), or "infinite".',
             type: "C-interger-or-infinite",
             key: "file_access_retries",
         },
         {
             label: "Fragment Retries",
-            description:
-                'Number of retries for a fragment (default is 10), or "infinite".',
+            description: 'Number of retries for a fragment (default is 10), or "infinite".',
             type: "C-interger-or-infinite",
             key: "fragment_retries",
         },
@@ -314,22 +321,19 @@ const downloadOptions = {
         },
         {
             label: "Keep Fragments",
-            description:
-                "Keep downloaded fragments on disk after downloading is finished.",
+            description: "Keep downloaded fragments on disk after downloading is finished.",
             type: "checkbox",
             key: "keep_fragments",
         },
         {
             label: "Buffer Size",
-            description:
-                "Size of download buffer (e.g. 1024 or 16K) (default is 1024).",
+            description: "Size of download buffer (e.g. 1024 or 16K) (default is 1024).",
             type: "C-filesize",
             key: "buffer_size",
         },
         {
             label: "No Resize Buffer",
-            description:
-                "Do not automatically adjust the buffer size. Follow the `Buffer Size` option.",
+            description: "Do not automatically adjust the buffer size. Follow the `Buffer Size` option.",
             type: "checkbox",
             key: "no_resize_buffer",
         },
@@ -357,8 +361,7 @@ const downloadOptions = {
         },
         {
             label: "Set Xattribute Filesize",
-            description:
-                "Set file xattribute ytdl.filesize with expected file size.",
+            description: "Set file xattribute ytdl.filesize with expected file size.",
             type: "checkbox",
             key: "xattr_set_filesize",
         },
@@ -419,10 +422,4 @@ const downloadOptions = {
     ],
 };
 
-export const formItemInfo = [
-    globalInput,
-    cookiesOptions,
-    networdOptions,
-    videoSelectionOptions,
-    downloadOptions,
-];
+export const formItemInfo = [globalInput, cookiesOptions, networdOptions, videoSelectionOptions, downloadOptions];

@@ -1,11 +1,9 @@
-/// @ts-nocheck
+import { formItemInfo, FormItemInfoGroup } from "./form_item_info.js";
 
-import { formItemInfo } from "./form_item_info.js";
+function generateFormItemGroup(formItemInfoGroup: FormItemInfoGroup): HTMLElement {
+    const legend = `<legend>${formItemInfoGroup.name}</legend>`;
 
-function generateFormItem(formItemGroup) {
-    const legend = `<legend>${formItemGroup.name}</legend>`;
-
-    const items = formItemGroup.items
+    const items = formItemInfoGroup.items
         .map((item) => {
             const formItemAttribute = `
                 label="${item.label}"
@@ -21,7 +19,7 @@ function generateFormItem(formItemGroup) {
             const formItemContent =
                 item.type === "select"
                     ? item.options
-                          .map((option) => {
+                          ?.map((option) => {
                               return `<option value="${option.value}">${option.label}</option>`;
                           })
                           .join("")
@@ -36,9 +34,14 @@ function generateFormItem(formItemGroup) {
     return filedset;
 }
 
-const formItems = document.getElementById("form_item_display");
+export function generateFormItems() {
+    const formItems = document.getElementById("form_item_display");
+    if (formItems === null) {
+        throw new Error("form_item_display element not found.");
+    }
 
-formItemInfo.forEach((formItemGroup) => {
-    const formItem = generateFormItem(formItemGroup);
-    formItems.appendChild(formItem);
-});
+    formItemInfo.forEach((formItemGroup) => {
+        const formItem = generateFormItemGroup(formItemGroup);
+        formItems.appendChild(formItem);
+    });
+}

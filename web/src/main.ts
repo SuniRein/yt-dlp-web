@@ -2,9 +2,11 @@
 
 import { registerFormItem } from "./assets/js/form_item.js";
 import { registerCustomFormItems } from "./assets/js/form_item_custom.js";
+import { generateFormItems } from "./assets/js/form_item_generate.js";
 
 registerFormItem();
 registerCustomFormItems();
+generateFormItems();
 
 function handleFormSubmit(event) {
     event.preventDefault();
