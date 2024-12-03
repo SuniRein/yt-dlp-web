@@ -3,17 +3,25 @@ export interface FormItemInfoGroup {
     items: FormItemInfo[];
 }
 
-interface FormItemInfo {
+interface SelectType {
+    type: "select";
+    options: { value: string; label: string }[];
+}
+
+interface CommonType {
+    type: Exclude<string, "select">;
+    options?: never;
+}
+
+type FormItemInfo = {
     label: string;
     description: string;
-    type: string;
     key: string;
     required?: boolean;
     multiple?: boolean;
     accept?: string;
     placeholder?: string;
-    options?: { value: string; label: string }[];
-}
+} & (SelectType | CommonType);
 
 const globalInput: FormItemInfoGroup = {
     name: "Global",
