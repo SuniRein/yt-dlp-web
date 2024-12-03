@@ -1,3 +1,5 @@
+/// @ts-nocheck
+
 function handleFormSubmit(event) {
     event.preventDefault();
 

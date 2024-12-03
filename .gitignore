@@ -1,3 +1,7 @@
 build/
 .xmake/
 .cache/
+
+# Web build
+web/node_modules/
+web/dist/

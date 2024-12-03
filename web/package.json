@@ -1,0 +1,12 @@
+{
+    "name": "yt-dlp-web",
+    "version": "0.1.0",
+    "description": "The Web Frontend for yt-dlp-web",
+    "scripts": {
+        "build": "tsc && copyfiles -u 1 public/**/* dist/"
+    },
+    "devDependencies": {
+        "copyfiles": "^2.4.1",
+        "typescript": "^5.7.2"
+    }
+}

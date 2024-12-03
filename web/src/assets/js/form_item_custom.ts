@@ -1,3 +1,5 @@
+/// @ts-nocheck
+
 import { FormItem } from "./form_item.js";
 
 class FormItemCustomType {

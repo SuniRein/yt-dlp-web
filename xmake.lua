@@ -10,8 +10,20 @@ add_requires("boost[cmake=false]") -- boost.process, boost.asio
 target("main", function()
     set_kind("binary")
     add_files("src/*.cpp")
-    add_defines('YT_DLP_WEB_PATH="$(projectdir)/web"')
+    add_defines('YT_DLP_WEB_PATH="$(projectdir)/web/dist"')
     add_packages("webui", "nlohmann_json", "boost")
+
+    -- build pnpm project
+    after_build(function()
+        os.cd("web")
+        os.rm("dist")
+        os.mkdir("dist")
+        os.run("pnpm build")
+    end)
+
+    after_clean(function()
+        os.rm("web/dist")
+    end)
 end)
 
 option("enable_test", function()

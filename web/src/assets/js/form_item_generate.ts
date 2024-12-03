@@ -1,3 +1,5 @@
+/// @ts-nocheck
+
 import { formItemInfo } from "./form_item_info.js";
 
 function generateFormItem(formItemGroup) {

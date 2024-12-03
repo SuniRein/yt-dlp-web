@@ -1,3 +1,5 @@
+/// @ts-nocheck
+
 export class FormItem extends HTMLElement {
     constructor() {
         super();

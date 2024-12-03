@@ -1,3 +1,5 @@
+/// @ts-nocheck
+
 const globalInput = {
     name: "Global",
     items: [
