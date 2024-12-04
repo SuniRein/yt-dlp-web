@@ -21,9 +21,14 @@ const customTypes: FormItemCustomType[] = [
         validityMessage: "Invalid item spec format.",
     },
     {
-        type: "C-interger-or-infinite",
+        type: "C-integer-or-infinite",
         validator: (value) => value === "infinite" || /^\d+$/.test(value),
         validityMessage: "Invalid input format. Expected a positive integer or 'infinite'.",
+    },
+    {
+        type: "C-integer",
+        validator: (value) => /^\d+$/.test(value),
+        validityMessage: "Invalid input format. Expected a positive integer.",
     },
 ];
 

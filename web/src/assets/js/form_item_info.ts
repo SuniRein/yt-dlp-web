@@ -9,11 +9,11 @@ interface SelectType {
 }
 
 interface CommonType {
-    type: Exclude<string, "select">;
+    type: string;
     options?: never;
 }
 
-type FormItemInfo = {
+export type FormItemInfo = {
     label: string;
     description: string;
     key: string;
@@ -293,19 +293,19 @@ const downloadOptions: FormItemInfoGroup = {
         {
             label: "Retries",
             description: 'Number of retries (default is 10), or "infinite".',
-            type: "C-interger-or-infinite",
+            type: "C-integer-or-infinite",
             key: "retries",
         },
         {
             label: "File Accress Retries",
             description: 'Number of times to retry on file access error (default is 3), or "infinite".',
-            type: "C-interger-or-infinite",
+            type: "C-integer-or-infinite",
             key: "file_access_retries",
         },
         {
             label: "Fragment Retries",
             description: 'Number of retries for a fragment (default is 10), or "infinite".',
-            type: "C-interger-or-infinite",
+            type: "C-integer-or-infinite",
             key: "fragment_retries",
         },
         {
@@ -430,4 +430,158 @@ const downloadOptions: FormItemInfoGroup = {
     ],
 };
 
-export const formItemInfo = [globalInput, cookiesOptions, networdOptions, videoSelectionOptions, downloadOptions];
+const filesystemOptions: FormItemInfoGroup = {
+    name: "Filesystem Option",
+    items: [
+        {
+            label: "Batch File",
+            description: "File containing URLs to download ('-' for stdin), one URL per line.",
+            type: "text",
+            key: "batch_file",
+        },
+        {
+            label: "Output Path",
+            description: `
+                The paths where the files should be downloaded to. Format: [TYPE:]PATH.
+                Additionally, you can also provide "home" (default) and "temp" paths.
+                All intermediary files are first downloaded to the temp path and then
+                the final files are moved over to the home path after download is finished.
+                This options is ignored if "Output File" is a absolute path.
+            `,
+            type: "text",
+            key: "output_path",
+            multiple: true,
+        },
+        {
+            label: "Output Filename",
+            description: "Output filename template. Format: [TYPE]:TEMPLATE.",
+            type: "text",
+            key: "output_filename",
+            multiple: true,
+        },
+        {
+            label: "Output NA placeholder",
+            description: 'Placeholder for unavailable fields in "Output Filename". Default is "NA".',
+            type: "text",
+            key: "output_na_placeholder",
+        },
+        {
+            label: "Resctict Filename",
+            description: 'Restrict filenames to only ASCII characters, and avoid "&" and spaces in filenames',
+            type: "checkbox",
+            key: "restrict_filename",
+        },
+        {
+            label: "Windows Filename",
+            description: "Force the filenames to be Windows compatible.",
+            type: "checkbox",
+            key: "windows_filename",
+        },
+        {
+            label: "Trim Filename",
+            description: "Trim the filename to this length.",
+            type: "C-integer",
+            key: "trim_filename",
+        },
+        {
+            label: "Overwrite Setting",
+            description: "Specify the overwrite behavior.",
+            type: "select",
+            key: "overwrite",
+            options: [
+                { label: "Auto", value: "none" },
+                { label: "Never", value: "never" },
+                { label: "Always", value: "always" },
+            ],
+        },
+        {
+            label: "No Continue",
+            description:
+                "Do not resume partially downloaded fragments. If the file is not fragmented, restart download of the entire file.",
+            type: "checkbox",
+            key: "no_continue",
+        },
+        {
+            label: "No Part",
+            description: "Do not use .part files - write directly into output file",
+            type: "checkbox",
+            key: "no_part",
+        },
+        {
+            label: "No Mtime",
+            description: "Do not use the Last-modified header to set the file modification time.",
+            type: "checkbox",
+            key: "no_mtime",
+        },
+        {
+            label: "Write Description",
+            description: "Write video description to a .description file.",
+            type: "checkbox",
+            key: "write_description",
+        },
+        {
+            label: "Write Info JSON",
+            description: "Write video metadata to a .info.json file (this may contain personal information).",
+            type: "checkbox",
+            key: "write_info_json",
+        },
+        {
+            label: "No Write Info JSON",
+            description: 'Do not write playlist metadata when using "Write description", "Write Info JSON", etc.',
+            type: "checkbox",
+            key: "no_write_info_json",
+        },
+        {
+            label: "Write All Info JSON",
+            description:
+                "Write all fields to the infojson. By default, some internal metadata such as filenames are removed.",
+            type: "checkbox",
+            key: "write_all_info_json",
+        },
+        {
+            label: "Write Comments",
+            description: `
+                Retrieve video comments to be placed in the infojson.
+                The comments are fetched even without this option if the extraction is known to be quick
+            `,
+            type: "checkbox",
+            key: "write_comments",
+        },
+        {
+            label: "Load Info JSON",
+            description: 'JSON file containing the video information (created with the "Write Info JSON" option).',
+            type: "text",
+            key: "load_info_json",
+        },
+        {
+            label: "Cache Directory",
+            description: `
+                Location in the filesystem where yt-dlp can store some downloaded information (such as
+                client ids and signatures) permanently. By default "\${XDG_CACHE_HOME}/yt-dlp".
+            `,
+            type: "text",
+            key: "cache_dir",
+        },
+        {
+            label: "No Cache",
+            description: "Disable filesystem caching.",
+            type: "checkbox",
+            key: "no_cache_dir",
+        },
+        {
+            label: "Remove Cache",
+            description: "Delete all filesystem cache files.",
+            type: "checkbox",
+            key: "rm_cache_dir",
+        },
+    ],
+};
+
+export const formItemInfo = [
+    globalInput,
+    cookiesOptions,
+    networdOptions,
+    videoSelectionOptions,
+    downloadOptions,
+    filesystemOptions,
+];
