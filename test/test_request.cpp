@@ -22,7 +22,7 @@ auto make_args(std::string_view json)
     data.emplace("url_input", "http://example.com");
 
     Request request(data.dump());
-    return request.args;
+    return request.args();
 }
 
 MATCHER_P(HasOption, name, "has argument \""s + name + "\"")
@@ -59,16 +59,16 @@ TEST(Request, ParseValidJSON)
 
     Request request(json);
 
-    EXPECT_EQ(request.action, Request::Action::Preview);
-    EXPECT_EQ(request.yt_dlp_path, "/usr/bin/yt-dlp");
-    EXPECT_EQ(request.args[0], "https://example.com/video");
-    EXPECT_THAT(request.args, HasOption("-j"));
+    EXPECT_EQ(request.action(), Request::Action::Preview);
+    EXPECT_EQ(request.yt_dlp_path(), "/usr/bin/yt-dlp");
+    EXPECT_EQ(request.args().front(), "https://example.com/video");
+    EXPECT_THAT(request.args(), HasOption("-j"));
 }
 
 TEST(Request, InterruptAction)
 {
     std::string json = R"({"action": "interrupt"})";
-    EXPECT_EQ(Request(json).action, Request::Action::Interrupt);
+    EXPECT_EQ(Request(json).action(), Request::Action::Interrupt);
 }
 
 TEST(Request, MissingFields)
@@ -77,9 +77,9 @@ TEST(Request, MissingFields)
 
     Request request(json);
 
-    EXPECT_EQ(request.action, Request::Action::Download);
-    EXPECT_EQ(request.yt_dlp_path, boost::process::search_path("yt-dlp"));
-    EXPECT_EQ(request.args[0], "https://example.com/video");
+    EXPECT_EQ(request.action(), Request::Action::Download);
+    EXPECT_EQ(request.yt_dlp_path(), boost::process::search_path("yt-dlp"));
+    EXPECT_EQ(request.args().front(), "https://example.com/video");
 }
 
 TEST(Request, MissingAction)

@@ -3,7 +3,7 @@
 #include <map>
 #include <string_view>
 
-#include "boost/process/search_path.hpp"
+#include "boost/process/v1/search_path.hpp"
 #include "nlohmann/json.hpp"
 
 namespace ytweb
@@ -11,24 +11,46 @@ namespace ytweb
 
 using Json = nlohmann::json;
 
-namespace
+class Request::Impl
 {
+  public:
+    Action                   action{};
+    std::string              yt_dlp_path;
+    std::vector<std::string> args;
 
-void check_argument_option(Json const& data, std::vector<std::string>& args, std::string_view key, std::string_view option)
+    void parse(std::string_view json);
+
+  private:
+    Json data_;
+
+    void check_argument_option(std::string_view key, std::string_view option);
+    void check_multiple_argument_option(std::string_view key, std::string_view option);
+    void check_option(std::string_view key, std::string_view option);
+    void map_option(std::string_view key, std::map<std::string, std::string> const& options);
+
+    void set_download_output_format();
+
+    void set_cookies_options();
+    void set_network_options();
+    void set_video_selection_options();
+    void set_download_options();
+};
+
+void Request::Impl::check_argument_option(std::string_view key, std::string_view option)
 {
-    if (data.find(key) != data.end())
+    if (data_.find(key) != data_.end())
     {
         args.emplace_back(option);
-        args.emplace_back(data.at(key).get<std::string>());
+        args.emplace_back(data_.at(key).get<std::string>());
     }
 }
 
 // The value is an array => make multiple argument options.
-void check_multiple_argument_option(Json const& data, std::vector<std::string>& args, std::string_view key, std::string_view option)
+void Request::Impl::check_multiple_argument_option(std::string_view key, std::string_view option)
 {
-    if (data.find(key) != data.end())
+    if (data_.find(key) != data_.end())
     {
-        for (auto const& value : data.at(key))
+        for (auto const& value : data_.at(key))
         {
             args.emplace_back(option);
             args.emplace_back(value.get<std::string>());
@@ -36,19 +58,19 @@ void check_multiple_argument_option(Json const& data, std::vector<std::string>& 
     }
 }
 
-void check_option(Json const& data, std::vector<std::string>& args, std::string_view key, std::string_view option)
+void Request::Impl::check_option(std::string_view key, std::string_view option)
 {
-    if (data.find(key) != data.end())
+    if (data_.find(key) != data_.end())
     {
         args.emplace_back(option);
     }
 }
 
-void map_option(Json const& data, std::vector<std::string>& args, std::string_view key, std::map<std::string, std::string> const& options)
+void Request::Impl::map_option(std::string_view key, std::map<std::string, std::string> const& options)
 {
-    if (data.find(key) != data.end())
+    if (data_.find(key) != data_.end())
     {
-        auto value = data.at(key).get<std::string>();
+        auto value = data_.at(key).get<std::string>();
         if (options.find(value) != options.end())
         {
             args.emplace_back(options.at(value));
@@ -56,7 +78,7 @@ void map_option(Json const& data, std::vector<std::string>& args, std::string_vi
     }
 }
 
-void set_download_output_format(std::vector<std::string>& args)
+void Request::Impl::set_download_output_format()
 {
     // Set common output information.
     args.emplace_back("-O");
@@ -92,87 +114,84 @@ void set_download_output_format(std::vector<std::string>& args)
     args.emplace_back("download:[Progress]%(progress)j");
 }
 
-void set_cookies_options(Json const& data, std::vector<std::string>& args)
+void Request::Impl::set_cookies_options()
 {
-    check_argument_option(data, args, "cookies_from_browser", "--cookies-from-browser");
-    check_argument_option(data, args, "cookies_from_file", "--cookies");
+    check_argument_option("cookies_from_browser", "--cookies-from-browser");
+    check_argument_option("cookies_from_file", "--cookies");
 }
 
-void set_network_options(Json const& data, std::vector<std::string>& args)
+void Request::Impl::set_network_options()
 {
-    check_argument_option(data, args, "proxy", "--proxy");
-    check_argument_option(data, args, "socket_timeout", "--socket-timeout");
-    check_argument_option(data, args, "source_address", "--source-address");
-    map_option(data, args, "force_ip_protocol",
+    check_argument_option("proxy", "--proxy");
+    check_argument_option("socket_timeout", "--socket-timeout");
+    check_argument_option("source_address", "--source-address");
+    map_option("force_ip_protocol",
         {
             {"ipv4", "--force-ipv4"},
             {"ipv6", "--force-ipv6"}
     });
-    check_option(data, args, "enable_file_urls", "--enable-file-urls");
+    check_option("enable_file_urls", "--enable-file-urls");
 }
 
-void set_video_selection_options(Json const& data, std::vector<std::string>& args)
+void Request::Impl::set_video_selection_options()
 {
-    check_argument_option(data, args, "playlist_indices", "--playlist-items");
-    check_argument_option(data, args, "filesize_min", "--min-filesize");
-    check_argument_option(data, args, "filesize_max", "--max-filesize");
-    check_argument_option(data, args, "date", "--date");
-    check_argument_option(data, args, "date_before", "--datebefore");
-    check_argument_option(data, args, "date_after", "--dateafter");
-    check_multiple_argument_option(data, args, "filters", "--match-filters");
-    check_multiple_argument_option(data, args, "stop_filters", "--break-match-filters");
-    map_option(data, args, "is_playlist",
+    check_argument_option("playlist_indices", "--playlist-items");
+    check_argument_option("filesize_min", "--min-filesize");
+    check_argument_option("filesize_max", "--max-filesize");
+    check_argument_option("date", "--date");
+    check_argument_option("date_before", "--datebefore");
+    check_argument_option("date_after", "--dateafter");
+    check_multiple_argument_option("filters", "--match-filters");
+    check_multiple_argument_option("stop_filters", "--break-match-filters");
+    map_option("is_playlist",
         {
             {"yes", "--yes-playlist"},
             { "no",  "--no-playlist"}
     });
-    check_argument_option(data, args, "age_limit", "--age-limit");
-    check_argument_option(data, args, "max_download_number", "--max-downloads");
-    check_argument_option(data, args, "download_archive", "--download-archive");
-    check_option(data, args, "break_on_existing", "--break-on-existing");
-    check_option(data, args, "break_per_input", "--break-per-input");
-    check_argument_option(data, args, "skip_playlist_after_errors", "--skip-playlist-after-errors");
+    check_argument_option("age_limit", "--age-limit");
+    check_argument_option("max_download_number", "--max-downloads");
+    check_argument_option("download_archive", "--download-archive");
+    check_option("break_on_existing", "--break-on-existing");
+    check_option("break_per_input", "--break-per-input");
+    check_argument_option("skip_playlist_after_errors", "--skip-playlist-after-errors");
 }
 
-void set_download_options(Json const& data, std::vector<std::string>& args)
+void Request::Impl::set_download_options()
 {
-    check_argument_option(data, args, "concurrent_fragments", "--concurrent-fragments");
-    check_argument_option(data, args, "limit_rate", "--limit-rate");
-    check_argument_option(data, args, "throttle_rate", "--throttle-rate");
-    check_argument_option(data, args, "retries", "--retries");
-    check_argument_option(data, args, "file_access_retries", "--file-access-retries");
-    check_argument_option(data, args, "fragment_retries", "--fragment-retries");
-    check_multiple_argument_option(data, args, "retry_sleep", "--retry-sleep");
-    check_option(data, args, "abort_on_unavailable_fragment", "--abort-on-unavailable-fragment");
-    check_option(data, args, "keep_fragments", "--keep-fragments");
-    check_argument_option(data, args, "buffer_size", "--buffer-size");
-    check_option(data, args, "no_resize_buffer", "--no-resize-buffer");
-    check_argument_option(data, args, "http_chunk_size", "--http-chunk-size");
-    check_option(data, args, "playlist_random", "--playlist-random");
-    check_option(data, args, "lazy_playlist", "--lazy-playlist");
-    check_option(data, args, "xattr_set_filesize", "--xattr-set-filesize");
-    map_option(data, args, "hls_use_mpegts",
+    check_argument_option("concurrent_fragments", "--concurrent-fragments");
+    check_argument_option("limit_rate", "--limit-rate");
+    check_argument_option("throttle_rate", "--throttle-rate");
+    check_argument_option("retries", "--retries");
+    check_argument_option("file_access_retries", "--file-access-retries");
+    check_argument_option("fragment_retries", "--fragment-retries");
+    check_multiple_argument_option("retry_sleep", "--retry-sleep");
+    check_option("abort_on_unavailable_fragment", "--abort-on-unavailable-fragment");
+    check_option("keep_fragments", "--keep-fragments");
+    check_argument_option("buffer_size", "--buffer-size");
+    check_option("no_resize_buffer", "--no-resize-buffer");
+    check_argument_option("http_chunk_size", "--http-chunk-size");
+    check_option("playlist_random", "--playlist-random");
+    check_option("lazy_playlist", "--lazy-playlist");
+    check_option("xattr_set_filesize", "--xattr-set-filesize");
+    map_option("hls_use_mpegts",
         {
             {"yes",    "--hls-use-mpegts"},
             { "no", "--no-hls-use-mpegts"}
     });
-    check_multiple_argument_option(data, args, "download_sections", "--download-section");
-    check_multiple_argument_option(data, args, "downloader", "--downloader");
-    check_multiple_argument_option(data, args, "download_args", "--downloader-args");
+    check_multiple_argument_option("download_sections", "--download-section");
+    check_multiple_argument_option("downloader", "--downloader");
+    check_multiple_argument_option("download_args", "--downloader-args");
 }
 
-}  // anonymous namespace
-
-Request::Request(std::string_view json)
+void Request::Impl::parse(std::string_view json)
 {
-    // Parse the JSON data.
-    auto data = Json::parse(json);
+    data_ = Json::parse(json);
 
     // If `yt_dlp_path` is not provided, run yt-dlp from `$PATH`
-    yt_dlp_path = data.value("yt_dlp_path", boost::process::search_path("yt-dlp").string());
+    yt_dlp_path = data_.value("yt_dlp_path", boost::process::search_path("yt-dlp").string());
 
     // Parse the action.
-    std::string action_str = data.at("action");
+    std::string action_str = data_.at("action");
 
     // If action is "interrupt", other fields are not needed.
     if (action_str == "interrupt")
@@ -184,12 +203,12 @@ Request::Request(std::string_view json)
     action = action_str == "preview" ? Action::Preview : Action::Download;
 
     // Generate arguments for yt-dlp
-    args.push_back(data.at("url_input").get<std::string>());
+    args.emplace_back(data_.at("url_input").get<std::string>());
 
-    set_cookies_options(data, args);
-    set_network_options(data, args);
-    set_video_selection_options(data, args);
-    set_download_options(data, args);
+    set_cookies_options();
+    set_network_options();
+    set_video_selection_options();
+    set_download_options();
 
     if (action == Request::Action::Preview)
     {
@@ -197,14 +216,41 @@ Request::Request(std::string_view json)
     }
     else
     {
-        set_download_output_format(args);
+        set_download_output_format();
 
         // Set the output path.
-        check_argument_option(data, args, "output_path", "-P");
+        check_argument_option("output_path", "-P");
 
         // Only download audio.
-        check_option(data, args, "audio_only", "--extract-audio");
+        check_option("audio_only", "--extract-audio");
     }
+
+    // JSON data is not needed anymore.
+    data_.clear();
 }
+
+/// Implement the `Request` class.
+
+auto Request::action() const -> Action
+{
+    return impl_->action;
+}
+
+auto Request::yt_dlp_path() const -> std::string const&
+{
+    return impl_->yt_dlp_path;
+}
+
+auto Request::args() const -> std::vector<std::string> const&
+{
+    return impl_->args;
+}
+
+Request::Request(std::string_view json): impl_(std::make_unique<Impl>())
+{
+    impl_->parse(json);
+}
+
+Request::~Request() = default;
 
 }  // namespace ytweb

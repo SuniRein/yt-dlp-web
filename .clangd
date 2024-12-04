@@ -4,6 +4,7 @@ Diagnostics:
       - boost/.* # boost header cannot be processed properly
   Suppress:
     - readability-identifier-length
+    - cppcoreguidelines-non-private-member-variables-in-classes
     - llvm-include-order
 
 ---
