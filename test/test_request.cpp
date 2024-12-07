@@ -258,3 +258,49 @@ TEST(Request, DownloadOptions)
     EXPECT_THAT(args, HasArgumentOption("--downloader-args", "aria2c:--max-connection-per-server=5"));
     EXPECT_THAT(args, HasArgumentOption("--downloader-args", "curl:--proxy socks5://127.0.0.1:7890"));
 }
+
+TEST(Request, FilesystemOptions)
+{
+    EXPECT_THAT(make_args(R"({"batch_file": "/tmp/batch_file.txt"})"), HasArgumentOption("--batch-file", "/tmp/batch_file.txt"));
+    EXPECT_THAT(make_args(R"({"overwrite": "never"})"), HasOption("--no-overwrites"));
+    EXPECT_THAT(make_args(R"({"overwrite": "always"})"), HasOption("--force-overwrites"));
+    EXPECT_THAT(make_args(R"({"no_continue": true})"), HasOption("--no-continue"));
+    EXPECT_THAT(make_args(R"({"no_part": true})"), HasOption("--no-part"));
+    EXPECT_THAT(make_args(R"({"no_mtime": true})"), HasOption("--no-mtime"));
+    EXPECT_THAT(make_args(R"({"write_description": true})"), HasOption("--write-description"));
+    EXPECT_THAT(make_args(R"({"write_info_json": true})"), HasOption("--write-info-json"));
+    EXPECT_THAT(make_args(R"({"no_write_playlist_metafile": true})"), HasOption("--no-write-playlist-metafiles"));
+    EXPECT_THAT(make_args(R"({"write_all_info_json": true})"), HasOption("--no-clean-info-json"));
+    EXPECT_THAT(make_args(R"({"write_comments": true})"), HasOption("--write-comments"));
+    EXPECT_THAT(make_args(R"({"load_info_json": "info.json"})"), HasArgumentOption("--load-info-json", "info.json"));
+    EXPECT_THAT(make_args(R"({"cache_dir": "/tmp/cache"})"), HasArgumentOption("--cache-dir", "/tmp/cache"));
+    EXPECT_THAT(make_args(R"({"no_cache_dir": true})"), HasOption("--no-cache-dir"));
+    EXPECT_THAT(make_args(R"({"rm_cache_dir": true})"), HasOption("--rm-cache-dir"));
+}
+
+TEST(Request, OutputOptions)
+{
+    auto args = make_args(R"({
+        "output_path": [
+            "home:~/Downloads",
+            "temp:~/tmp"
+        ],
+        "output_filename": [
+            "subtitle:sub",
+            "%(uploader)s/%(title)s.%(ext)s"
+        ],
+        "output_na_placeholder": "N/A",
+        "restrict_filename": true,
+        "windows_filename": true,
+        "trim_filename": "50"
+    })");
+
+    EXPECT_THAT(args, HasArgumentOption("-P", "home:~/Downloads"));
+    EXPECT_THAT(args, HasArgumentOption("-P", "temp:~/tmp"));
+    EXPECT_THAT(args, HasArgumentOption("-o", "subtitle:sub"));
+    EXPECT_THAT(args, HasArgumentOption("-o", "%(uploader)s/%(title)s.%(ext)s"));
+    EXPECT_THAT(args, HasArgumentOption("--output-na-placeholder", "N/A"));
+    EXPECT_THAT(args, HasOption("--restrict-filenames"));
+    EXPECT_THAT(args, HasOption("--windows-filenames"));
+    EXPECT_THAT(args, HasArgumentOption("--trim-filename", "50"));
+}

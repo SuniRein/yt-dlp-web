@@ -34,6 +34,8 @@ class Request::Impl
     void set_network_options();
     void set_video_selection_options();
     void set_download_options();
+    void set_output_options();
+    void set_filesystem_options();
 };
 
 void Request::Impl::check_argument_option(std::string_view key, std::string_view option)
@@ -183,6 +185,38 @@ void Request::Impl::set_download_options()
     check_multiple_argument_option("download_args", "--downloader-args");
 }
 
+void Request::Impl::set_output_options()
+{
+    check_multiple_argument_option("output_path", "-P");
+    check_multiple_argument_option("output_filename", "-o");
+    check_argument_option("output_na_placeholder", "--output-na-placeholder");
+    check_option("restrict_filename", "--restrict-filenames");
+    check_option("windows_filename", "--windows-filenames");
+    check_argument_option("trim_filename", "--trim-filename");
+}
+
+void Request::Impl::set_filesystem_options()
+{
+    check_argument_option("batch_file", "--batch-file");
+    map_option("overwrite",
+        {
+            { "never",    "--no-overwrites"},
+            {"always", "--force-overwrites"}
+    });
+    check_option("no_continue", "--no-continue");
+    check_option("no_part", "--no-part");
+    check_option("no_mtime", "--no-mtime");
+    check_option("write_description", "--write-description");
+    check_option("write_info_json", "--write-info-json");
+    check_option("no_write_playlist_metafile", "--no-write-playlist-metafiles");
+    check_option("write_all_info_json", "--no-clean-info-json");
+    check_option("write_comments", "--write-comments");
+    check_argument_option("load_info_json", "--load-info-json");
+    check_argument_option("cache_dir", "--cache-dir");
+    check_option("no_cache_dir", "--no-cache-dir");
+    check_option("rm_cache_dir", "--rm-cache-dir");
+}
+
 void Request::Impl::parse(std::string_view json)
 {
     data_ = Json::parse(json);
@@ -209,6 +243,8 @@ void Request::Impl::parse(std::string_view json)
     set_network_options();
     set_video_selection_options();
     set_download_options();
+    set_output_options();
+    set_filesystem_options();
 
     if (action == Request::Action::Preview)
     {
@@ -217,9 +253,6 @@ void Request::Impl::parse(std::string_view json)
     else
     {
         set_download_output_format();
-
-        // Set the output path.
-        check_argument_option("output_path", "-P");
 
         // Only download audio.
         check_option("audio_only", "--extract-audio");

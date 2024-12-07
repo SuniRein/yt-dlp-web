@@ -59,13 +59,6 @@ const globalInput: FormItemInfoGroup = {
                 },
             ],
         },
-        {
-            label: "Output Path",
-            description: "Set the output path for the downloaded file.",
-            type: "text",
-            key: "output_path",
-            placeholder: "/path/to/output",
-        },
     ],
 };
 
@@ -430,15 +423,9 @@ const downloadOptions: FormItemInfoGroup = {
     ],
 };
 
-const filesystemOptions: FormItemInfoGroup = {
-    name: "Filesystem Option",
+const outputOptions: FormItemInfoGroup = {
+    name: "Output Option",
     items: [
-        {
-            label: "Batch File",
-            description: "File containing URLs to download ('-' for stdin), one URL per line.",
-            type: "text",
-            key: "batch_file",
-        },
         {
             label: "Output Path",
             description: `
@@ -483,6 +470,18 @@ const filesystemOptions: FormItemInfoGroup = {
             type: "C-integer",
             key: "trim_filename",
         },
+    ],
+};
+
+const filesystemOptions: FormItemInfoGroup = {
+    name: "Filesystem Option",
+    items: [
+        {
+            label: "Batch File",
+            description: "File containing URLs to download ('-' for stdin), one URL per line.",
+            type: "text",
+            key: "batch_file",
+        },
         {
             label: "Overwrite Setting",
             description: "Specify the overwrite behavior.",
@@ -526,10 +525,10 @@ const filesystemOptions: FormItemInfoGroup = {
             key: "write_info_json",
         },
         {
-            label: "No Write Info JSON",
+            label: "No Write Playerlist Metafile",
             description: 'Do not write playlist metadata when using "Write description", "Write Info JSON", etc.',
             type: "checkbox",
-            key: "no_write_info_json",
+            key: "no_write_playlist_metafile",
         },
         {
             label: "Write All Info JSON",
@@ -583,5 +582,6 @@ export const formItemInfo = [
     networdOptions,
     videoSelectionOptions,
     downloadOptions,
+    outputOptions,
     filesystemOptions,
 ];
