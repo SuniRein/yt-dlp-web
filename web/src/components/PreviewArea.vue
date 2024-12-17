@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { bytesToSize } from '@/utils/show';
+import { NCard, NDataTable, type DataTableColumns, NImage } from 'naive-ui';
 
 export interface UrlFormatInfo {
     format_id: string;
@@ -35,6 +36,40 @@ function formatIsRequested(formatId: string) {
     return data.value?.requested_formats.some((format) => format.format_id === formatId) ? 'Yes' : '';
 }
 
+const tableData = computed(() => {
+    return data.value?.formats.map((format) => ({
+        ID: format.format_id,
+        Extension: format.ext,
+        Resolution: format.resolution,
+        FPS: format.fps,
+        Size: bytesToSize(format.filesize_approx),
+        TBR: format.tbr,
+        Protocol: format.protocol,
+        VCodec: hideIfEmpty(format.vcodec),
+        VBR: hideIfEmpty(format.vbr),
+        ACodec: hideIfEmpty(format.acodec),
+        ABR: hideIfEmpty(format.abr),
+        Chosen: formatIsRequested(format.format_id),
+    }));
+});
+
+const tableColumns: DataTableColumns = [
+    { title: 'ID', key: 'ID' },
+    { title: 'Extension', key: 'Extension' },
+    { title: 'Resolution', key: 'Resolution' },
+    { title: 'FPS', key: 'FPS' },
+    { title: 'Size', key: 'Size' },
+    { title: 'TBR', key: 'TBR' },
+    { title: 'Protocol', key: 'Protocol' },
+    { title: 'VCodec', key: 'VCodec' },
+    { title: 'VBR', key: 'VBR' },
+    { title: 'ACodec', key: 'ACodec' },
+    { title: 'ABR', key: 'ABR' },
+    { title: 'Chosen', key: 'Chosen' },
+].map((column) => {
+    return { ...column, align: 'center' };
+});
+
 defineExpose({
     preview: (previewData: UrlDataInfo) => {
         data.value = previewData;
@@ -46,55 +81,19 @@ defineExpose({
 </script>
 
 <template>
-    <fieldset>
-        <legend>Preview</legend>
-
+    <NCard title="Preview">
         <template v-if="data !== null">
-            <h4>{{ data.title }}</h4>
+            <NCard :title="data.title">
+                {{ data.description }}
 
-            <p>{{ data.description }}</p>
+                <NImage :src="data.thumbnail" :img-props="{ referrerpolicy: 'no-referrer' }" />
 
-            <img :src="data.thumbnail" referrerPolicy="no-referrer" />
+                <p><b>Destination:</b> {{ data.filename }}</p>
+            </NCard>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Extension</th>
-                        <th>Resolution</th>
-                        <th>FPS</th>
-                        <th>Size</th>
-                        <th>TBR</th>
-                        <th>Protocol</th>
-                        <th>VCodec</th>
-                        <th>VBR</th>
-                        <th>ACodec</th>
-                        <th>ABR</th>
-                        <th>Chosen</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr v-for="format in data.formats" :key="format.format_id">
-                        <td>{{ format.format_id }}</td>
-                        <td>{{ format.ext }}</td>
-                        <td>{{ format.resolution }}</td>
-                        <td>{{ format.fps }}</td>
-                        <td>{{ bytesToSize(format.filesize_approx) }}</td>
-                        <td>{{ format.tbr }}</td>
-                        <td>{{ format.protocol }}</td>
-                        <td>{{ hideIfEmpty(format.vcodec) }}</td>
-                        <td>{{ hideIfEmpty(format.vbr) }}</td>
-                        <td>{{ hideIfEmpty(format.acodec) }}</td>
-                        <td>{{ hideIfEmpty(format.abr) }}</td>
-                        <td>{{ formatIsRequested(format.format_id) }}</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <p><b>Destination:</b> {{ data.filename }}</p>
+            <NDataTable :data="tableData" :columns="tableColumns" />
         </template>
-    </fieldset>
+    </NCard>
 </template>
 
 <style scoped>

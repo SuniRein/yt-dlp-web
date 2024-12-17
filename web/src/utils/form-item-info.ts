@@ -1,11 +1,6 @@
-import { type FormItemInfo } from '@/components/FormItem.vue';
+import { type FormInfoSet } from '@/components/FormArea.vue';
 
-export interface FormItemInfoGroup {
-    name: string;
-    items: FormItemInfo[];
-}
-
-const globalInput: FormItemInfoGroup = {
+const globalInput: FormInfoSet = {
     name: 'Global',
     items: [
         {
@@ -44,7 +39,7 @@ const globalInput: FormItemInfoGroup = {
     ],
 };
 
-const cookiesOptions: FormItemInfoGroup = {
+const cookiesOptions: FormInfoSet = {
     name: 'Cookies Option',
     items: [
         {
@@ -53,7 +48,7 @@ const cookiesOptions: FormItemInfoGroup = {
             type: 'select',
             name: 'cookies_from_browser',
             options: [
-                { value: 'none', label: 'None' },
+                { value: '', label: 'None' },
                 { value: 'brave', label: 'Brave' },
                 { value: 'firefox', label: 'Firefox' },
                 { value: 'chrome', label: 'Chrome' },
@@ -70,12 +65,11 @@ const cookiesOptions: FormItemInfoGroup = {
             description: 'Netscape formatted file to read cookies from and dump cookie jar in.',
             type: 'text',
             name: 'cookies_from_file',
-            accept: 'text/plain',
         },
     ],
 };
 
-const networdOptions: FormItemInfoGroup = {
+const networdOptions: FormInfoSet = {
     name: 'Network Option',
     items: [
         {
@@ -107,7 +101,7 @@ const networdOptions: FormItemInfoGroup = {
             type: 'select',
             name: 'force_ip_protocol',
             options: [
-                { label: 'Default', value: 'none' },
+                { label: 'Default', value: '' },
                 { label: 'Force IPv4', value: 'ipv4' },
                 { label: 'Force IPv6', value: 'ipv6' },
             ],
@@ -121,7 +115,7 @@ const networdOptions: FormItemInfoGroup = {
     ],
 };
 
-const videoSelectionOptions: FormItemInfoGroup = {
+const videoSelectionOptions: FormInfoSet = {
     name: 'Video Selection Option',
     items: [
         {
@@ -191,7 +185,7 @@ const videoSelectionOptions: FormItemInfoGroup = {
             type: 'select',
             name: 'is_playlist',
             options: [
-                { value: 'none', label: 'Auto' },
+                { value: '', label: 'Auto' },
                 { value: 'no', label: 'No' },
                 { value: 'yes', label: 'Yes' },
             ],
@@ -242,7 +236,7 @@ const videoSelectionOptions: FormItemInfoGroup = {
     ],
 };
 
-const downloadOptions: FormItemInfoGroup = {
+const downloadOptions: FormInfoSet = {
     name: 'Download Option',
     items: [
         {
@@ -358,7 +352,7 @@ const downloadOptions: FormItemInfoGroup = {
             type: 'select',
             name: 'hls_use_mpegts',
             options: [
-                { value: 'none', label: 'Auto' },
+                { value: '', label: 'Auto' },
                 { value: 'no', label: 'No' },
                 { value: 'yes', label: 'Yes' },
             ],
@@ -405,7 +399,7 @@ const downloadOptions: FormItemInfoGroup = {
     ],
 };
 
-const outputOptions: FormItemInfoGroup = {
+const outputOptions: FormInfoSet = {
     name: 'Output Option',
     items: [
         {
@@ -455,7 +449,7 @@ const outputOptions: FormItemInfoGroup = {
     ],
 };
 
-const filesystemOptions: FormItemInfoGroup = {
+const filesystemOptions: FormInfoSet = {
     name: 'Filesystem Option',
     items: [
         {
@@ -470,7 +464,7 @@ const filesystemOptions: FormItemInfoGroup = {
             type: 'select',
             name: 'overwrite',
             options: [
-                { label: 'Auto', value: 'none' },
+                { label: 'Auto', value: '' },
                 { label: 'Never', value: 'never' },
                 { label: 'Always', value: 'always' },
             ],

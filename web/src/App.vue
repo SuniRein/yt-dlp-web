@@ -1,41 +1,27 @@
 <script setup lang="ts">
 import { onMounted, useTemplateRef } from 'vue';
 
-import FormItem from '@/components/FormItem.vue';
+import FormArea from '@/components/FormArea.vue';
 import LogArea from '@/components/LogArea.vue';
 import PreviewArea from '@/components/PreviewArea.vue';
+import { NButton } from 'naive-ui';
 
 import { formItemInfo } from '@/utils/form-item-info';
 import { bytesToSize } from '@/utils/show';
 
-type FormItemType = InstanceType<typeof FormItem>;
-
-const formItems = useTemplateRef<FormItemType[]>('formItems');
+const form = useTemplateRef('form');
 const logArea = useTemplateRef('logArea');
 const previewArea = useTemplateRef('previewArea');
 
 function handleFormSubmit(action: string) {
-    // Convert form data to JSON.
-    const data: {
-        [key: string]: string | string[];
-    } = { action: action };
-
-    if (!formItems.value) {
-        return;
+    if (!form.value) {
+        throw new Error('Form is not availabel.');
     }
 
-    for (const element of formItems.value) {
-        // If input is invalid, show error message and stop.
-        if (!element.checkValidity()) {
-            return;
-        }
-
-        // Here only send meaningful values.
-        // Empty values are not sent to backend.
-        if (!element.empty()) {
-            data[element.name] = element.value();
-        }
-    }
+    const data = {
+        action,
+        ...form.value.data,
+    };
 
     logMessage(`Request: ${JSON.stringify(data, null, 2)}`);
 
@@ -86,17 +72,14 @@ onMounted(() => {
 </script>
 
 <template>
-    <fieldset v-for="formItemGroup in formItemInfo" :key="formItemGroup.name">
-        <legend>{{ formItemGroup.name }}</legend>
-        <FormItem v-for="formItem in formItemGroup.items" v-bind="formItem" :key="formItem.name" ref="formItems" />
-    </fieldset>
+    <FormArea :info="formItemInfo" ref="form" />
 
-    <button @click.prevent="handleFormSubmit('download')">Download</button>
-    <button @click.prevent="handleFormSubmit('preview')">Preview</button>
-    <button @click.prevent="handleFormSubmit('interrupt')">Interrupt</button>
+    <NButton @click.prevent="handleFormSubmit('download')">Download</NButton>
+    <NButton @click.prevent="handleFormSubmit('preview')">Preview</NButton>
+    <NButton @click.prevent="handleFormSubmit('interrupt')">Interrupt</NButton>
 
-    <button @click.prevent="logArea?.clear()">Clear Log</button>
-    <button @click.prevent="previewArea?.clear()">Clear Preview</button>
+    <NButton @click.prevent="logArea?.clear()">Clear Log</NButton>
+    <NButton @click.prevent="previewArea?.clear()">Clear Preview</NButton>
 
     <PreviewArea ref="previewArea" />
 
@@ -107,18 +90,5 @@ onMounted(() => {
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
-}
-
-fieldset {
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-legend {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #333;
 }
 </style>

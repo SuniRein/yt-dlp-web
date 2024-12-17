@@ -1,26 +1,21 @@
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
+import { ref } from 'vue';
+import { NCard, NLog } from 'naive-ui';
 
-const logOutput = useTemplateRef('logOutput');
+const log = ref('');
 
 defineExpose({
     clear: () => {
-        if (logOutput.value) {
-            logOutput.value.value = '';
-        }
+        log.value = '';
     },
     log: (message: string) => {
-        if (logOutput.value) {
-            logOutput.value.value += message + '\n';
-            logOutput.value.scrollTop = logOutput.value.scrollHeight;
-        }
+        log.value += message + '\n';
     },
 });
 </script>
 
 <template>
-    <fieldset>
-        <legend>Log Output</legend>
-        <textarea rows="10" style="width: 100%" readonly ref="logOutput"></textarea>
-    </fieldset>
+    <NCard title="Log">
+        <NLog :log="log" />
+    </NCard>
 </template>
