@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { NCard, NLog } from 'naive-ui';
 
 const log = ref('');
 
 defineExpose({
-    clear: () => {
+    clear: async () => {
         log.value = '';
+        await nextTick();
     },
-    log: (message: string) => {
+    log: async (message: string) => {
         log.value += message + '\n';
+        await nextTick();
     },
 });
 </script>

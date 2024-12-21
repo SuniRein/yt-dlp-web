@@ -38,8 +38,8 @@ defineExpose({
 
 <template>
     <NForm ref="form" show-feedback>
-        <NCard v-for="set in info" :key="set.name" :title="set.name">
-            <FormItem v-for="item in set.items" :key="item.name" v-bind="item" ref="formItems" />
+        <NCard v-for="set in info" :key="set.name" :title="set.name" data-test="form-set">
+            <FormItem v-for="item in set.items" :key="item.name" v-bind="item" ref="formItems" data-test="form-item" />
         </NCard>
     </NForm>
 </template>

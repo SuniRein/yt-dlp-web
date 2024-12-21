@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { bytesToSize } from '@/utils/show';
-import { NCard, NDataTable, type DataTableColumns, NImage } from 'naive-ui';
+import { NCard, NDataTable, NImage, NConfigProvider } from 'naive-ui';
+import type { DataTableColumns } from 'naive-ui';
 
 export interface UrlFormatInfo {
     format_id: string;
     ext: string;
     resolution: string;
-    fps: string;
+    fps: number;
     filesize_approx: number;
     protocol: string;
     vcodec: string;
@@ -71,11 +72,13 @@ const tableColumns: DataTableColumns = [
 });
 
 defineExpose({
-    preview: (previewData: UrlDataInfo) => {
+    preview: async (previewData: UrlDataInfo) => {
         data.value = previewData;
+        await nextTick();
     },
-    clear: () => {
+    clear: async () => {
         data.value = null;
+        await nextTick();
     },
 });
 </script>
@@ -91,7 +94,9 @@ defineExpose({
                 <p><b>Destination:</b> {{ data.filename }}</p>
             </NCard>
 
-            <NDataTable :data="tableData" :columns="tableColumns" />
+            <NConfigProvider>
+                <NDataTable :data="tableData" :columns="tableColumns" />
+            </NConfigProvider>
         </template>
     </NCard>
 </template>
