@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added extensive options provided by `yt-dlp`.
 - Implemented frontend input validation for certain input options.
 - UI imporvements for better user experience.
+    - Header navigation bar.
     - A '*' symbol will be displayed when an input is required.
     - Real-time validation for user input.
     - Auto focus on the first invalid input field when summited.
