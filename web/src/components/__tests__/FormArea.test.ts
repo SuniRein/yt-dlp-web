@@ -1,9 +1,8 @@
 import FormArea from '@/components/FormArea.vue';
 import FormItem from '@/components/FormItem.vue';
-import { describe, test, expect } from 'vitest';
-import { mount, type VueWrapper } from '@vue/test-utils';
-
-type FormItemInst = InstanceType<typeof FormItem>;
+import type { FormItemValidator } from '@/types/FormItem.types';
+import { describe, test, expect, beforeAll } from 'vitest';
+import { mount } from '@vue/test-utils';
 
 function createWrapper() {
     const wrapper = mount(FormArea, {
@@ -34,8 +33,7 @@ function createWrapper() {
                         {
                             label: 'item5',
                             description: 'description5',
-                            type: 'text',
-                            multiple: true,
+                            type: 'dynamic',
                             name: 'dynamic-input',
                         },
                     ],
@@ -45,13 +43,6 @@ function createWrapper() {
     });
     expect(wrapper.exists()).toBe(true);
     return wrapper;
-}
-
-function setInputValue(item: VueWrapper<FormItemInst>, value: string, index?: number) {
-    const input = item.findAll('input')[index ?? 0];
-    expect(input).toBeTruthy();
-    input.setValue(value);
-    return input.trigger('input');
 }
 
 describe('check info display', () => {
@@ -84,8 +75,7 @@ describe('check info display', () => {
         expect(checkbox.vm.type).toBe('checkbox');
 
         expect(dynamicInput.text()).toContain('item5');
-        expect(dynamicInput.vm.type).toBe('text');
-        expect(dynamicInput.vm.multiple).toBe(true);
+        expect(dynamicInput.vm.type).toBe('dynamic');
     });
 });
 
@@ -96,11 +86,11 @@ describe('get form data', () => {
 
         const [text1, text2] = wrapper.findAllComponents(FormItem).slice(0, 2);
 
-        await setInputValue(text1, 'value1');
-        await setInputValue(text2, 'value2');
+        await text1.vm.setInputValue('value1');
+        await text2.vm.setInputValue('value2');
         expect(wrapper.vm.data).toEqual({ text1: 'value1', text2: 'value2' });
 
-        await setInputValue(text1, '');
+        await text1.vm.setInputValue('');
         expect(wrapper.vm.data).toEqual({ text2: 'value2' });
     });
 
@@ -141,17 +131,89 @@ describe('get form data', () => {
 
         const dynamicInput = wrapper.findAllComponents(FormItem)[4];
 
-        await setInputValue(dynamicInput, 'value1');
+        await dynamicInput.vm.setInputValue('value1', 0);
         expect(wrapper.vm.data).toEqual({ 'dynamic-input': ['value1'] });
 
         await dynamicInput.findAll('button')[1].trigger('click');
 
-        await setInputValue(dynamicInput, 'value2', 1);
+        await dynamicInput.vm.setInputValue('value2', 1);
         expect(wrapper.vm.data).toEqual({ 'dynamic-input': ['value1', 'value2'] });
 
-        await setInputValue(dynamicInput, '', 0);
+        await dynamicInput.vm.setInputValue('', 0);
         expect(wrapper.vm.data).toEqual({ 'dynamic-input': ['value2'] });
     });
 });
 
-describe.todo('check form validation');
+describe('check form validation', () => {
+    const validator: FormItemValidator = {
+        verify: (value) => value === 'valid',
+        message: 'value should be "valid"',
+    };
+
+    const wrapper = mount(FormArea, {
+        props: {
+            info: [
+                {
+                    name: 'default',
+                    items: [
+                        { label: 'item1', description: 'description1', type: 'text', name: 'text1', required: true },
+                        { label: 'item2', description: 'description2', type: 'text', name: 'text2', validator },
+                        {
+                            label: 'item3',
+                            description: 'description3',
+                            type: 'text',
+                            name: 'text3',
+                            validator,
+                            required: true,
+                        },
+                    ],
+                },
+            ],
+        },
+    });
+
+    const [text1, text2, text3] = wrapper.findAllComponents(FormItem);
+
+    beforeAll(() => {
+        // set all inputs to valid
+        text1.vm.setInputValue('random');
+        text2.vm.setInputValue('valid');
+        text3.vm.setInputValue('valid');
+    });
+
+    test('verify required field', async () => {
+        await text1.vm.setInputValue('');
+        expect(wrapper.vm.verify()).toBe(false);
+
+        await text1.vm.setInputValue('random');
+        expect(wrapper.vm.verify()).toBe(true);
+    });
+
+    test('verify validator', async () => {
+        await text2.vm.setInputValue('invalid');
+        expect(wrapper.vm.verify()).toBe(false);
+
+        await text2.vm.setInputValue('valid ');
+        expect(wrapper.vm.verify()).toBe(false);
+
+        await text2.vm.setInputValue(' valid');
+        expect(wrapper.vm.verify()).toBe(false);
+
+        await text2.vm.setInputValue('random');
+        expect(wrapper.vm.verify()).toBe(false);
+
+        await text2.vm.setInputValue('valid');
+        expect(wrapper.vm.verify()).toBe(true);
+    });
+
+    test('verify both required field and validator', async () => {
+        await text3.vm.setInputValue('');
+        expect(wrapper.vm.verify()).toBe(false);
+
+        await text3.vm.setInputValue('invalid');
+        expect(wrapper.vm.verify()).toBe(false);
+
+        await text3.vm.setInputValue('valid');
+        expect(wrapper.vm.verify()).toBe(true);
+    });
+});

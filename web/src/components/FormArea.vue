@@ -1,25 +1,24 @@
 <script setup lang="ts">
 import { computed, useTemplateRef } from 'vue';
-import FormItem, { type FormItemInfo } from '@/components/FormItem.vue';
+import FormItem from '@/components/FormItem.vue';
+import type { FormItemSet } from '@/types/FormItem.types';
 import { NForm, NCard } from 'naive-ui';
 
 type FormItemInst = InstanceType<typeof FormItem>;
 
-export interface FormInfoSet {
-    name: string;
-    items: FormItemInfo[];
-}
+defineProps<{ info: FormItemSet[] }>();
 
-defineProps<{ info: FormInfoSet[] }>();
-
-const form = useTemplateRef('form');
 const formItems = useTemplateRef<FormItemInst[]>('formItems');
 
-function validate() {
-    if (!form.value) {
-        throw new Error('Form is not available.');
+function verify() {
+    if (!formItems.value) {
+        throw new Error('Form items are not available.');
     }
-    form.value.validate();
+
+    const errors = formItems.value.map((item) => item.verify()).filter((error) => error !== undefined);
+    errors[0]?.element?.focus();
+
+    return errors.length === 0;
 }
 
 const data = computed(() => {
@@ -31,13 +30,13 @@ const data = computed(() => {
 });
 
 defineExpose({
-    validate,
+    verify,
     data,
 });
 </script>
 
 <template>
-    <NForm ref="form" show-feedback>
+    <NForm show-feedback>
         <NCard v-for="set in info" :key="set.name" :title="set.name" data-test="form-set">
             <FormItem v-for="item in set.items" :key="item.name" v-bind="item" ref="formItems" data-test="form-item" />
         </NCard>

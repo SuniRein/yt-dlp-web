@@ -18,6 +18,10 @@ function handleFormSubmit(action: string) {
         throw new Error('Form is not availabel.');
     }
 
+    if (!form.value.verify()) {
+        return;
+    }
+
     const data = {
         action,
         ...form.value.data,

@@ -1,26 +1,18 @@
-import FormItem, { type FormItemInfo } from '@/components/FormItem.vue';
+import FormItem from '@/components/FormItem.vue';
+import type {
+    TextFormItem,
+    DynamicFormItem,
+    SelectFormItem,
+    CheckboxFormItem,
+    FormItemValidator,
+} from '@/types/FormItem.types';
 import { describe, test, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import type { VueWrapper } from '@vue/test-utils';
 import { nextTick } from 'vue';
 
 class FormItemWrapper {
-    protected wrapper: VueWrapper<InstanceType<typeof FormItem>>;
-
-    constructor(props: Partial<FormItemInfo>) {
-        this.wrapper = mount(FormItem, {
-            props: {
-                label: 'label',
-                description: 'description',
-                name: 'name',
-                placeholder: 'placeholder',
-                type: props.type ?? 'text',
-                ...props,
-            },
-        });
-
-        expect(this.wrapper.exists()).toBe(true);
-    }
+    protected wrapper!: VueWrapper<InstanceType<typeof FormItem>>;
 
     get vm() {
         return this.wrapper.vm;
@@ -40,27 +32,42 @@ class FormItemWrapper {
 }
 
 class TextWrapper extends FormItemWrapper {
-    constructor(props: Partial<FormItemInfo> = {}) {
-        super({ type: 'text', ...props });
+    constructor(props: Partial<TextFormItem> = {}) {
+        super();
+        this.wrapper = mount(FormItem, {
+            props: {
+                label: 'label',
+                description: 'description',
+                placeholder: 'placeholder',
+                name: 'name',
+                type: 'text',
+                ...props,
+            },
+        });
     }
 
     async setValue(value: string) {
-        const input = this.wrapper.get('input');
-        input.setValue(value);
-        await input.trigger('input');
+        await this.wrapper.vm.setInputValue(value);
     }
 }
 
 class SelectWrapper extends FormItemWrapper {
-    constructor(props: Partial<FormItemInfo> = {}) {
-        super({
-            type: 'select',
-            options: [
-                { label: 'option0', value: '' },
-                { label: 'option1', value: '1' },
-                { label: 'option2', value: '2' },
-            ],
-            ...props,
+    constructor(props: Partial<SelectFormItem> = {}) {
+        super();
+        this.wrapper = mount(FormItem, {
+            props: {
+                label: 'label',
+                description: 'description',
+                placeholder: 'placeholder',
+                name: 'name',
+                type: 'select',
+                options: [
+                    { label: 'option0', value: '' },
+                    { label: 'option1', value: '1' },
+                    { label: 'option2', value: '2' },
+                ],
+                ...props,
+            },
         });
     }
 
@@ -70,8 +77,17 @@ class SelectWrapper extends FormItemWrapper {
 }
 
 class ChechboxWrapper extends FormItemWrapper {
-    constructor(props: Partial<FormItemInfo> = {}) {
-        super({ type: 'checkbox', ...props });
+    constructor(props: Partial<CheckboxFormItem> = {}) {
+        super();
+        this.wrapper = mount(FormItem, {
+            props: {
+                label: 'label',
+                description: 'description',
+                name: 'name',
+                type: 'checkbox',
+                ...props,
+            },
+        });
     }
 
     setChecked(checked: boolean) {
@@ -80,8 +96,18 @@ class ChechboxWrapper extends FormItemWrapper {
 }
 
 class DynamicInputWrapper extends FormItemWrapper {
-    constructor(props: Partial<FormItemInfo> = {}) {
-        super({ multiple: true, ...props });
+    constructor(props: Partial<DynamicFormItem> = {}) {
+        super();
+        this.wrapper = mount(FormItem, {
+            props: {
+                label: 'label',
+                description: 'description',
+                placeholder: 'placeholder',
+                name: 'name',
+                type: 'dynamic',
+                ...props,
+            },
+        });
     }
 
     get inputs() {
@@ -97,13 +123,16 @@ class DynamicInputWrapper extends FormItemWrapper {
     }
 
     async setValue(index: number, value: string) {
-        const input = this.inputs.at(index);
-        input?.setValue(value);
-        await input?.trigger('input');
+        await this.wrapper.vm.setInputValue(value, index);
     }
 }
 
 describe('text type', () => {
+    const validator: FormItemValidator = {
+        verify: (value) => value === 'valid',
+        message: 'value should be "valid"',
+    };
+
     test('create element', () => {
         const wrapper = new TextWrapper();
 
@@ -133,6 +162,45 @@ describe('text type', () => {
 
         await wrapper.setValue('another value');
         expect(wrapper.vm.value).toBe('another value');
+    });
+
+    test('verify input value', async () => {
+        const wrapper = new TextWrapper({ validator });
+        expect(wrapper.vm.verify()).toBeUndefined();
+
+        await wrapper.setValue('invalid');
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'value should be "valid"');
+        expect(wrapper.vm.verify()).toHaveProperty('element');
+
+        await wrapper.setValue('valid');
+        expect(wrapper.vm.verify()).toBeUndefined();
+
+        await wrapper.setValue('valid ');
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'value should be "valid"');
+        expect(wrapper.vm.verify()).toHaveProperty('element');
+    });
+
+    test('verify required field', async () => {
+        const wrapper = new TextWrapper({ required: true });
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'This field is required');
+        expect(wrapper.vm.verify()).toHaveProperty('element');
+
+        await wrapper.setValue('value');
+        expect(wrapper.vm.verify()).toBeUndefined();
+
+        await wrapper.setValue('');
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'This field is required');
+    });
+
+    test('verify required field with validator', async () => {
+        const wrapper = new TextWrapper({ required: true, validator });
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'This field is required');
+
+        await wrapper.setValue('invalid');
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'value should be "valid"');
+
+        await wrapper.setValue('valid');
+        expect(wrapper.vm.verify()).toBeUndefined();
     });
 });
 

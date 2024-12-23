@@ -1,19 +1,21 @@
-import { type FormInfoSet } from '@/components/FormArea.vue';
+import type { FormItemSet } from '@/types/FormItem.types';
+import * as Validators from '@/utils/form-item-validator';
 
-const globalInput: FormInfoSet = {
+const globalInput: FormItemSet = {
     name: 'Global',
     items: [
         {
             label: 'URL',
-            description: '',
-            type: 'url',
+            description: 'URL of the video to download.',
+            type: 'text',
             name: 'url_input',
+            validator: Validators.Url,
             placeholder: 'https://www.bilibili.com/video/BV1hK4y1C7Uw',
             required: true,
         },
         {
             label: 'Audio Only',
-            description: '',
+            description: 'Only download audio.',
             type: 'checkbox',
             name: 'audio_only',
         },
@@ -26,20 +28,15 @@ const globalInput: FormInfoSet = {
         },
         {
             label: 'Video Quality',
-            description: '',
+            description: 'Select the video quality.',
             type: 'select',
             name: 'quality',
-            options: [
-                {
-                    value: 'bestvideo+bestaudio',
-                    label: 'Best Video and Audio',
-                },
-            ],
+            options: [{ value: '', label: 'Best Video and Audio' }],
         },
     ],
 };
 
-const cookiesOptions: FormInfoSet = {
+const cookiesOptions: FormItemSet = {
     name: 'Cookies Option',
     items: [
         {
@@ -69,7 +66,7 @@ const cookiesOptions: FormInfoSet = {
     ],
 };
 
-const networdOptions: FormInfoSet = {
+const networdOptions: FormItemSet = {
     name: 'Network Option',
     items: [
         {
@@ -86,7 +83,8 @@ const networdOptions: FormInfoSet = {
         {
             label: 'Socket Timeout',
             description: 'Time to wait before giving up, in seconds.',
-            type: 'number',
+            type: 'text',
+            validator: Validators.RealNumber,
             name: 'socket_timeout',
         },
         {
@@ -115,7 +113,7 @@ const networdOptions: FormInfoSet = {
     ],
 };
 
-const videoSelectionOptions: FormInfoSet = {
+const videoSelectionOptions: FormItemSet = {
     name: 'Video Selection Option',
     items: [
         {
@@ -126,19 +124,22 @@ const videoSelectionOptions: FormInfoSet = {
                 Use negative indices to count from the right and negative STEP to download in reverse order.
                 E.g. "-I 1:3,7,-5::2" used on a playlist of size 15 will download the items at index 1,2,3,7,11,13,15".
             `,
-            type: 'C-item-spec',
+            type: 'text',
+            validator: Validators.ItemSpec,
             name: 'playlist_indices',
         },
         {
             label: 'Min Filesize',
             description: 'Only download file with a size greater than this value. Format: 100, 10K, 1.2M',
-            type: 'C-filesize',
+            type: 'text',
+            validator: Validators.FileSize,
             name: 'filesize_min',
         },
         {
             label: 'Max Filesize',
             description: 'Only download file with a size less than this value. Format: 100, 10K, 1.2M',
-            type: 'C-filesize',
+            type: 'text',
+            validator: Validators.FileSize,
             name: 'filesize_max',
         },
         {
@@ -147,19 +148,22 @@ const videoSelectionOptions: FormInfoSet = {
                 Download only videos uploaded on this date.
                 The date can be "YYYYMMDD" or in the format [now|today|yesterday][-N[day|week|month|year]].
             `,
-            type: 'C-date',
+            type: 'text',
+            validator: Validators.Date,
             name: 'date',
         },
         {
             label: 'Date Before',
             description: 'Download only videos uploaded on or before this date',
-            type: 'C-date',
+            type: 'text',
+            validator: Validators.Date,
             name: 'date_before',
         },
         {
             label: 'Date After',
             description: 'Download only videos uploaded on or after this date',
-            type: 'C-date',
+            type: 'text',
+            validator: Validators.Date,
             name: 'date_after',
         },
         {
@@ -168,16 +172,14 @@ const videoSelectionOptions: FormInfoSet = {
                 Generic video filter. Any "OUTPUT TEMPLATE" field can be compared with a number or a string
                 using the operators defined in "Filtering Formats".
             `,
-            type: 'text',
+            type: 'dynamic',
             name: 'filters',
-            multiple: true,
         },
         {
             label: 'Stop Filters',
             description: "Stop the download process when a video doesn't match the filters.",
-            type: 'text',
+            type: 'dynamic',
             name: 'stop_filters',
-            multiple: true,
         },
         {
             label: 'Is Playerlist',
@@ -193,13 +195,14 @@ const videoSelectionOptions: FormInfoSet = {
         {
             label: 'Age Limit',
             description: 'Download only videos suitable for the given age.',
-            type: 'number',
+            type: 'text',
+            validator: Validators.Integer,
             name: 'age_limit',
         },
         {
             label: 'Max Download Number',
             description: 'Abort after downloading NUMBER files.',
-            type: 'number',
+            type: 'text',
             name: 'max_download_number',
         },
         {
@@ -230,51 +233,58 @@ const videoSelectionOptions: FormInfoSet = {
         {
             label: 'Skip Playlist After Errors',
             description: 'Number of allowed failures until the rest of the playlist is skipped.',
-            type: 'number',
+            type: 'text',
+            validator: Validators.Integer,
             name: 'skip_playlist_after_errors',
         },
     ],
 };
 
-const downloadOptions: FormInfoSet = {
+const downloadOptions: FormItemSet = {
     name: 'Download Option',
     items: [
         {
             label: 'Concurrent Fragments',
             description:
                 'Number of fragments of a dash/hlsnative video that should be downloaded concurrently (default is 1).',
-            type: 'number',
+            type: 'text',
+            validator: Validators.Integer,
             name: 'concurrent_fragments',
         },
         {
             label: 'Limit Rate',
             description: 'Maximum download rate in bytes per second.',
-            type: 'C-filesize',
+            type: 'text',
+            validator: Validators.FileSize,
             name: 'limit_rate',
         },
         {
             label: 'Throttle Rate',
             description:
                 'Minimum download rate in bytes per second below which throttling is assumed and the video data is re-extracted.',
-            type: 'C-filesize',
+            type: 'text',
+            validator: Validators.FileSize,
             name: 'throttle_rate',
         },
         {
             label: 'Retries',
             description: 'Number of retries (default is 10), or "infinite".',
-            type: 'C-integer-or-infinite',
+            type: 'text',
+            validator: Validators.IntegerOrInfinite,
             name: 'retries',
         },
         {
             label: 'File Accress Retries',
             description: 'Number of times to retry on file access error (default is 3), or "infinite".',
-            type: 'C-integer-or-infinite',
+            type: 'text',
+            validator: Validators.IntegerOrInfinite,
             name: 'file_access_retries',
         },
         {
             label: 'Fragment Retries',
             description: 'Number of retries for a fragment (default is 10), or "infinite".',
-            type: 'C-integer-or-infinite',
+            type: 'text',
+            validator: Validators.IntegerOrInfinite,
             name: 'fragment_retries',
         },
         {
@@ -286,9 +296,8 @@ const downloadOptions: FormInfoSet = {
                 This option can be used multiple times to set the sleep for the different retry types,
                 e.g. "linear=1::2", "fragment:exp=1:20".
             `,
-            type: 'text',
+            type: 'dynamic',
             name: 'retry_sleep',
-            multiple: true,
         },
         {
             label: 'Abort On Unavailable Fragments',
@@ -305,7 +314,8 @@ const downloadOptions: FormInfoSet = {
         {
             label: 'Buffer Size',
             description: 'Size of download buffer (e.g. 1024 or 16K) (default is 1024).',
-            type: 'C-filesize',
+            type: 'text',
+            validator: Validators.FileSize,
             name: 'buffer_size',
         },
         {
@@ -320,7 +330,8 @@ const downloadOptions: FormInfoSet = {
                 Size of a chunk for chunk-based HTTP downloading, e.g. 10485760 or 10M (default is disabled).
                 May be useful for bypassing bandwidth throttling imposed by a webserver (experimental).
             `,
-            type: 'C-filesize',
+            type: 'text',
+            validator: Validators.FileSize,
             name: 'http_chunk_size',
         },
         {
@@ -368,9 +379,8 @@ const downloadOptions: FormInfoSet = {
                 This option can be used multiple times to download multiple sections.
                 E.g. "*10:15-inf", "intro".
             `,
-            type: 'text',
+            type: 'dynamic',
             name: 'download_sections',
-            multiple: true,
         },
         {
             label: 'Downloader',
@@ -381,9 +391,8 @@ const downloadOptions: FormInfoSet = {
                 E.g. "aria2c", "dash,m3u8:native" will
                 use aria2c for http/ftp downloads, and the native downloader for dash/m3u8 downloads.
             `,
-            type: 'text',
+            type: 'dynamic',
             name: 'downloader',
-            multiple: true,
         },
         {
             label: 'Download Arguments',
@@ -392,14 +401,13 @@ const downloadOptions: FormInfoSet = {
                 Specify the downloader name and the arguments separated by a colon ":".
                 For ffmpeg, arguments can be passed to different positions using the same syntax as "Postprocessor Arguments".
             `,
-            type: 'text',
+            type: 'dynamic',
             name: 'download_args',
-            multiple: true,
         },
     ],
 };
 
-const outputOptions: FormInfoSet = {
+const outputOptions: FormItemSet = {
     name: 'Output Option',
     items: [
         {
@@ -411,16 +419,14 @@ const outputOptions: FormInfoSet = {
                 the final files are moved over to the home path after download is finished.
                 This options is ignored if "Output File" is a absolute path.
             `,
-            type: 'text',
+            type: 'dynamic',
             name: 'output_path',
-            multiple: true,
         },
         {
             label: 'Output Filename',
             description: 'Output filename template. Format: [TYPE]:TEMPLATE.',
-            type: 'text',
+            type: 'dynamic',
             name: 'output_filename',
-            multiple: true,
         },
         {
             label: 'Output NA placeholder',
@@ -443,13 +449,14 @@ const outputOptions: FormInfoSet = {
         {
             label: 'Trim Filename',
             description: 'Trim the filename to this length.',
-            type: 'C-integer',
+            type: 'text',
+            validator: Validators.Integer,
             name: 'trim_filename',
         },
     ],
 };
 
-const filesystemOptions: FormInfoSet = {
+const filesystemOptions: FormItemSet = {
     name: 'Filesystem Option',
     items: [
         {
