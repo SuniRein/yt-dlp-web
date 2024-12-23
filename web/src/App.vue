@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, useTemplateRef } from 'vue';
 
+import HeaderArea from '@/components/HeaderArea.vue';
 import FormArea from '@/components/FormArea.vue';
 import LogArea from '@/components/LogArea.vue';
 import PreviewArea from '@/components/PreviewArea.vue';
@@ -76,6 +77,8 @@ onMounted(() => {
 </script>
 
 <template>
+    <HeaderArea />
+
     <FormArea :info="formItemInfo" ref="form" />
 
     <NButton @click.prevent="handleFormSubmit('download')">Download</NButton>
