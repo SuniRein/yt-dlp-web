@@ -1,561 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PreviewArea renders correctly 1`] = `
-"<div data-v-007c1805="" class="n-card n-card--bordered" style="--n-bezier: cubic-bezier(.4, 0, .2, 1); --n-border-radius: 3px; --n-color: #fff; --n-color-modal: #fff; --n-color-popover: #fff; --n-color-embedded: rgb(250, 250, 252); --n-color-embedded-modal: rgb(250, 250, 252); --n-color-embedded-popover: rgb(250, 250, 252); --n-color-target: #18a058; --n-text-color: rgb(51, 54, 57); --n-line-height: 1.6; --n-action-color: rgb(250, 250, 252); --n-title-text-color: rgb(31, 34, 37); --n-title-font-weight: 500; --n-close-icon-color: rgba(102, 102, 102, 1); --n-close-icon-color-hover: rgba(102, 102, 102, 1); --n-close-icon-color-pressed: rgba(102, 102, 102, 1); --n-close-color-hover: rgba(0, 0, 0, .09); --n-close-color-pressed: rgba(0, 0, 0, .13); --n-border-color: rgb(239, 239, 245); --n-box-shadow: 0 1px 2px -2px rgba(0, 0, 0, .08), 0 3px 6px 0 rgba(0, 0, 0, .06), 0 5px 12px 4px rgba(0, 0, 0, .04); --n-padding-top: 19px; --n-padding-bottom: 20px; --n-padding-left: 24px; --n-font-size: 14px; --n-title-font-size: 18px; --n-close-size: 22px; --n-close-icon-size: 18px; --n-close-border-radius: 3px;">
-  <!---->
-  <div class="n-card-header" role="heading">
-    <div class="n-card-header__main" role="heading">Preview</div>
-    <!---->
-    <!---->
-  </div>
-  <!---->
-  <!---->
-  <!---->
-</div>"
-`;
-
-exports[`PreviewArea renders correctly 2`] = `
-"<div data-v-007c1805="" class="n-card n-card--bordered" style="--n-bezier: cubic-bezier(.4, 0, .2, 1); --n-border-radius: 3px; --n-color: #fff; --n-color-modal: #fff; --n-color-popover: #fff; --n-color-embedded: rgb(250, 250, 252); --n-color-embedded-modal: rgb(250, 250, 252); --n-color-embedded-popover: rgb(250, 250, 252); --n-color-target: #18a058; --n-text-color: rgb(51, 54, 57); --n-line-height: 1.6; --n-action-color: rgb(250, 250, 252); --n-title-text-color: rgb(31, 34, 37); --n-title-font-weight: 500; --n-close-icon-color: rgba(102, 102, 102, 1); --n-close-icon-color-hover: rgba(102, 102, 102, 1); --n-close-icon-color-pressed: rgba(102, 102, 102, 1); --n-close-color-hover: rgba(0, 0, 0, .09); --n-close-color-pressed: rgba(0, 0, 0, .13); --n-border-color: rgb(239, 239, 245); --n-box-shadow: 0 1px 2px -2px rgba(0, 0, 0, .08), 0 3px 6px 0 rgba(0, 0, 0, .06), 0 5px 12px 4px rgba(0, 0, 0, .04); --n-padding-top: 19px; --n-padding-bottom: 20px; --n-padding-left: 24px; --n-font-size: 14px; --n-title-font-size: 18px; --n-close-size: 22px; --n-close-icon-size: 18px; --n-close-border-radius: 3px;">
-  <!---->
-  <div class="n-card-header" role="heading">
-    <div class="n-card-header__main" role="heading">Preview</div>
-    <!---->
-    <!---->
-  </div>
-  <div class="n-card__content" role="none">
-    <div data-v-007c1805="" class="n-card n-card--bordered" style="--n-bezier: cubic-bezier(.4, 0, .2, 1); --n-border-radius: 3px; --n-color: #fff; --n-color-modal: #fff; --n-color-popover: #fff; --n-color-embedded: rgb(250, 250, 252); --n-color-embedded-modal: rgb(250, 250, 252); --n-color-embedded-popover: rgb(250, 250, 252); --n-color-target: #18a058; --n-text-color: rgb(51, 54, 57); --n-line-height: 1.6; --n-action-color: rgb(250, 250, 252); --n-title-text-color: rgb(31, 34, 37); --n-title-font-weight: 500; --n-close-icon-color: rgba(102, 102, 102, 1); --n-close-icon-color-hover: rgba(102, 102, 102, 1); --n-close-icon-color-pressed: rgba(102, 102, 102, 1); --n-close-color-hover: rgba(0, 0, 0, .09); --n-close-color-pressed: rgba(0, 0, 0, .13); --n-border-color: rgb(239, 239, 245); --n-box-shadow: 0 1px 2px -2px rgba(0, 0, 0, .08), 0 3px 6px 0 rgba(0, 0, 0, .06), 0 5px 12px 4px rgba(0, 0, 0, .04); --n-padding-top: 19px; --n-padding-bottom: 20px; --n-padding-left: 24px; --n-font-size: 14px; --n-title-font-size: 18px; --n-close-size: 22px; --n-close-icon-size: 18px; --n-close-border-radius: 3px;">
-      <!---->
-      <div class="n-card-header" role="heading">
-        <div class="n-card-header__main" role="heading">RLCraft 最新Dregora版生存 EP5</div>
-        <!---->
-        <!---->
-      </div>
-      <div class="n-card__content" role="none">点赞过3万更新新的一集~
-
-        EP1：BV17kyaY6E46
-        EP2：BV1cvDAY5EKj
-        EP3：BV1SMSmY2Ew1
-        EP4：BV1TFDsYUE2M <div data-v-007c1805="" role="none" class="n-image"><img referrerpolicy="no-referrer" src="http://i1.hdslb.com/bfs/archive/c0ac572f42668c212cf9c6a34fbe4a19aa0397f4.jpg" loading="eager" style="object-fit: fill;" data-error="false" data-preview-src="http://i1.hdslb.com/bfs/archive/c0ac572f42668c212cf9c6a34fbe4a19aa0397f4.jpg" data-group-id="">
-          <!---->
-          <!---->
-        </div>
-        <p data-v-007c1805=""><b data-v-007c1805="">Destination:</b> RLCraft 最新Dregora版生存 EP5 [BV122UxY7Ev4].mp4</p>
-      </div>
-      <!---->
-      <!---->
-    </div>
-    <div data-v-007c1805="" class="n-config-provider">
-      <div data-v-007c1805="" class="n-data-table n-data-table--bordered n-data-table--single-line" style="--n-font-size: 14px; --n-th-padding: 12px; --n-td-padding: 12px; --n-bezier: cubic-bezier(.4, 0, .2, 1); --n-border-radius: 3px; --n-line-height: 1.6; --n-border-color: rgba(239, 239, 245, 1); --n-border-color-modal: rgba(239, 239, 245, 1); --n-border-color-popover: rgba(239, 239, 245, 1); --n-th-color: rgba(250, 250, 252, 1); --n-th-color-hover: rgba(243, 243, 247, 1); --n-th-color-modal: rgba(250, 250, 252, 1); --n-th-color-hover-modal: rgba(243, 243, 247, 1); --n-th-color-popover: rgba(250, 250, 252, 1); --n-th-color-hover-popover: rgba(243, 243, 247, 1); --n-td-color: #fff; --n-td-color-hover: rgba(247, 247, 250, 1); --n-td-color-modal: #fff; --n-td-color-hover-modal: rgba(247, 247, 250, 1); --n-td-color-popover: #fff; --n-td-color-hover-popover: rgba(247, 247, 250, 1); --n-th-text-color: rgb(31, 34, 37); --n-td-text-color: rgb(51, 54, 57); --n-th-font-weight: 500; --n-th-button-color-hover: rgba(0, 0, 100, 0.03); --n-th-icon-color: rgba(194, 194, 194, 1); --n-th-icon-color-active: #18a058; --n-filter-size: 15px; --n-pagination-margin: 12px 0 0 0; --n-empty-padding: 48px 0; --n-box-shadow-before: inset -12px 0 8px -12px rgba(0, 0, 0, .18); --n-box-shadow-after: inset 12px 0 8px -12px rgba(0, 0, 0, .18); --n-sorter-size: 15px; --n-resizable-container-size: 8px; --n-resizable-size: 2px; --n-loading-size: 28px; --n-loading-color: #18a058; --n-opacity-loading: 0.5; --n-td-color-striped: rgba(250, 250, 252, 1); --n-td-color-striped-modal: rgba(250, 250, 252, 1); --n-td-color-striped-popover: rgba(250, 250, 252, 1);">
-        <div class="n-data-table-wrapper">
-          <div class="n-data-table-base-table">
-            <!---->
-            <div class="n-data-table-base-table-body n-scrollbar" style="--n-scrollbar-bezier: cubic-bezier(.4, 0, .2, 1); --n-scrollbar-color: rgba(0, 0, 0, 0.25); --n-scrollbar-color-hover: rgba(0, 0, 0, 0.4); --n-scrollbar-border-radius: 5px; --n-scrollbar-width: 5px; --n-scrollbar-height: 5px; --n-scrollbar-rail-inset-horizontal-top: 4px 2px auto 2px; --n-scrollbar-rail-inset-horizontal-bottom: auto 2px 4px 2px; --n-scrollbar-rail-inset-vertical-right: 2px 4px 2px auto; --n-scrollbar-rail-inset-vertical-left: 2px auto 2px 4px; --n-scrollbar-rail-color: transparent;" role="none">
-              <div role="none" class="n-scrollbar-container">
-                <div role="none" style="min-width: 100%;" class="n-scrollbar-content">
-                  <table class="n-data-table-table" style="table-layout: auto;">
-                    <colgroup>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                    </colgroup>
-                    <thead class="n-data-table-thead" >
-                      <tr class="n-data-table-tr">
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">ID</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">Extension</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">Resolution</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">FPS</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">Size</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">TBR</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">Protocol</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">VCodec</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">VBR</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">ACodec</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-th">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">ABR</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                        <th style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-th n-data-table-th--last">
-                          <div class="n-data-table-th__title-wrapper">
-                            <div class="n-data-table-th__title">Chosen</div>
-                            <!---->
-                          </div>
-                          <!---->
-                          <!---->
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody  class="n-data-table-tbody">
-                      <tr class="n-data-table-tr">
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->30216
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->m4a
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->audio only
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->8.63 MB
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->49.111
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->https
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->mp4a.40.5
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->49.111
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-col">
-                          <!---->
-                        </td>
-                      </tr>
-                      <tr class="n-data-table-tr">
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->30232
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->m4a
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->audio only
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->18.35 MB
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->104.386
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->https
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->mp4a.40.2
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->104.386
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-col">
-                          <!---->
-                        </td>
-                      </tr>
-                      <tr class="n-data-table-tr">
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->30280
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->m4a
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->audio only
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->34.80 MB
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->198.012
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->https
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->mp4a.40.2
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->198.012
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-col">
-                          <!---->Yes
-                        </td>
-                      </tr>
-                      <tr class="n-data-table-tr">
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->100046
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->mp4
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->640x360
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->30
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->26.17 MB
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->148.881
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->https
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->avc1.64001E
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->148.881
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-col">
-                          <!---->
-                        </td>
-                      </tr>
-                      <tr class="n-data-table-tr">
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->100109
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->mp4
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->640x360
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->30
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->28.73 MB
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->163.436
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->https
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->hev1.1.6.L120.90
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->163.436
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-col">
-                          <!---->
-                        </td>
-                      </tr>
-                      <tr class="n-data-table-tr">
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->100022
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->mp4
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->640x360
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->30
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->25.19 MB
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->143.347
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->https
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->av01.0.00M.10.0.110.01.01.01.0
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->143.347
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-col">
-                          <!---->
-                        </td>
-                      </tr>
-                      <tr class="n-data-table-tr">
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->100047
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->mp4
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->852x480
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->30
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->48.32 MB
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->274.904
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->https
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->avc1.64001F
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->274.904
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-col">
-                          <!---->
-                        </td>
-                      </tr>
-                      <tr class="n-data-table-tr">
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->100110
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->mp4
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->852x480
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->30
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->42.48 MB
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->241.675
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->https
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->hev1.1.6.L120.90
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->241.675
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-td n-data-table-td--center-align">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-col">
-                          <!---->
-                        </td>
-                      </tr>
-                      <tr class="n-data-table-tr">
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ID" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->100023
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Extension" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->mp4
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Resolution" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->852x480
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="FPS" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->30
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Size" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->37.57 MB
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="TBR" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->213.744
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Protocol" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->https
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VCodec" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->av01.0.00M.10.0.110.01.01.01.0
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="VBR" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->213.744
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ACodec" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="ABR" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-row">
-                          <!---->
-                        </td>
-                        <td style="text-align: center;" colspan="1" rowspan="1" data-col-key="Chosen" class="n-data-table-td n-data-table-td--center-align n-data-table-td--last-col n-data-table-td--last-row">
-                          <!---->Yes
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="n-scrollbar-rail n-scrollbar-rail--vertical n-scrollbar-rail--vertical--right n-scrollbar-rail--disabled" data-scrollbar-rail="true" style="z-index: 3;" aria-hidden="true">
-                <transition-stub name="fade-in-transition" appear="false" persisted="false" css="true">
-                  <!---->
-                </transition-stub>
-              </div>
-              <div class="n-scrollbar-rail n-scrollbar-rail--horizontal n-scrollbar-rail--horizontal--bottom n-scrollbar-rail--disabled" style="z-index: 3;" data-scrollbar-rail="true" aria-hidden="true">
-                <transition-stub name="fade-in-transition" appear="false" persisted="false" css="true">
-                  <!---->
-                </transition-stub>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!---->
-        <transition-stub name="fade-in-scale-up-transition" appear="false" persisted="false" css="true">
-          <!---->
-        </transition-stub>
-      </div>
-    </div>
-  </div>
-  <!---->
-  <!---->
-</div>"
-`;
-
-exports[`PreviewArea renders correctly 3`] = `
-"<div data-v-007c1805="" class="n-card n-card--bordered" style="--n-bezier: cubic-bezier(.4, 0, .2, 1); --n-border-radius: 3px; --n-color: #fff; --n-color-modal: #fff; --n-color-popover: #fff; --n-color-embedded: rgb(250, 250, 252); --n-color-embedded-modal: rgb(250, 250, 252); --n-color-embedded-popover: rgb(250, 250, 252); --n-color-target: #18a058; --n-text-color: rgb(51, 54, 57); --n-line-height: 1.6; --n-action-color: rgb(250, 250, 252); --n-title-text-color: rgb(31, 34, 37); --n-title-font-weight: 500; --n-close-icon-color: rgba(102, 102, 102, 1); --n-close-icon-color-hover: rgba(102, 102, 102, 1); --n-close-icon-color-pressed: rgba(102, 102, 102, 1); --n-close-color-hover: rgba(0, 0, 0, .09); --n-close-color-pressed: rgba(0, 0, 0, .13); --n-border-color: rgb(239, 239, 245); --n-box-shadow: 0 1px 2px -2px rgba(0, 0, 0, .08), 0 3px 6px 0 rgba(0, 0, 0, .06), 0 5px 12px 4px rgba(0, 0, 0, .04); --n-padding-top: 19px; --n-padding-bottom: 20px; --n-padding-left: 24px; --n-font-size: 14px; --n-title-font-size: 18px; --n-close-size: 22px; --n-close-icon-size: 18px; --n-close-border-radius: 3px;">
-  <!---->
-  <div class="n-card-header" role="heading">
-    <div class="n-card-header__main" role="heading">Preview</div>
-    <!---->
-    <!---->
-  </div>
-  <!---->
-  <!---->
-  <!---->
-</div>"
-`;
-
 exports[`clear preview 1`] = `
 "<div data-v-007c1805="" class="n-card n-card--bordered" style="--n-bezier: cubic-bezier(.4, 0, .2, 1); --n-border-radius: 3px; --n-color: #fff; --n-color-modal: #fff; --n-color-popover: #fff; --n-color-embedded: rgb(250, 250, 252); --n-color-embedded-modal: rgb(250, 250, 252); --n-color-embedded-popover: rgb(250, 250, 252); --n-color-target: #18a058; --n-text-color: rgb(51, 54, 57); --n-line-height: 1.6; --n-action-color: rgb(250, 250, 252); --n-title-text-color: rgb(31, 34, 37); --n-title-font-weight: 500; --n-close-icon-color: rgba(102, 102, 102, 1); --n-close-icon-color-hover: rgba(102, 102, 102, 1); --n-close-icon-color-pressed: rgba(102, 102, 102, 1); --n-close-color-hover: rgba(0, 0, 0, .09); --n-close-color-pressed: rgba(0, 0, 0, .13); --n-border-color: rgb(239, 239, 245); --n-box-shadow: 0 1px 2px -2px rgba(0, 0, 0, .08), 0 3px 6px 0 rgba(0, 0, 0, .06), 0 5px 12px 4px rgba(0, 0, 0, .04); --n-padding-top: 19px; --n-padding-bottom: 20px; --n-padding-left: 24px; --n-font-size: 14px; --n-title-font-size: 18px; --n-close-size: 22px; --n-close-icon-size: 18px; --n-close-border-radius: 3px;">
   <!---->
@@ -564,7 +8,21 @@ exports[`clear preview 1`] = `
     <!---->
     <!---->
   </div>
-  <!---->
+  <div class="n-card__content" role="none">
+    <div data-v-007c1805="" class="n-float-button n-float-button--circle-shape n-float-button--default-type" style="--n-bezier: cubic-bezier(.4, 0, .2, 1); --n-box-shadow: 0 2px 8px 0px rgba(0, 0, 0, .16); --n-box-shadow-hover: 0 2px 12px 0px rgba(0, 0, 0, .24); --n-box-shadow-pressed: 0 2px 12px 0px rgba(0, 0, 0, .24); --n-color: #fff; --n-text-color: rgb(51, 54, 57); --n-color-hover: rgba(46, 51, 56, .09); --n-color-pressed: rgba(46, 51, 56, .13); --n-border-radius-square: 3px; position: absolute; width: 32px; min-height: 32px; right: 16px; top: 16px;" role="button">
+      <div class="n-float-button__fill" aria-hidden="true"></div>
+      <div class="n-float-button__body"><i data-v-007c1805="" role="img" class="n-icon" style="--n-bezier: cubic-bezier(.4, 0, .2, 1);"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16">
+            <g fill="none">
+              <path d="M14.854 1.146a.5.5 0 0 0-.707 0L9.476 5.817c-1.452-1.103-3.507-.937-4.823.373l-.684.639l-2.676 1.216a.5.5 0 0 0-.147.809l6 6a.5.5 0 0 0 .81-.147l1.212-2.667l.685-.686a3.668 3.668 0 0 0 .33-4.83l4.67-4.67a.5.5 0 0 0 0-.708zM4.14 7.85l4.01 4.01l-.808 1.777l-4.98-4.98l1.778-.807zm4.609 3.194l-3.78-3.78l.371-.347l.012-.012c1.065-1.065 2.75-1.095 3.793-.05a2.67 2.67 0 0 1 0 3.793l-.396.396z" fill="currentColor"></path>
+            </g>
+          </svg></i>
+        <!---->
+      </div>
+      <!---->
+      <!---->
+    </div>
+    <!--v-if-->
+  </div>
   <!---->
   <!---->
 </div>"
@@ -578,7 +36,21 @@ exports[`create element 1`] = `
     <!---->
     <!---->
   </div>
-  <!---->
+  <div class="n-card__content" role="none">
+    <div data-v-007c1805="" class="n-float-button n-float-button--circle-shape n-float-button--default-type" style="--n-bezier: cubic-bezier(.4, 0, .2, 1); --n-box-shadow: 0 2px 8px 0px rgba(0, 0, 0, .16); --n-box-shadow-hover: 0 2px 12px 0px rgba(0, 0, 0, .24); --n-box-shadow-pressed: 0 2px 12px 0px rgba(0, 0, 0, .24); --n-color: #fff; --n-text-color: rgb(51, 54, 57); --n-color-hover: rgba(46, 51, 56, .09); --n-color-pressed: rgba(46, 51, 56, .13); --n-border-radius-square: 3px; position: absolute; width: 32px; min-height: 32px; right: 16px; top: 16px;" role="button">
+      <div class="n-float-button__fill" aria-hidden="true"></div>
+      <div class="n-float-button__body"><i data-v-007c1805="" role="img" class="n-icon" style="--n-bezier: cubic-bezier(.4, 0, .2, 1);"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16">
+            <g fill="none">
+              <path d="M14.854 1.146a.5.5 0 0 0-.707 0L9.476 5.817c-1.452-1.103-3.507-.937-4.823.373l-.684.639l-2.676 1.216a.5.5 0 0 0-.147.809l6 6a.5.5 0 0 0 .81-.147l1.212-2.667l.685-.686a3.668 3.668 0 0 0 .33-4.83l4.67-4.67a.5.5 0 0 0 0-.708zM4.14 7.85l4.01 4.01l-.808 1.777l-4.98-4.98l1.778-.807zm4.609 3.194l-3.78-3.78l.371-.347l.012-.012c1.065-1.065 2.75-1.095 3.793-.05a2.67 2.67 0 0 1 0 3.793l-.396.396z" fill="currentColor"></path>
+            </g>
+          </svg></i>
+        <!---->
+      </div>
+      <!---->
+      <!---->
+    </div>
+    <!--v-if-->
+  </div>
   <!---->
   <!---->
 </div>"
@@ -593,6 +65,18 @@ exports[`show preview 1`] = `
     <!---->
   </div>
   <div class="n-card__content" role="none">
+    <div data-v-007c1805="" class="n-float-button n-float-button--circle-shape n-float-button--default-type" style="--n-bezier: cubic-bezier(.4, 0, .2, 1); --n-box-shadow: 0 2px 8px 0px rgba(0, 0, 0, .16); --n-box-shadow-hover: 0 2px 12px 0px rgba(0, 0, 0, .24); --n-box-shadow-pressed: 0 2px 12px 0px rgba(0, 0, 0, .24); --n-color: #fff; --n-text-color: rgb(51, 54, 57); --n-color-hover: rgba(46, 51, 56, .09); --n-color-pressed: rgba(46, 51, 56, .13); --n-border-radius-square: 3px; position: absolute; width: 32px; min-height: 32px; right: 16px; top: 16px;" role="button">
+      <div class="n-float-button__fill" aria-hidden="true"></div>
+      <div class="n-float-button__body"><i data-v-007c1805="" role="img" class="n-icon" style="--n-bezier: cubic-bezier(.4, 0, .2, 1);"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16">
+            <g fill="none">
+              <path d="M14.854 1.146a.5.5 0 0 0-.707 0L9.476 5.817c-1.452-1.103-3.507-.937-4.823.373l-.684.639l-2.676 1.216a.5.5 0 0 0-.147.809l6 6a.5.5 0 0 0 .81-.147l1.212-2.667l.685-.686a3.668 3.668 0 0 0 .33-4.83l4.67-4.67a.5.5 0 0 0 0-.708zM4.14 7.85l4.01 4.01l-.808 1.777l-4.98-4.98l1.778-.807zm4.609 3.194l-3.78-3.78l.371-.347l.012-.012c1.065-1.065 2.75-1.095 3.793-.05a2.67 2.67 0 0 1 0 3.793l-.396.396z" fill="currentColor"></path>
+            </g>
+          </svg></i>
+        <!---->
+      </div>
+      <!---->
+      <!---->
+    </div>
     <div data-v-007c1805="" class="n-card n-card--bordered" style="--n-bezier: cubic-bezier(.4, 0, .2, 1); --n-border-radius: 3px; --n-color: #fff; --n-color-modal: #fff; --n-color-popover: #fff; --n-color-embedded: rgb(250, 250, 252); --n-color-embedded-modal: rgb(250, 250, 252); --n-color-embedded-popover: rgb(250, 250, 252); --n-color-target: #18a058; --n-text-color: rgb(51, 54, 57); --n-line-height: 1.6; --n-action-color: rgb(250, 250, 252); --n-title-text-color: rgb(31, 34, 37); --n-title-font-weight: 500; --n-close-icon-color: rgba(102, 102, 102, 1); --n-close-icon-color-hover: rgba(102, 102, 102, 1); --n-close-icon-color-pressed: rgba(102, 102, 102, 1); --n-close-color-hover: rgba(0, 0, 0, .09); --n-close-color-pressed: rgba(0, 0, 0, .13); --n-border-color: rgb(239, 239, 245); --n-box-shadow: 0 1px 2px -2px rgba(0, 0, 0, .08), 0 3px 6px 0 rgba(0, 0, 0, .06), 0 5px 12px 4px rgba(0, 0, 0, .04); --n-padding-top: 19px; --n-padding-bottom: 20px; --n-padding-left: 24px; --n-font-size: 14px; --n-title-font-size: 18px; --n-close-size: 22px; --n-close-icon-size: 18px; --n-close-border-radius: 3px;">
       <!---->
       <div class="n-card-header" role="heading">
