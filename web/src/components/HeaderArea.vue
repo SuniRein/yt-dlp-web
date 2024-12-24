@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, h } from 'vue';
+import { RouterLink, useRoute } from 'vue-router';
+
 import { NLayoutHeader, NButton, NFlex, NMenu, NSwitch } from 'naive-ui';
-import { useDisplayModeStore } from '@/stores/display-mode';
+import type { MenuOption } from 'naive-ui';
 
 import LightIcon from '@vicons/fluent/WeatherSunny16Regular';
 import DarkIcon from '@vicons/fluent/WeatherMoon16Filled';
+
+import { useDisplayModeStore } from '@/stores/display-mode';
 
 // TODO: Implement language toggling
 function toggleLanguage() {
     console.log('Toggle language');
 }
 
-const menuValue = computed(() => 'home');
+const route = useRoute();
+
+const menuValue = computed(() => route.name as string);
 
 const menuOptions = [
     {
@@ -36,6 +42,10 @@ const menuOptions = [
     },
 ];
 
+function renderMenuLabel(option: MenuOption) {
+    return h(RouterLink, { to: { name: option.key as string } }, () => option.label);
+}
+
 const displayMode = useDisplayModeStore();
 </script>
 
@@ -47,7 +57,13 @@ const displayMode = useDisplayModeStore();
             </div>
 
             <div class="nav-menu">
-                <NMenu responsive mode="horizontal" :value="menuValue" :options="menuOptions" />
+                <NMenu
+                    responsive
+                    mode="horizontal"
+                    :value="menuValue"
+                    :options="menuOptions"
+                    :render-label="renderMenuLabel"
+                />
             </div>
 
             <div class="nav-end">
