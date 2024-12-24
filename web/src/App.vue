@@ -17,6 +17,10 @@ const theme = computed(() => (displayMode.state === 'light' ? lightTheme : darkT
 
         <HeaderArea />
 
-        <RouterView />
+        <RouterView v-slot="{ Component }">
+            <KeepAlive>
+                <component :is="Component" />
+            </KeepAlive>
+        </RouterView>
     </NConfigProvider>
 </template>
