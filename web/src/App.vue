@@ -5,7 +5,8 @@ import HeaderArea from '@/components/HeaderArea.vue';
 import FormArea from '@/components/FormArea.vue';
 import LogArea from '@/components/LogArea.vue';
 import PreviewArea from '@/components/PreviewArea.vue';
-import { NButton, NConfigProvider, NGlobalStyle, lightTheme, darkTheme } from 'naive-ui';
+import OperationArea from '@/components/OperationArea.vue';
+import { NConfigProvider, NGlobalStyle, lightTheme, darkTheme } from 'naive-ui';
 import { useDisplayModeStore } from '@/stores/display-mode';
 
 import { formItemInfo } from '@/utils/form-item-info';
@@ -88,16 +89,15 @@ onMounted(() => {
 
         <FormArea :info="formItemInfo" ref="form" />
 
-        <NButton @click.prevent="handleFormSubmit('download')">Download</NButton>
-        <NButton @click.prevent="handleFormSubmit('preview')">Preview</NButton>
-        <NButton @click.prevent="handleFormSubmit('interrupt')">Interrupt</NButton>
-
-        <NButton @click.prevent="logArea?.clear()">Clear Log</NButton>
-        <NButton @click.prevent="previewArea?.clear()">Clear Preview</NButton>
-
         <PreviewArea ref="previewArea" />
 
         <LogArea ref="logArea" />
+
+        <OperationArea
+            :download="() => handleFormSubmit('download')"
+            :preview="() => handleFormSubmit('preview')"
+            :interrupt="() => handleFormSubmit('interrupt')"
+        />
     </NConfigProvider>
 </template>
 
