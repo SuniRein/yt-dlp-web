@@ -8,7 +8,7 @@ import type { MenuOption } from 'naive-ui';
 import LightIcon from '@vicons/fluent/WeatherSunny16Regular';
 import DarkIcon from '@vicons/fluent/WeatherMoon16Filled';
 
-import { useDisplayModeStore } from '@/stores/display-mode';
+import { useDisplayModeStore } from '@/store/display-mode';
 
 // TODO: Implement language toggling
 function toggleLanguage() {

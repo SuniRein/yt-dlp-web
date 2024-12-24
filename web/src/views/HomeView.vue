@@ -2,16 +2,18 @@
 import { onMounted, useTemplateRef } from 'vue';
 
 import FormArea from '@/components/FormArea.vue';
-import LogArea from '@/components/LogArea.vue';
 import PreviewArea from '@/components/PreviewArea.vue';
 import OperationArea from '@/components/OperationArea.vue';
+
+import { useLogStore } from '@/store/log';
 
 import { formItemInfo } from '@/utils/form-item-info';
 import { bytesToSize } from '@/utils/show';
 
 const form = useTemplateRef('form');
-const logArea = useTemplateRef('logArea');
 const previewArea = useTemplateRef('previewArea');
+
+const log = useLogStore();
 
 function handleFormSubmit(action: string) {
     if (!form.value) {
@@ -38,7 +40,7 @@ function handleFormSubmit(action: string) {
 }
 
 function logMessage(message: string) {
-    logArea.value?.log(message);
+    log.log(message);
 }
 
 function showDownloadProgress(rawData: Uint8Array) {
@@ -79,8 +81,6 @@ onMounted(() => {
     <FormArea :info="formItemInfo" ref="form" />
 
     <PreviewArea ref="previewArea" />
-
-    <LogArea ref="logArea" />
 
     <OperationArea
         :download="() => handleFormSubmit('download')"

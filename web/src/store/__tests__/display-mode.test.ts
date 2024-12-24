@@ -1,4 +1,4 @@
-import { useDisplayModeStore } from '@/stores/display-mode';
+import { useDisplayModeStore } from '@/store/display-mode';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 

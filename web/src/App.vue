@@ -5,7 +5,7 @@ import { NConfigProvider, NGlobalStyle, lightTheme, darkTheme } from 'naive-ui';
 
 import HeaderArea from '@/components/HeaderArea.vue';
 
-import { useDisplayModeStore } from '@/stores/display-mode';
+import { useDisplayModeStore } from '@/store/display-mode';
 
 const displayMode = useDisplayModeStore();
 const theme = computed(() => (displayMode.state === 'light' ? lightTheme : darkTheme));
