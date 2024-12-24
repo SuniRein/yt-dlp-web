@@ -6,7 +6,7 @@ import FormArea from '@/components/FormArea.vue';
 import LogArea from '@/components/LogArea.vue';
 import PreviewArea from '@/components/PreviewArea.vue';
 import OperationArea from '@/components/OperationArea.vue';
-import { NButton, NConfigProvider, NGlobalStyle, lightTheme, darkTheme } from 'naive-ui';
+import { NConfigProvider, NGlobalStyle, lightTheme, darkTheme } from 'naive-ui';
 import { useDisplayModeStore } from '@/stores/display-mode';
 
 import { formItemInfo } from '@/utils/form-item-info';
@@ -88,9 +88,6 @@ onMounted(() => {
         <HeaderArea />
 
         <FormArea :info="formItemInfo" ref="form" />
-
-        <NButton @click.prevent="logArea?.clear()">Clear Log</NButton>
-        <NButton @click.prevent="previewArea?.clear()">Clear Preview</NButton>
 
         <PreviewArea ref="previewArea" />
 

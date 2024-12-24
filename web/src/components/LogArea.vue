@@ -1,23 +1,32 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue';
-import { NCard, NLog } from 'naive-ui';
+import { NCard, NLog, NFloatButton, NIcon } from 'naive-ui';
+import ClearIcon from '@vicons/fluent/Broom16Regular';
 
-const log = ref('');
+const logContent = ref('');
+
+async function clear() {
+    logContent.value = '';
+    await nextTick();
+}
+
+async function log(message: string) {
+    logContent.value += message + '\n';
+    await nextTick();
+}
 
 defineExpose({
-    clear: async () => {
-        log.value = '';
-        await nextTick();
-    },
-    log: async (message: string) => {
-        log.value += message + '\n';
-        await nextTick();
-    },
+    clear,
+    log,
 });
 </script>
 
 <template>
     <NCard title="Log">
-        <NLog :log="log" />
+        <NFloatButton position="absolute" right="16" top="16" height="32" width="32" @click.prevent="clear">
+            <NIcon :component="ClearIcon" />
+        </NFloatButton>
+
+        <NLog :log="logContent" />
     </NCard>
 </template>

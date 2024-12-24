@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from 'vue';
 import { bytesToSize } from '@/utils/show';
-import { NCard, NDataTable, NImage, NConfigProvider } from 'naive-ui';
+import { NCard, NDataTable, NImage, NConfigProvider, NFloatButton, NIcon } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
+import ClearIcon from '@vicons/fluent/Broom16Regular';
 
 export interface UrlFormatInfo {
     format_id: string;
@@ -71,20 +72,28 @@ const tableColumns: DataTableColumns = [
     return { ...column, align: 'center' };
 });
 
+async function preview(previewData: UrlDataInfo) {
+    data.value = previewData;
+    await nextTick();
+}
+
+async function clear() {
+    data.value = null;
+    await nextTick();
+}
+
 defineExpose({
-    preview: async (previewData: UrlDataInfo) => {
-        data.value = previewData;
-        await nextTick();
-    },
-    clear: async () => {
-        data.value = null;
-        await nextTick();
-    },
+    preview,
+    clear,
 });
 </script>
 
 <template>
     <NCard title="Preview">
+        <NFloatButton position="absolute" right="16" top="16" height="32" width="32" @click.prevent="clear">
+            <NIcon :component="ClearIcon" />
+        </NFloatButton>
+
         <template v-if="data !== null">
             <NCard :title="data.title">
                 {{ data.description }}
