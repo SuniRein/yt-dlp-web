@@ -2,18 +2,18 @@
 import { onMounted, useTemplateRef } from 'vue';
 
 import FormArea from '@/components/FormArea.vue';
-import PreviewArea from '@/components/PreviewArea.vue';
 import OperationArea from '@/components/OperationArea.vue';
 
 import { useLogStore } from '@/store/log';
+import { useMediaDataStore } from '@/store/media-data';
 
 import { formItemInfo } from '@/utils/form-item-info';
 import { bytesToSize } from '@/utils/show';
 
 const form = useTemplateRef('form');
-const previewArea = useTemplateRef('previewArea');
 
 const log = useLogStore();
+const mediaData = useMediaDataStore();
 
 function handleFormSubmit(action: string) {
     if (!form.value) {
@@ -34,7 +34,7 @@ function handleFormSubmit(action: string) {
     // Backend call
     webui.submitUrl(JSON.stringify(data)).then((response) => {
         if (action === 'preview' && response) {
-            previewArea.value?.preview(JSON.parse(response));
+            mediaData.value = JSON.parse(response);
         }
     });
 }
@@ -79,8 +79,6 @@ onMounted(() => {
 
 <template>
     <FormArea :info="formItemInfo" ref="form" />
-
-    <PreviewArea ref="previewArea" />
 
     <OperationArea
         :download="() => handleFormSubmit('download')"
