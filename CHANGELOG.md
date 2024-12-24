@@ -11,11 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added extensive options provided by `yt-dlp`.
 - Implemented frontend input validation for certain input options.
-- UI imporvements for better user experience.
+- UI improvements for better user experience.
     - Header navigation bar.
+    - Automatic dark mode and a display mode switch.
     - A '*' symbol will be displayed when an input is required.
     - Real-time validation for user input.
-    - Auto focus on the first invalid input field when summited.
+    - Auto focus on the first invalid input field when submitted.
     - Hover-to-show description text.
 
 ### Internal
@@ -24,7 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Introduced `vue-ts` to refactor the frontend.
 - Introduced `ESLint` and `Prettier` to enforce code style.
 - Introduced `Vitest` for testing the frontend components.
-- Introduced `NaiveUI` as the UI library for the frontend.
+- Introduced `Pinia` for state management in the frontend.
+- Introduced `NaiveUI` and `XIcons` as the UI library for the frontend.
 - Adjusted the JavaScript API provided by `WebUI` backend and added TypeScript type definition files.
 
 ## [0.1.0] - 2024-11-24
