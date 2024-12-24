@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { NLayoutHeader, NButton, NFlex, NMenu } from 'naive-ui';
+import { NLayoutHeader, NButton, NFlex, NMenu, NSwitch } from 'naive-ui';
+import { useDisplayModeStore } from '@/stores/display-mode';
 
-// TODO: Implement display mode toggling
-function toggleDisplayMode() {
-    console.log('Toggle display mode');
-}
+import LightIcon from '@vicons/fluent/WeatherSunny16Regular';
+import DarkIcon from '@vicons/fluent/WeatherMoon16Filled';
 
 // TODO: Implement language toggling
 function toggleLanguage() {
@@ -36,6 +35,8 @@ const menuOptions = [
         label: 'Settings',
     },
 ];
+
+const displayMode = useDisplayModeStore();
 </script>
 
 <template>
@@ -52,7 +53,10 @@ const menuOptions = [
             <div class="nav-end">
                 <NButton size="small" quaternary @click="toggleLanguage">Toggle Language</NButton>
 
-                <NButton size="small" quaternary @click="toggleDisplayMode">Toggle Theme</NButton>
+                <NSwitch @update:value="displayMode.toggle" :default-value="displayMode.state === 'dark'">
+                    <template #checked-icon><DarkIcon /></template>
+                    <template #unchecked-icon><LightIcon /></template>
+                </NSwitch>
 
                 <NButton size="small" quaternary tag="a" href="https://github.com/SuniRein/yt-dlp-web" target="_blank">
                     Github

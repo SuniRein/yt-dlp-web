@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue';
+import { computed, onMounted, useTemplateRef } from 'vue';
 
 import HeaderArea from '@/components/HeaderArea.vue';
 import FormArea from '@/components/FormArea.vue';
 import LogArea from '@/components/LogArea.vue';
 import PreviewArea from '@/components/PreviewArea.vue';
-import { NButton } from 'naive-ui';
+import { NButton, NConfigProvider, NGlobalStyle, lightTheme, darkTheme } from 'naive-ui';
+import { useDisplayModeStore } from '@/stores/display-mode';
 
 import { formItemInfo } from '@/utils/form-item-info';
 import { bytesToSize } from '@/utils/show';
@@ -61,6 +62,9 @@ function showDownloadInfo(rawData: Uint8Array) {
     logMessage(data);
 }
 
+const displayMode = useDisplayModeStore();
+const theme = computed(() => (displayMode.state === 'light' ? lightTheme : darkTheme));
+
 declare global {
     interface Window {
         logMessage: (message: string) => void;
@@ -77,20 +81,24 @@ onMounted(() => {
 </script>
 
 <template>
-    <HeaderArea />
+    <NConfigProvider :theme>
+        <NGlobalStyle />
 
-    <FormArea :info="formItemInfo" ref="form" />
+        <HeaderArea />
 
-    <NButton @click.prevent="handleFormSubmit('download')">Download</NButton>
-    <NButton @click.prevent="handleFormSubmit('preview')">Preview</NButton>
-    <NButton @click.prevent="handleFormSubmit('interrupt')">Interrupt</NButton>
+        <FormArea :info="formItemInfo" ref="form" />
 
-    <NButton @click.prevent="logArea?.clear()">Clear Log</NButton>
-    <NButton @click.prevent="previewArea?.clear()">Clear Preview</NButton>
+        <NButton @click.prevent="handleFormSubmit('download')">Download</NButton>
+        <NButton @click.prevent="handleFormSubmit('preview')">Preview</NButton>
+        <NButton @click.prevent="handleFormSubmit('interrupt')">Interrupt</NButton>
 
-    <PreviewArea ref="previewArea" />
+        <NButton @click.prevent="logArea?.clear()">Clear Log</NButton>
+        <NButton @click.prevent="previewArea?.clear()">Clear Preview</NButton>
 
-    <LogArea ref="logArea" />
+        <PreviewArea ref="previewArea" />
+
+        <LogArea ref="logArea" />
+    </NConfigProvider>
 </template>
 
 <style>
