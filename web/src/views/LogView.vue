@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NCard, NLog, NFloatButton, NIcon } from 'naive-ui';
+import { NFloatButton, NIcon } from 'naive-ui';
 import { useLogStore } from '@/store/log';
 import ClearIcon from '@vicons/fluent/Broom16Regular';
 
@@ -7,7 +7,7 @@ const log = useLogStore();
 </script>
 
 <template>
-    <NCard>
+    <div style="position: relative">
         <NFloatButton
             position="absolute"
             right="16"
@@ -15,11 +15,14 @@ const log = useLogStore();
             height="32"
             width="32"
             @click.prevent="log.clear"
+            style="z-index: 100"
             data-test="log-clear-button"
         >
             <NIcon :component="ClearIcon" />
         </NFloatButton>
 
-        <NLog :log="log.value" data-test="log-content" />
-    </NCard>
+        <div style="margin: auto 16px" data-test="log-content">
+            <pre>{{ log.value }}</pre>
+        </div>
+    </div>
 </template>
