@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Hover-to-show description text.
 - Using floating buttons to interactive.
 
+### Changed
+
+- Remove `data-test` attribute in production environment.
+
 ### Internal
 
 - Used `pnpm` as the package manager for the frontend part.

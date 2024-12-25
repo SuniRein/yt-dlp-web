@@ -69,6 +69,9 @@ importers:
       prettier:
         specifier: ^3.3.3
         version: 3.4.2
+      remove-attr:
+        specifier: ^0.0.15
+        version: 0.0.15
       typescript:
         specifier: ~5.6.3
         version: 5.6.3
@@ -1840,6 +1843,9 @@ packages:
   read-package-json-fast@4.0.0:
     resolution: {integrity: sha512-qpt8EwugBWDw2cgE2W+/3oxC+KTez2uSVR8JU9Q36TXPAGCaozfQUs59v4j4GFpWTaw0i6hAZSvOmu1J0uOEUg==}
     engines: {node: ^18.17.0 || >=20.5.0}
+
+  remove-attr@0.0.15:
+    resolution: {integrity: sha512-pEdSmtZKvNY0htA5oXyX1kIXSAvMpLniSnFwnbsFGUhAf3vAYSSRWJGar2NWenmRVZviawOqpwN1K/jg/Ot6ww==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -4043,6 +4049,8 @@ snapshots:
     dependencies:
       json-parse-even-better-errors: 4.0.0
       npm-normalize-package-bin: 4.0.0
+
+  remove-attr@0.0.15: {}
 
   resolve-from@4.0.0: {}
 
