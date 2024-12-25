@@ -7,7 +7,7 @@ const log = useLogStore();
 </script>
 
 <template>
-    <div style="position: relative">
+    <div style="position: relative; overflow: hidden; min-height: 64px">
         <NFloatButton
             position="absolute"
             right="16"
