@@ -1,34 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, nextTick } from 'vue';
-import { bytesToSize } from '@/utils/show';
+import { computed } from 'vue';
+
 import { NCard, NDataTable, NImage, NConfigProvider, NFloatButton, NIcon } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
+
 import ClearIcon from '@vicons/fluent/Broom16Regular';
 
-export interface UrlFormatInfo {
-    format_id: string;
-    ext: string;
-    resolution: string;
-    fps: number;
-    filesize_approx: number;
-    protocol: string;
-    vcodec: string;
-    acodec: string;
-    tbr: number;
-    vbr: number;
-    abr: number;
-}
+import { useMediaDataStore } from '@/store/media-data';
+import { bytesToSize } from '@/utils/show';
 
-export interface UrlDataInfo {
-    title: string;
-    description: string;
-    thumbnail: string;
-    formats: UrlFormatInfo[];
-    requested_formats: { format_id: string }[];
-    filename: string;
-}
-
-const data = ref<UrlDataInfo | null>(null);
+const data = useMediaDataStore();
 
 function hideIfEmpty(value: string | number) {
     return value == 0 || value == 'none' ? '' : value;
@@ -71,48 +52,35 @@ const tableColumns: DataTableColumns = [
 ].map((column) => {
     return { ...column, align: 'center' };
 });
-
-async function preview(previewData: UrlDataInfo) {
-    data.value = previewData;
-    await nextTick();
-}
-
-async function clear() {
-    data.value = null;
-    await nextTick();
-}
-
-defineExpose({
-    preview,
-    clear,
-});
 </script>
 
 <template>
-    <NCard title="Preview">
-        <NFloatButton position="absolute" right="16" top="16" height="32" width="32" @click.prevent="clear">
+    <div style="position: relative; overflow: hidden; min-height: 64px">
+        <NFloatButton
+            position="absolute"
+            right="16"
+            top="16"
+            height="32"
+            width="32"
+            @click.prevent="data.clear"
+            style="z-index: 100"
+            data-test="preview-clear-button"
+        >
             <NIcon :component="ClearIcon" />
         </NFloatButton>
 
-        <template v-if="data !== null">
-            <NCard :title="data.title">
-                {{ data.description }}
+        <div v-if="data.value" data-test="preview-content">
+            <NCard :title="data.value.title">
+                {{ data.value.description }}
 
-                <NImage :src="data.thumbnail" :img-props="{ referrerpolicy: 'no-referrer' }" />
+                <NImage :src="data.value.thumbnail" :img-props="{ referrerpolicy: 'no-referrer' }" />
 
-                <p><b>Destination:</b> {{ data.filename }}</p>
+                <p><b>Destination:</b> {{ data.value.filename }}</p>
             </NCard>
 
             <NConfigProvider>
                 <NDataTable :data="tableData" :columns="tableColumns" />
             </NConfigProvider>
-        </template>
-    </NCard>
+        </div>
+    </div>
 </template>
-
-<style scoped>
-table {
-    text-align: center;
-    border-spacing: 8px;
-}
-</style>

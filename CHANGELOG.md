@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - UI improvements for better user experience.
     - Header navigation bar.
     - Automatic dark mode and a display mode switch.
+    - Make preview and log area a single page view.
     - A '*' symbol will be displayed when an input is required.
     - Real-time validation for user input.
     - Auto focus on the first invalid input field when submitted.
