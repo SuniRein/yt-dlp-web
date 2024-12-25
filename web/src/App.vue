@@ -13,7 +13,7 @@ const theme = computed(() => (displayMode.state === 'light' ? lightTheme : darkT
 const devToolComponent = ref<DefineComponent | null>(null);
 onMounted(async () => {
     if (__DEV__) {
-        const { default: DevTool } = await import('@/components/DevTool.vue');
+        const { default: DevTool } = await import('@/dev/DevTool.vue');
         devToolComponent.value = DevTool as DefineComponent;
     }
 });
