@@ -69,7 +69,7 @@ const displayMode = useDisplayModeStore();
             <div class="nav-end">
                 <NButton size="small" quaternary @click="toggleLanguage">Toggle Language</NButton>
 
-                <NSwitch @update:value="displayMode.toggle" :default-value="displayMode.state === 'dark'">
+                <NSwitch @update:value="displayMode.toggle" :value="displayMode.state === 'dark'">
                     <template #checked-icon><DarkIcon /></template>
                     <template #unchecked-icon><LightIcon /></template>
                 </NSwitch>

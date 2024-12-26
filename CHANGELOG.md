@@ -19,7 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Real-time validation for user input.
     - Auto focus on the first invalid input field when submitted.
     - Hover-to-show description text.
+    - Dev tools for developers.
 - Using floating buttons to interactive.
+
+### Changed
+
+- Remove `data-test` attribute in production environment.
 
 ### Internal
 

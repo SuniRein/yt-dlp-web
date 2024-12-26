@@ -7,7 +7,7 @@ import type { MediaData } from '@/types/MediaData.types';
 import { mount } from '@vue/test-utils';
 import { test, expect } from 'vitest';
 
-import info from './media-info.json';
+import info from '@/dev/media-info.json';
 
 setActivePinia(createPinia());
 const mediaData = useMediaDataStore();
