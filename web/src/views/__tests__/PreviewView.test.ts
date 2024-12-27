@@ -14,34 +14,40 @@ const mediaData = useMediaDataStore();
 
 const preview = mount(PreviewView);
 
-function getContent() {
-    return preview.find('[data-test="preview-content"]');
+function findElement(name: string) {
+    return preview.find(`[data-test="preview-${name}"]`);
 }
 
-function getStaticHtml() {
-    return getContent()
+function getElement(name: string) {
+    return preview.find(`[data-test="preview-${name}"]`);
+}
+
+function getStaticHtml(name: string) {
+    return getElement(name)
         .html()
-        .replace(/data-n-id=".*?"/g, '')
-        .replace(/data-v-.{8}=".*?"/g, '')
-        .replace(/data-test=".*?"/g, '');
+        .replace(/ data-n-id=".*?"/g, '')
+        .replace(/ data-v-.{8}=".*?"/g, '')
+        .replace(/ data-test=".*?"/g, '');
 }
 
 test('create element', () => {
-    expect(getContent().exists()).toBe(false);
+    expect(findElement('clear-button').exists()).toBe(true);
+    expect(findElement('content').exists()).toBe(false);
 });
 
 test('show preview', async () => {
     mediaData.value = info as MediaData;
     await preview.vm.$nextTick();
 
-    expect(getContent().exists()).toBe(true);
-    expect(getStaticHtml()).toMatchSnapshot();
+    expect(findElement('content').exists()).toBe(true);
+    expect(getStaticHtml('media-show')).toMatchSnapshot();
+    expect(getStaticHtml('media-format-table')).toMatchSnapshot();
 });
 
 test('clear preview', async () => {
-    const clearButton = preview.get('[data-test="preview-clear-button"]');
+    const clearButton = getElement('clear-button');
     await clearButton.trigger('click');
 
-    expect(getContent().exists()).toBe(false);
+    expect(findElement('content').exists()).toBe(false);
     expect(mediaData.value).toBeNull();
 });
