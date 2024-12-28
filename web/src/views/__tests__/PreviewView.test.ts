@@ -1,4 +1,5 @@
 import PreviewView from '@/views/PreviewView.vue';
+import { NConfigProvider } from 'naive-ui';
 
 import { setActivePinia, createPinia } from 'pinia';
 import { useMediaDataStore } from '@/store/media-data';
@@ -12,7 +13,12 @@ import info from '@/dev/media-info.json';
 setActivePinia(createPinia());
 const mediaData = useMediaDataStore();
 
-const preview = mount(PreviewView);
+// NDataTable needs to be wrapped in NConfigProvider.
+const app = mount({
+    components: { NConfigProvider, PreviewView },
+    template: `<NConfigProvider><PreviewView /></NConfigProvider>`,
+});
+const preview = app.getComponent(PreviewView);
 
 function findElement(name: string) {
     return preview.find(`[data-test="preview-${name}"]`);

@@ -16,7 +16,6 @@ import {
     NEllipsis,
 
     // Preview Table
-    NConfigProvider,
     NDataTable,
 } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
@@ -153,9 +152,7 @@ const tableColumns: DataTableColumns = [
                 </NGi>
             </NGrid>
 
-            <NConfigProvider>
-                <NDataTable :data="tableData" :columns="tableColumns" data-test="preview-media-format-table"/>
-            </NConfigProvider>
+            <NDataTable :data="tableData" :columns="tableColumns" data-test="preview-media-format-table" />
         </div>
     </div>
 </template>
