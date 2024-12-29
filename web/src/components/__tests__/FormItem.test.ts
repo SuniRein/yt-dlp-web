@@ -1,490 +1,417 @@
-import { describe, test, expect, beforeEach, afterEach, beforeAll, afterAll, vi, type Mock } from 'vitest';
-import FormItem from '../FormItem.vue';
-import { mount, type VueWrapper, type DOMWrapper } from '@vue/test-utils';
-import { registerCustomType, formItemCustomTypes } from '@/store/form-item-custom-type';
+import FormItem from '@/components/FormItem.vue';
+import type {
+    TextFormItem,
+    DynamicFormItem,
+    SelectFormItem,
+    CheckboxFormItem,
+    FormItemValidator,
+} from '@/types/FormItem.types';
+import { describe, test, expect } from 'vitest';
+import { mount } from '@vue/test-utils';
+import type { VueWrapper } from '@vue/test-utils';
+import { nextTick } from 'vue';
 
-describe('common text input', () => {
-    let wrapper: VueWrapper<InstanceType<typeof FormItem>>;
-    let input: DOMWrapper<HTMLInputElement>;
+class FormItemWrapper {
+    protected wrapper!: VueWrapper<InstanceType<typeof FormItem>>;
 
-    beforeEach(() => {
-        wrapper = mount(FormItem, {
+    get vm() {
+        return this.wrapper.vm;
+    }
+
+    get text() {
+        return this.wrapper.text();
+    }
+
+    get html() {
+        return this.wrapper.html();
+    }
+
+    find(selector: string) {
+        return this.wrapper.find(selector);
+    }
+}
+
+class TextWrapper extends FormItemWrapper {
+    constructor(props: Partial<TextFormItem> = {}) {
+        super();
+        this.wrapper = mount(FormItem, {
             props: {
                 label: 'label',
                 description: 'description',
-                type: 'text',
-                name: 'name',
                 placeholder: 'placeholder',
+                name: 'name',
+                type: 'text',
+                ...props,
             },
         });
-        input = wrapper.find('input');
-    });
+    }
 
-    afterEach(() => {
-        wrapper.unmount();
-    });
+    async setValue(value: string) {
+        await this.wrapper.vm.setInputValue(value);
+    }
+}
 
-    test('create element', () => {
-        expect(wrapper.text()).toContain('label');
-        expect(wrapper.text()).toContain('description');
-        expect(wrapper.find('input').attributes('type')).toBe('text');
-        expect(wrapper.find('input').attributes('name')).toBe('name');
-    });
-
-    test('get value', () => {
-        expect(wrapper.vm.value()).toBe('');
-        expect(wrapper.vm.empty()).toBe(true);
-
-        input.setValue('value');
-        expect(wrapper.vm.value()).toBe('value');
-        expect(wrapper.vm.empty()).toBe(false);
-    });
-
-    test('placeholder', () => {
-        expect(input.attributes('placeholder')).toBe('placeholder');
-    });
-});
-
-describe("input with 'multiple'", () => {
-    let wrapper: VueWrapper<InstanceType<typeof FormItem>>;
-    let addButton: DOMWrapper<HTMLButtonElement>;
-    let removeButton: DOMWrapper<HTMLButtonElement>;
-
-    beforeEach(() => {
-        wrapper = mount(FormItem, {
+class SelectWrapper extends FormItemWrapper {
+    constructor(props: Partial<SelectFormItem> = {}) {
+        super();
+        this.wrapper = mount(FormItem, {
             props: {
                 label: 'label',
                 description: 'description',
-                type: 'text',
+                placeholder: 'placeholder',
                 name: 'name',
-                multiple: true,
+                type: 'select',
+                options: [
+                    { label: 'option0', value: '' },
+                    { label: 'option1', value: '1' },
+                    { label: 'option2', value: '2' },
+                ],
+                ...props,
             },
         });
-        addButton = wrapper.findAll('button')[0];
-        removeButton = wrapper.findAll('button')[1];
-    });
+    }
 
-    afterEach(() => {
-        wrapper.unmount();
-    });
+    setSelected(index: number) {
+        this.wrapper.vm.setSelected(index);
+    }
+}
+
+class ChechboxWrapper extends FormItemWrapper {
+    constructor(props: Partial<CheckboxFormItem> = {}) {
+        super();
+        this.wrapper = mount(FormItem, {
+            props: {
+                label: 'label',
+                description: 'description',
+                name: 'name',
+                type: 'checkbox',
+                ...props,
+            },
+        });
+    }
+
+    setChecked(checked: boolean) {
+        this.wrapper.vm.setChecked(checked);
+    }
+}
+
+class DynamicInputWrapper extends FormItemWrapper {
+    constructor(props: Partial<DynamicFormItem> = {}) {
+        super();
+        this.wrapper = mount(FormItem, {
+            props: {
+                label: 'label',
+                description: 'description',
+                placeholder: 'placeholder',
+                name: 'name',
+                type: 'dynamic',
+                ...props,
+            },
+        });
+    }
+
+    get inputs() {
+        return this.wrapper.findAll('input');
+    }
+
+    get addButton() {
+        return this.wrapper.findAll('button').at(-1)!;
+    }
+
+    get removeButton() {
+        return this.wrapper.findAll('button').at(-2)!;
+    }
+
+    async setValue(index: number, value: string) {
+        await this.wrapper.vm.setInputValue(value, index);
+    }
+}
+
+describe('text type', () => {
+    const validator: FormItemValidator = {
+        verify: (value) => value === 'valid',
+        message: 'value should be "valid"',
+    };
 
     test('create element', () => {
-        expect(wrapper.text()).toContain('label');
-        expect(wrapper.text()).toContain('description');
-        expect(wrapper.find('input').attributes('type')).toBe('text');
-        expect(wrapper.find('input').attributes('name')).toBe('name');
+        const wrapper = new TextWrapper();
 
-        expect(wrapper.findAll('button')).toHaveLength(2);
-        expect(addButton.text()).toBe('+');
-        expect(removeButton.text()).toBe('-');
+        expect(wrapper.text).toContain('label');
+        expect(wrapper.text).toContain('placeholder');
+
+        expect(wrapper.find('[data-test="input"]').exists()).toBe(true);
     });
 
-    test('click the add button to add an input', async () => {
-        expect(wrapper.findAll('input')).toHaveLength(1);
+    test('check empty', async () => {
+        const wrapper = new TextWrapper();
+        expect(wrapper.vm.empty).toBe(true);
 
-        await addButton.trigger('click');
-        expect(wrapper.findAll('input')).toHaveLength(2);
+        await wrapper.setValue('value');
+        expect(wrapper.vm.empty).toBe(false);
 
-        await addButton.trigger('click');
-        expect(wrapper.findAll('input')).toHaveLength(3);
-    });
-
-    test('the added input should have the same name and type', async () => {
-        await addButton.trigger('click');
-        await addButton.trigger('click');
-        wrapper.findAll('input').forEach((input) => {
-            expect(input.attributes('type')).toBe('text');
-            expect(input.attributes('name')).toBe('name');
-        });
-    });
-
-    test('the added input should be empty', async () => {
-        wrapper.find('input').setValue('value');
-        expect(wrapper.find('input').element.value).toBe('value');
-
-        await addButton.trigger('click');
-        expect(wrapper.findAll('input')[1].element.value).toBe('');
-        wrapper.findAll('input')[1].setValue('value');
-
-        await addButton.trigger('click');
-        expect(wrapper.findAll('input')[2].element.value).toBe('');
-    });
-
-    test('click the remove button to remove an input', async () => {
-        await addButton.trigger('click');
-        await addButton.trigger('click');
-        await addButton.trigger('click');
-        expect(wrapper.findAll('input')).toHaveLength(4);
-
-        await removeButton.trigger('click');
-        expect(wrapper.findAll('input')).toHaveLength(3);
-
-        await removeButton.trigger('click');
-        expect(wrapper.findAll('input')).toHaveLength(2);
-
-        await removeButton.trigger('click');
-        expect(wrapper.findAll('input')).toHaveLength(1);
-    });
-
-    test('the last input should not be removed', async () => {
-        await removeButton.trigger('click');
-        expect(wrapper.findAll('input')).toHaveLength(1);
-
-        await addButton.trigger('click');
-        await removeButton.trigger('click');
-        await removeButton.trigger('click');
-        expect(wrapper.findAll('input')).toHaveLength(1);
-    });
-
-    test('the value of other inputs should not be affected by removing', async () => {
-        await addButton.trigger('click');
-        await addButton.trigger('click');
-        await addButton.trigger('click');
-
-        const inputs = wrapper.findAll('input');
-        inputs.forEach((input, index) => {
-            input.setValue(`value${index}`);
-        });
-
-        await removeButton.trigger('click');
-        inputs.forEach((input, index) => {
-            expect(input.element.value).toBe(`value${index}`);
-        });
+        await wrapper.setValue('');
+        expect(wrapper.vm.empty).toBe(true);
     });
 
     test('get value', async () => {
-        expect(wrapper.vm.value()).toEqual([]);
-        expect(wrapper.vm.empty()).toBe(true);
+        const wrapper = new TextWrapper();
+        expect(wrapper.vm.value).toBe('');
 
-        await addButton.trigger('click');
-        expect(wrapper.vm.value()).toEqual([]);
-        expect(wrapper.vm.empty()).toBe(true);
+        await wrapper.setValue('value');
+        expect(wrapper.vm.value).toBe('value');
 
-        wrapper.findAll('input').forEach((input, index) => {
-            input.setValue(`value${index}`);
-        });
-        expect(wrapper.vm.value()).toEqual(['value0', 'value1']);
-        expect(wrapper.vm.empty()).toBe(false);
+        await wrapper.setValue('another value');
+        expect(wrapper.vm.value).toBe('another value');
+    });
 
-        wrapper.findAll('input')[0].setValue('');
-        expect(wrapper.vm.value()).toEqual(['value1']);
-        expect(wrapper.vm.empty()).toBe(false);
+    test('verify input value', async () => {
+        const wrapper = new TextWrapper({ validator });
+        expect(wrapper.vm.verify()).toBeUndefined();
+
+        await wrapper.setValue('invalid');
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'value should be "valid"');
+        expect(wrapper.vm.verify()).toHaveProperty('element');
+
+        await wrapper.setValue('valid');
+        expect(wrapper.vm.verify()).toBeUndefined();
+
+        await wrapper.setValue('valid ');
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'value should be "valid"');
+        expect(wrapper.vm.verify()).toHaveProperty('element');
+    });
+
+    test('verify required field', async () => {
+        const wrapper = new TextWrapper({ required: true });
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'This field is required');
+        expect(wrapper.vm.verify()).toHaveProperty('element');
+
+        await wrapper.setValue('value');
+        expect(wrapper.vm.verify()).toBeUndefined();
+
+        await wrapper.setValue('');
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'This field is required');
+    });
+
+    test('verify required field with validator', async () => {
+        const wrapper = new TextWrapper({ required: true, validator });
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'This field is required');
+
+        await wrapper.setValue('invalid');
+        expect(wrapper.vm.verify()).toHaveProperty('error', 'value should be "valid"');
+
+        await wrapper.setValue('valid');
+        expect(wrapper.vm.verify()).toBeUndefined();
     });
 });
 
-describe('select input', () => {
-    let wrapper: VueWrapper<InstanceType<typeof FormItem>>;
-    let select: DOMWrapper<HTMLSelectElement>;
-    let options: Array<DOMWrapper<HTMLOptionElement>>;
-
-    beforeEach(() => {
-        wrapper = mount(FormItem, {
-            props: {
-                label: 'label',
-                description: 'description',
-                type: 'select',
-                name: 'name',
-                options: [
-                    { value: 'none', label: 'Option 0' },
-                    { value: 'option1', label: 'Option 1' },
-                    { value: 'option2', label: 'Option 2' },
-                    { value: 'option3', label: 'Option 3' },
-                ],
-            },
-        });
-        select = wrapper.find('select');
-        options = wrapper.findAll('option');
-    });
-
-    afterEach(() => {
-        wrapper.unmount();
-    });
-
+describe('select type', () => {
     test('create element', () => {
-        expect(wrapper.text()).toContain('label');
-        expect(wrapper.text()).toContain('description');
-        expect(select.attributes('name')).toBe('name');
+        const wrapper = new SelectWrapper();
 
-        expect(options).toHaveLength(4);
-        expect(options[0].text()).toBe('Option 0');
-        expect(options[0].attributes('value')).toBe('none');
-        options.slice(1).forEach((option, index) => {
-            expect(option.text()).toBe(`Option ${index + 1}`);
-            expect(option.attributes('value')).toBe(`option${index + 1}`);
-        });
+        expect(wrapper.text).toContain('label');
+        expect(wrapper.text).toContain('placeholder');
+
+        expect(wrapper.find('[data-test="select"]').exists()).toBe(true);
+    });
+
+    test('check empty', () => {
+        const wrapper = new SelectWrapper();
+        expect(wrapper.vm.empty).toBe(true);
+
+        wrapper.setSelected(1);
+        expect(wrapper.vm.empty).toBe(false);
+
+        wrapper.setSelected(0);
+        expect(wrapper.vm.empty).toBe(true);
     });
 
     test('get value', () => {
-        expect(wrapper.vm.value()).toBe('');
-        expect(wrapper.vm.empty()).toBe(true);
+        const wrapper = new SelectWrapper();
+        expect(wrapper.vm.value).toBe('');
 
-        select.setValue('option1');
-        expect(wrapper.vm.value()).toBe('option1');
-        expect(wrapper.vm.empty()).toBe(false);
+        wrapper.setSelected(1);
+        expect(wrapper.vm.value).toBe('1');
 
-        select.setValue('none');
-        expect(wrapper.vm.value()).toBe('');
-        expect(wrapper.vm.empty()).toBe(true);
+        wrapper.setSelected(2);
+        expect(wrapper.vm.value).toBe('2');
     });
 });
 
-describe('checkbox input', () => {
-    let wrapper: VueWrapper<InstanceType<typeof FormItem>>;
-    let checkbox: DOMWrapper<HTMLInputElement>;
-
-    beforeEach(() => {
-        wrapper = mount(FormItem, {
-            props: {
-                label: 'label',
-                description: 'description',
-                type: 'checkbox',
-                name: 'name',
-            },
-        });
-        checkbox = wrapper.find('input');
-    });
-
-    afterEach(() => {
-        wrapper.unmount();
-    });
-
+describe('chechbox type', () => {
     test('create element', () => {
-        expect(wrapper.text()).toContain('label');
-        expect(wrapper.text()).toContain('description');
+        const wrapper = new ChechboxWrapper();
 
-        expect(checkbox.attributes('type')).toBe('checkbox');
-        expect(checkbox.attributes('name')).toBe('name');
+        expect(wrapper.text).toContain('label');
+
+        expect(wrapper.find('[data-test="checkbox"]').exists()).toBe(true);
+    });
+
+    test('check empty', () => {
+        const wrapper = new ChechboxWrapper();
+        expect(wrapper.vm.empty).toBe(true);
+
+        wrapper.setChecked(true);
+        expect(wrapper.vm.empty).toBe(false);
+
+        wrapper.setChecked(false);
+        expect(wrapper.vm.empty).toBe(true);
     });
 
     test('get value', () => {
-        expect(wrapper.vm.value()).toBe('');
-        expect(wrapper.vm.empty()).toBe(true);
+        const wrapper = new ChechboxWrapper();
+        expect(wrapper.vm.value).toBe('');
 
-        checkbox.setValue(true);
-        expect(wrapper.vm.value()).toBe('on');
-        expect(wrapper.vm.empty()).toBe(false);
+        wrapper.setChecked(true);
+        expect(wrapper.vm.value).toBe('on');
 
-        checkbox.setValue(false);
-        expect(wrapper.vm.value()).toBe('');
-        expect(wrapper.vm.empty()).toBe(true);
+        wrapper.setChecked(false);
+        expect(wrapper.vm.value).toBe('');
     });
 });
 
-describe.skip('radio input', () => {
-    let wrappers: Array<VueWrapper<InstanceType<typeof FormItem>>>;
-    let audios: Array<DOMWrapper<HTMLInputElement>>;
+describe('dynamic input type', () => {
+    test('create element', async () => {
+        const wrapper = new DynamicInputWrapper();
+        await nextTick(); // wait for the first input to be created
 
-    beforeEach(() => {
-        wrappers = Array.from({ length: 4 }).map((_, index) =>
-            mount(FormItem, {
-                props: {
-                    label: 'label',
-                    description: 'description',
-                    type: 'radio',
-                    name: 'name',
-                    value: `option${index}`,
-                },
-            }),
-        );
-        audios = wrappers.map((wrapper) => wrapper.find('input'));
+        expect(wrapper.find('[data-test="dynamic-input"]').exists()).toBe(true);
+
+        expect(wrapper.text).toContain('label');
+        expect(wrapper.text).toContain('placeholder');
+
+        expect(wrapper.inputs).toHaveLength(1);
+
+        expect(wrapper.addButton.exists()).toBe(true);
+        expect(wrapper.removeButton.exists()).toBe(true);
     });
 
-    afterEach(() => {
-        wrappers.forEach((wrapper) => wrapper.unmount());
+    test('add input', async () => {
+        const wrapper = new DynamicInputWrapper();
+        await nextTick();
+
+        await wrapper.addButton.trigger('click');
+        expect(wrapper.inputs).toHaveLength(2);
+
+        await wrapper.addButton.trigger('click');
+        expect(wrapper.inputs).toHaveLength(3);
     });
 
-    test('create element', () => {
-        wrappers.forEach((wrapper, index) => {
-            expect(wrapper.text()).toContain('label');
-            expect(wrapper.text()).toContain('description');
-            expect(audios[index].attributes('type')).toBe('radio');
-            expect(audios[index].attributes('name')).toBe('name');
-            expect(audios[index].attributes('value')).toBe(`option${index}`);
-        });
+    test('remove input', async () => {
+        const wrapper = new DynamicInputWrapper();
+        await nextTick();
+
+        await wrapper.addButton.trigger('click');
+        await wrapper.addButton.trigger('click');
+        await wrapper.addButton.trigger('click');
+        expect(wrapper.inputs).toHaveLength(4);
+
+        await wrapper.removeButton.trigger('click');
+        expect(wrapper.inputs).toHaveLength(3);
+
+        await wrapper.removeButton.trigger('click');
+        expect(wrapper.inputs).toHaveLength(2);
+
+        await wrapper.removeButton.trigger('click');
+        expect(wrapper.inputs).toHaveLength(1);
     });
 
-    test.skip('get value', () => {});
-});
+    test('check empty with one input', async () => {
+        const wrapper = new DynamicInputWrapper();
+        await nextTick();
 
-describe('custom input type', () => {
-    beforeAll(() => {
-        registerCustomType({
-            type: 'my-custom',
-            validator: (value) => /^[\d]+$/.test(value),
-            validityMessage: 'Invalid value',
-        });
+        expect(wrapper.vm.empty).toBe(true);
 
-        expect(formItemCustomTypes).toHaveProperty('my-custom');
+        await wrapper.setValue(0, 'value');
+        expect(wrapper.vm.empty).toBe(false);
+
+        await wrapper.setValue(0, '');
+        expect(wrapper.vm.empty).toBe(true);
     });
 
-    afterAll(() => {
-        delete formItemCustomTypes['my-custom'];
-        expect(formItemCustomTypes).not.toHaveProperty('my-custom');
+    test('get value with one input', async () => {
+        const wrapper = new DynamicInputWrapper();
+        await nextTick();
+
+        expect(wrapper.vm.value).toEqual([]);
+
+        await wrapper.setValue(0, 'value');
+        expect(wrapper.vm.value).toEqual(['value']);
+
+        await wrapper.setValue(0, 'another value');
+        expect(wrapper.vm.value).toEqual(['another value']);
     });
 
-    let wrapper: VueWrapper<InstanceType<typeof FormItem>>;
-    let input: DOMWrapper<HTMLInputElement>;
-    let reportValidity: Mock<() => boolean>;
+    test('check empty with multiple inputs', async () => {
+        const wrapper = new DynamicInputWrapper();
+        await nextTick();
+        await wrapper.addButton.trigger('click');
+        await wrapper.addButton.trigger('click');
 
-    beforeEach(() => {
-        wrapper = mount(FormItem, {
-            props: {
-                label: 'label',
-                description: 'description',
-                type: 'my-custom',
-                name: 'name',
-            },
-        });
-        input = wrapper.find('input');
+        expect(wrapper.vm.empty).toBe(true);
 
-        reportValidity = vi.fn(() => true);
-        input.element.reportValidity = reportValidity;
+        await wrapper.setValue(0, 'value');
+        await wrapper.setValue(1, 'value');
+        expect(wrapper.vm.empty).toBe(false);
+
+        await wrapper.setValue(0, '');
+        expect(wrapper.vm.empty).toBe(false);
+
+        await wrapper.setValue(1, '');
+        expect(wrapper.vm.empty).toBe(true);
     });
 
-    afterEach(() => {
-        wrapper.unmount();
+    test('get value with multiple inputs', async () => {
+        const wrapper = new DynamicInputWrapper();
+        await Promise.all([wrapper.addButton.trigger('click'), wrapper.addButton.trigger('click')]);
+
+        expect(wrapper.vm.value).toEqual([]);
+
+        await wrapper.setValue(0, 'value0');
+        await wrapper.setValue(1, 'value1');
+        expect(wrapper.vm.value).toEqual(['value0', 'value1']);
+
+        await wrapper.setValue(0, 'another value0');
+        expect(wrapper.vm.value).toEqual(['another value0', 'value1']);
+
+        await wrapper.setValue(0, '');
+        expect(wrapper.vm.value).toEqual(['value1']);
     });
 
-    test('create element', () => {
-        expect(wrapper.text()).toContain('label');
-        expect(wrapper.text()).toContain('description');
-        expect(input.attributes('type')).toBe('text');
-        expect(input.attributes('name')).toBe('name');
+    test("the last input can't be removed", async () => {
+        const wrapper = new DynamicInputWrapper();
+        await nextTick();
+        expect(wrapper.inputs).toHaveLength(1);
+
+        await wrapper.removeButton.trigger('click');
+        expect(wrapper.inputs).toHaveLength(1);
+
+        await wrapper.addButton.trigger('click');
+        await wrapper.removeButton.trigger('click');
+        await wrapper.removeButton.trigger('click');
+        expect(wrapper.inputs).toHaveLength(1);
     });
 
-    test('empty value is always valid', () => {
-        expect(wrapper.vm.checkValidity()).toBe(true);
-        expect(wrapper.vm.empty()).toBe(true);
-        expect(reportValidity).not.toHaveBeenCalled();
+    test('the new created input is empty', async () => {
+        const wrapper = new DynamicInputWrapper();
+        await nextTick();
+
+        await wrapper.setValue(0, 'value');
+        await wrapper.addButton.trigger('click');
+        expect(wrapper.vm.value).toEqual(['value']);
     });
 
-    test('invalid value', () => {
-        const invalidValues = ['abc', '123abc', 'abc123'];
+    test('remove an input don`t affect the others', async () => {
+        const wrapper = new DynamicInputWrapper();
+        await nextTick();
+        await wrapper.addButton.trigger('click');
+        await wrapper.addButton.trigger('click');
 
-        invalidValues.forEach((value, index) => {
-            input.setValue(value);
-            expect(wrapper.vm.checkValidity()).toBe(false);
-            expect(reportValidity).toHaveBeenCalledTimes(index + 1);
-        });
-    });
+        await wrapper.setValue(0, 'value0');
+        await wrapper.setValue(1, 'value1');
+        await wrapper.setValue(2, 'value2');
+        expect(wrapper.vm.value).toEqual(['value0', 'value1', 'value2']);
 
-    test('valid value', () => {
-        const validValues = ['123', '456', '78919'];
-
-        validValues.forEach((value) => {
-            input.setValue(value);
-            expect(wrapper.vm.checkValidity()).toBe(true);
-            expect(reportValidity).not.toHaveBeenCalled();
-        });
-    });
-});
-
-describe("input with 'required'", () => {
-    let wrapper: VueWrapper<InstanceType<typeof FormItem>>;
-    let input: DOMWrapper<HTMLInputElement>;
-    let reportValidity: Mock<() => boolean>;
-
-    beforeEach(() => {
-        wrapper = mount(FormItem, {
-            props: {
-                label: 'label',
-                description: 'description',
-                type: 'text',
-                name: 'name',
-                required: true,
-            },
-        });
-        input = wrapper.find('input');
-
-        reportValidity = vi.fn(() => true);
-        input.element.reportValidity = reportValidity;
-    });
-
-    afterEach(() => {
-        wrapper.unmount();
-    });
-
-    test('create element', () => {
-        expect(wrapper.text()).toContain('label');
-        expect(wrapper.text()).toContain('description');
-        expect(input.attributes('type')).toBe('text');
-        expect(input.attributes('name')).toBe('name');
-    });
-
-    test('empty value is invalid', () => {
-        expect(wrapper.vm.checkValidity()).toBe(false);
-        expect(reportValidity).toHaveBeenCalledTimes(1);
-    });
-
-    test('non-empty value is valid', () => {
-        input.setValue('value');
-        expect(wrapper.vm.checkValidity()).toBe(true);
-        expect(reportValidity).not.toHaveBeenCalled();
-    });
-});
-
-describe("input with 'multiple' and 'required'", () => {
-    let wrapper: VueWrapper<InstanceType<typeof FormItem>>;
-    let inputs: Array<DOMWrapper<HTMLInputElement>>;
-    let reportValiditys: Array<Mock<() => boolean>>;
-
-    beforeEach(async () => {
-        wrapper = mount(FormItem, {
-            props: {
-                label: 'label',
-                description: 'description',
-                type: 'type',
-                name: 'name',
-                required: true,
-                multiple: true,
-            },
-        });
-
-        await wrapper.findAll('button')[0].trigger('click');
-        await wrapper.findAll('button')[0].trigger('click');
-        await wrapper.findAll('button')[0].trigger('click');
-
-        inputs = wrapper.findAll('input');
-        expect(inputs).toHaveLength(4);
-
-        reportValiditys = inputs.map((input) => {
-            const reportValidity = vi.fn(() => true);
-            input.element.reportValidity = reportValidity;
-            return reportValidity;
-        });
-        expect(reportValiditys).toHaveLength(4);
-    });
-
-    afterEach(() => {
-        wrapper.unmount();
-    });
-
-    test('empty value is invalid', () => {
-        expect(wrapper.vm.checkValidity()).toBe(false);
-        expect(reportValiditys[0]).toHaveBeenCalledTimes(1);
-        reportValiditys.slice(1).forEach((reportValidity) => {
-            expect(reportValidity).not.toHaveBeenCalled();
-        });
-    });
-
-    test('only the first empty value will be checked', () => {
-        inputs[0].setValue('value');
-        inputs[3].setValue('value');
-
-        expect(wrapper.vm.checkValidity()).toBe(false);
-        expect(reportValiditys[1]).toHaveBeenCalledTimes(1);
-        reportValiditys.forEach((reportValidity, index) => {
-            if (index !== 1) {
-                expect(reportValidity).not.toHaveBeenCalled();
-            }
-        });
-    });
-
-    test('all values are non-empty', () => {
-        inputs.forEach((input) => input.setValue('value'));
-        expect(wrapper.vm.checkValidity()).toBe(true);
-        reportValiditys.forEach((reportValidity) => {
-            expect(reportValidity).not.toHaveBeenCalled();
-        });
+        await wrapper.removeButton.trigger('click');
+        expect(wrapper.vm.value).toEqual(['value0', 'value1']);
     });
 });

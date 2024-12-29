@@ -1,176 +1,196 @@
 <script setup lang="ts">
-import { computed, useTemplateRef, ref } from 'vue';
-import { formItemCustomTypes } from '@/store/form-item-custom-type';
-
-export interface FormItemInfo {
-    label: string;
-    description: string;
-    name: string;
-    type: string;
-    required?: boolean;
-    multiple?: boolean;
-    accept?: string;
-    placeholder?: string;
-    options?: { value: string; label: string }[];
-}
+import { computed, useTemplateRef, ref, onMounted, nextTick } from 'vue';
+import { NInput, NDynamicInput, NSelect, NCheckbox, NFormItem, NTooltip } from 'naive-ui';
+import type { FormItemRule } from 'naive-ui';
+import type {
+    TextFormItem,
+    DynamicFormItem,
+    SelectFormItem,
+    CheckboxFormItem,
+    FormItemInfo,
+} from '@/types/FormItem.types';
 
 const props = defineProps<FormItemInfo>();
 
-const isAudioOrCheckbox = computed(() => props.type === 'audio' || props.type === 'checkbox');
-const isSelect = computed(() => props.type === 'select');
+const isCheckbox = (info: FormItemInfo): info is CheckboxFormItem => info.type === 'checkbox';
+const isSelect = (info: FormItemInfo): info is SelectFormItem => info.type === 'select';
+const isInput = (info: FormItemInfo): info is TextFormItem => info.type === 'text';
+const isDynamicInput = (info: FormItemInfo): info is DynamicFormItem => info.type === 'dynamic';
 
-const inputType = computed(() => {
-    if (props.type in formItemCustomTypes) {
-        return 'text';
-    }
-    return props.type;
-});
+const inputElement = useTemplateRef('inputElement');
+const dynamicInputElement = useTemplateRef('dynamicInputElement');
+const inputValue = ref();
 
-const inputElement = useTemplateRef<HTMLInputElement | HTMLSelectElement>('inputElement');
-const extraInputElements = useTemplateRef('extraInputElements');
-const extraInputElementNumber = ref(0);
-
-// All input elements, including the main input element and extra input elements.
-// Note: select element are not included.
-const inputElements = computed(() => {
-    if (inputElement.value instanceof HTMLInputElement) {
-        return [inputElement.value, ...(extraInputElements.value || [])];
-    }
-    return [];
-});
-
-function addInputElement() {
-    if (props.multiple) {
-        extraInputElementNumber.value++;
-    }
-}
-
-function removeInputElement() {
-    if (props.multiple && extraInputElementNumber.value !== 0) {
-        extraInputElementNumber.value--;
-    }
-}
-
-function inputIsEmpty(input: HTMLSelectElement | HTMLInputElement | null | undefined) {
-    if (!input) {
+function verify() {
+    if (!(isInput(props) || isDynamicInput(props))) {
         return true;
     }
 
-    if (input.type === 'checkbox') {
-        return !input.checked;
-    }
-    if (input.type === 'radio') {
-        return !input.checked || input.value === 'none' || input.value === '';
-    }
-    return input.value === 'none' || input.value === '';
-}
+    const value = inputValue.value;
 
-function inputIsValidity(input: HTMLInputElement) {
-    // Check required fields.
-    if (props.required && input.value === '') {
-        input.setCustomValidity('This field is required.');
-        input.reportValidity();
-        return false;
+    if (props.required && !value) {
+        return new Error('This field is required');
     }
 
-    // Check number type.
-    // Accepts empty strings, but not bad inputs.
-    if (props.type === 'number' && input.validity.badInput) {
-        input.setCustomValidity('This field must be a number.');
-        input.reportValidity();
-        return false;
-    }
-
-    // Check custom types.
-    if (props.type in formItemCustomTypes) {
-        const customType = formItemCustomTypes[props.type];
-        if (input.value !== '' && !customType.validator(input.value)) {
-            input.setCustomValidity(customType.validityMessage);
-            input.reportValidity();
-            return false;
-        }
+    if (props.validator) {
+        return !value || props.validator.verify(value) ? true : new Error(props.validator.message);
     }
 
     return true;
 }
 
-function value() {
-    if (props.multiple) {
-        const values = Array.from(inputElements.value)
-            .filter((inputElement) => !inputIsEmpty(inputElement))
-            .map((inputElement) => inputElement.value);
-        return values;
+const rule = computed<FormItemRule | undefined>(() => {
+    if (!(isInput(props) || isDynamicInput(props)) || !(props.required || props.validator)) {
+        return undefined;
     }
 
-    return inputIsEmpty(inputElement.value) ? '' : inputElement.value!.value;
-}
+    return {
+        trigger: ['blur', 'input'],
+        required: props.required,
+        validator: verify,
+    } satisfies FormItemRule;
+});
 
-function empty() {
-    return value().length === 0;
-}
+const value = computed<string | string[]>(() => {
+    const value = inputValue.value as string | string[] | boolean | undefined;
 
-function checkValidity() {
-    return Array.from(inputElements.value).every((inputElement) => inputIsValidity(inputElement));
-}
+    if (isDynamicInput(props)) {
+        return (value as string[]).filter((item) => item.length > 0);
+    }
+
+    if (isCheckbox(props)) {
+        return value ? 'on' : '';
+    }
+
+    if (value !== undefined && typeof value !== 'string') {
+        throw new Error(`Invalid value type: ${typeof value} in ${props.name}`);
+    }
+    return value ?? '';
+});
+
+const empty = computed(() => value.value.length === 0);
+
+onMounted(() => {
+    // Dynamiv input has a initial input element.
+    if (isDynamicInput(props) && dynamicInputElement.value) {
+        dynamicInputElement.value.createItem(1);
+    }
+});
 
 defineExpose({
-    name: props.name,
+    ...props,
     value,
     empty,
-    checkValidity,
+
+    /**
+     * Verify the input value.
+     * @returns An error if the value is invalid, with the input element to focus.
+     * @returns undefined if the value is valid.
+     */
+    verify: () => {
+        const result = verify();
+        if (result instanceof Error) {
+            return {
+                error: result.message,
+                element: inputElement.value, // send the input element to focus
+            };
+        }
+        return undefined;
+    },
+
+    /**
+     * Set the state of a checkbox (if it is).
+     * @warning This method is only for test.
+     */
+    setChecked: (checked: boolean) => {
+        if (!isCheckbox(props)) {
+            throw new Error('setChecked is only available for checkbox');
+        }
+        inputValue.value = checked;
+    },
+
+    /**
+     * Set the selected option of a select (if it is).
+     * @warning This method is only for test.
+     */
+    setSelected: (index: number) => {
+        if (!isSelect(props)) {
+            throw new Error('setSelected is only available for select');
+        }
+        inputValue.value = props.options?.[index]?.value;
+    },
+
+    /**
+     * Set the input value.
+     * @warning This method is only for test.
+     */
+    setInputValue: async (value: string, index?: number) => {
+        if (!isInput(props) && !isDynamicInput(props)) {
+            throw new Error('setInputValue is only available for input or dynamic input');
+        }
+
+        const input = isInput(props)
+            ? inputElement.value?.inputElRef
+            : dynamicInputElement.value?.$el.querySelectorAll('input')[index ?? 0];
+
+        if (!input) {
+            throw new Error('Input element not found');
+        }
+
+        input.value = value;
+        input.dispatchEvent(new Event('input'));
+        await nextTick();
+    },
 });
 </script>
 
 <template>
     <div class="form-item">
-        <label v-if="isAudioOrCheckbox">
-            <input :name="name" :type="type" ref="inputElement" />
-            <span class="form-item-label-content">{{ label }}</span>
-        </label>
-
-        <label v-else>
-            <span class="form-item-label-content">{{ label }}</span>
-
-            <select :name="name" v-if="isSelect" ref="inputElement">
-                <option v-for="{ value, label } in options" :value="value" :key="value">{{ label }}</option>
-            </select>
-
-            <div v-else ref="inputElementDiv">
-                <input :name="name" :type="inputType" :placeholder="placeholder" ref="inputElement" />
-
-                <template v-if="multiple">
-                    <button @click.prevent="addInputElement">+</button>
-                    <button @click.prevent="removeInputElement">-</button>
-
-                    <template v-for="index in extraInputElementNumber" :key="index">
-                        <br />
-                        <input :name="name" :type="inputType" :placeholder="placeholder" ref="extraInputElements" />
+        <NFormItem v-if="isCheckbox(props)" :show-label="false">
+            <NCheckbox v-model:checked="inputValue" ref="inputElement" data-test="checkbox">
+                <NTooltip>
+                    <template #trigger>
+                        {{ props.label }}
                     </template>
-                </template>
-            </div>
-        </label>
 
-        <span class="form-item-description"> {{ description }} </span>
+                    {{ props.description }}
+                </NTooltip>
+            </NCheckbox>
+        </NFormItem>
+
+        <NFormItem v-else label-placement="left" :rule ref="formItem">
+            <NSelect
+                v-if="isSelect(props)"
+                v-model:value="inputValue"
+                :placeholder="props.placeholder"
+                :options="props.options"
+                data-test="select"
+            />
+            <NDynamicInput
+                v-else-if="isDynamicInput(props)"
+                v-model:value="inputValue"
+                :placeholder="props.placeholder"
+                :min="1"
+                ref="dynamicInputElement"
+                data-test="dynamic-input"
+            />
+            <NInput
+                v-else-if="isInput(props)"
+                v-model:value="inputValue"
+                :placeholder="props.placeholder"
+                ref="inputElement"
+                data-test="input"
+            />
+
+            <template #label>
+                <NTooltip>
+                    <template #trigger>
+                        {{ label }}
+                    </template>
+
+                    {{ description }}
+                </NTooltip>
+            </template>
+        </NFormItem>
     </div>
 </template>
-
-<style scoped>
-.form-item {
-    margin-bottom: 10px;
-}
-
-.form-item-description {
-    font-size: 0.875em;
-    font-style: italic;
-    color: #555;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    line-height: 1.5;
-    display: block;
-}
-
-.form-item-label-content {
-    font-weight: bold;
-    margin-right: 8px;
-}
-</style>
