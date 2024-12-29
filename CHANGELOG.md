@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2024-12-12
+## [0.2.0] - 2024-12-29
 
 ### Added
 
@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Header navigation bar.
     - Automatic dark mode and a display mode switch.
     - Make preview and log area a single page view.
-    - A '*' symbol will be displayed when an input is required.
+    - A '\*' symbol will be displayed when an input is required.
     - Real-time validation for user input.
     - Auto focus on the first invalid input field when submitted.
     - Hover-to-show description text.
@@ -48,4 +48,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled users to define the path for the `yt-dlp` executable.
 - Added the ability to interrupt a currently running task.
 - Provided a real-time progress display for ongoing downloads, showing status updates and percentage.
-
