@@ -16,7 +16,7 @@ void AsyncProcess::launch(Request const& request, std::function<void(std::string
     interrupted_ = false;
 
     // Call yt-dlp with the given URL and options.
-    yt_dlp_process_ = std::make_unique<bp::child>(request.yt_dlp_path, request.args, bp::std_out > *pipe_, io_context_);
+    yt_dlp_process_ = std::make_unique<bp::child>(request.yt_dlp_path(), request.args(), bp::std_out > *pipe_, io_context_);
 
     // Set callback functions.
     on_linebreak_ = std::move(on_linebreak);

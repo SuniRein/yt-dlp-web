@@ -1,1 +1,8 @@
 tabWidth = 4
+printWidth = 120
+
+[[overrides]]
+files = ["*.yml", "*.yaml"]
+
+[overrides.options]
+tabWidth = 2

@@ -26,6 +26,6 @@ int main(int argc, char* argv[])
     webui::window win;
     win.set_root_folder(INDEX_PATH.string());
     win.show_browser("index.html", AnyBrowser);
-    win.bind("submit_url", ytweb::handle_submit_url);
+    win.bind("submitUrl", ytweb::handle_submit_url);
     webui::wait();
 }

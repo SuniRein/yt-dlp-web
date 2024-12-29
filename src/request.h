@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -7,21 +8,26 @@
 namespace ytweb
 {
 
-struct Request
+class Request
 {
+  public:
     enum class Action
     {
         Preview,
         Download,
         Interrupt,
-    } action{};
+    };
 
-    std::string yt_dlp_path;
+    auto action() const -> Action;
+    auto yt_dlp_path() const -> std::string const&;
+    auto args() const -> std::vector<std::string> const&;
 
-    std::vector<std::string> args;
-
-    // Take a JSON string and parse it to initialize.
     explicit Request(std::string_view json);
+    ~Request();
+
+  private:
+    class Impl;
+    std::unique_ptr<Impl> impl_;
 };
 
 }  // namespace ytweb

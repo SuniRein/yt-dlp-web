@@ -18,7 +18,7 @@ void handle_submit_url(webui::window::event* event)
 
     Request request(event->get_string_view());
 
-    if (request.action == Request::Action::Interrupt)
+    if (request.action() == Request::Action::Interrupt)
     {
         send_log(event, "Interrupt the current request.");
         process.interrupt();
@@ -33,10 +33,10 @@ void handle_submit_url(webui::window::event* event)
     }
 
     // Log the command that will be run.
-    send_log(event, "Run command: " + request.yt_dlp_path + " " + boost::algorithm::join(request.args, " "));
+    send_log(event, "Run command: " + request.yt_dlp_path() + " " + boost::algorithm::join(request.args(), " "));
 
     std::string response;  // Put here to keep it alive until the end of the function.
-    if (request.action == Request::Action::Preview)
+    if (request.action() == Request::Action::Preview)
     {
         process.launch(request, [&](std::string_view line) { response += line; }, [&]() { event->return_string(response); });
     }

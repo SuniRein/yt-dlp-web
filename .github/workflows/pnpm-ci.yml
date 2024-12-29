@@ -1,0 +1,57 @@
+name: pnpm-CI
+
+on:
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - "web/**"
+      - ".github/workflows/pnpm-ci.yml"
+  push:
+    paths:
+      - "web/**"
+      - ".github/workflows/pnpm-ci.yml"
+
+jobs:
+  frontend-check:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+          cache-dependency-path: "./web/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Prettier
+        run: pnpm format --check
+        continue-on-error: true
+
+      - name: Run ESLint
+        run: pnpm lint
+        continue-on-error: true
+
+      - name: Type-check with vue-tsc
+        run: pnpm type-check
+        continue-on-error: true
+
+      - name: Run Vitest
+        env:
+          CI: true
+        run: pnpm test

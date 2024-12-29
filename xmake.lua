@@ -1,5 +1,5 @@
 set_project("yt-dlp-web")
-set_version("0.0.1")
+set_version("0.2.0")
 
 add_rules("mode.debug", "mode.release")
 
@@ -10,7 +10,7 @@ add_requires("boost[cmake=false]") -- boost.process, boost.asio
 target("main", function()
     set_kind("binary")
     add_files("src/*.cpp")
-    add_defines('YT_DLP_WEB_PATH="$(projectdir)/web"')
+    add_defines('YT_DLP_WEB_PATH="$(projectdir)/web/dist"')
     add_packages("webui", "nlohmann_json", "boost")
 end)
 
