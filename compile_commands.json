@@ -1,0 +1,46 @@
+[
+{
+  "directory": "/home/SuniRein/Projects/yt-dlp-web",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-Isrc", "-DYT_DLP_WEB_FAKE_BIN=\"/home/SuniRein/Projects/yt-dlp-web/test/yt-dlp-test.py\"", "-I", "/home/SuniRein/.local/share/xmake/w/webui/nightly/4e0143c97b65425b855ad5fd03038b6a/include", "-I", "/home/SuniRein/.local/share/xmake/n/nlohmann_json/v3.11.3/b4e38c4916bd42c39063f144e29030df/include", "-I", "/home/SuniRein/.local/share/xmake/b/boost/1.87.0/2a0f3f3862e94af797e2f612433056b9/include", "-I", "/home/SuniRein/.local/share/xmake/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-I", "/home/SuniRein/.local/share/xmake/g/gtest/v1.15.2/e830ee96ef8d4f3fbca8f32f6cf0dc3f/include", "-o", "build/.objs/test/linux/x86_64/debug/src/async_process.cpp.o", "src/async_process.cpp"],
+  "file": "src/async_process.cpp"
+},
+{
+  "directory": "/home/SuniRein/Projects/yt-dlp-web",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-Isrc", "-DYT_DLP_WEB_FAKE_BIN=\"/home/SuniRein/Projects/yt-dlp-web/test/yt-dlp-test.py\"", "-I", "/home/SuniRein/.local/share/xmake/w/webui/nightly/4e0143c97b65425b855ad5fd03038b6a/include", "-I", "/home/SuniRein/.local/share/xmake/n/nlohmann_json/v3.11.3/b4e38c4916bd42c39063f144e29030df/include", "-I", "/home/SuniRein/.local/share/xmake/b/boost/1.87.0/2a0f3f3862e94af797e2f612433056b9/include", "-I", "/home/SuniRein/.local/share/xmake/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-I", "/home/SuniRein/.local/share/xmake/g/gtest/v1.15.2/e830ee96ef8d4f3fbca8f32f6cf0dc3f/include", "-o", "build/.objs/test/linux/x86_64/debug/src/request.cpp.o", "src/request.cpp"],
+  "file": "src/request.cpp"
+},
+{
+  "directory": "/home/SuniRein/Projects/yt-dlp-web",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-Isrc", "-DYT_DLP_WEB_FAKE_BIN=\"/home/SuniRein/Projects/yt-dlp-web/test/yt-dlp-test.py\"", "-I", "/home/SuniRein/.local/share/xmake/w/webui/nightly/4e0143c97b65425b855ad5fd03038b6a/include", "-I", "/home/SuniRein/.local/share/xmake/n/nlohmann_json/v3.11.3/b4e38c4916bd42c39063f144e29030df/include", "-I", "/home/SuniRein/.local/share/xmake/b/boost/1.87.0/2a0f3f3862e94af797e2f612433056b9/include", "-I", "/home/SuniRein/.local/share/xmake/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-I", "/home/SuniRein/.local/share/xmake/g/gtest/v1.15.2/e830ee96ef8d4f3fbca8f32f6cf0dc3f/include", "-o", "build/.objs/test/linux/x86_64/debug/src/handle.cpp.o", "src/handle.cpp"],
+  "file": "src/handle.cpp"
+},
+{
+  "directory": "/home/SuniRein/Projects/yt-dlp-web",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-Isrc", "-DYT_DLP_WEB_FAKE_BIN=\"/home/SuniRein/Projects/yt-dlp-web/test/yt-dlp-test.py\"", "-I", "/home/SuniRein/.local/share/xmake/w/webui/nightly/4e0143c97b65425b855ad5fd03038b6a/include", "-I", "/home/SuniRein/.local/share/xmake/n/nlohmann_json/v3.11.3/b4e38c4916bd42c39063f144e29030df/include", "-I", "/home/SuniRein/.local/share/xmake/b/boost/1.87.0/2a0f3f3862e94af797e2f612433056b9/include", "-I", "/home/SuniRein/.local/share/xmake/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-I", "/home/SuniRein/.local/share/xmake/g/gtest/v1.15.2/e830ee96ef8d4f3fbca8f32f6cf0dc3f/include", "-o", "build/.objs/test/linux/x86_64/debug/test/test_request.cpp.o", "test/test_request.cpp"],
+  "file": "test/test_request.cpp"
+},
+{
+  "directory": "/home/SuniRein/Projects/yt-dlp-web",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-Isrc", "-DYT_DLP_WEB_FAKE_BIN=\"/home/SuniRein/Projects/yt-dlp-web/test/yt-dlp-test.py\"", "-I", "/home/SuniRein/.local/share/xmake/w/webui/nightly/4e0143c97b65425b855ad5fd03038b6a/include", "-I", "/home/SuniRein/.local/share/xmake/n/nlohmann_json/v3.11.3/b4e38c4916bd42c39063f144e29030df/include", "-I", "/home/SuniRein/.local/share/xmake/b/boost/1.87.0/2a0f3f3862e94af797e2f612433056b9/include", "-I", "/home/SuniRein/.local/share/xmake/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-I", "/home/SuniRein/.local/share/xmake/g/gtest/v1.15.2/e830ee96ef8d4f3fbca8f32f6cf0dc3f/include", "-o", "build/.objs/test/linux/x86_64/debug/test/test_async_process.cpp.o", "test/test_async_process.cpp"],
+  "file": "test/test_async_process.cpp"
+},
+{
+  "directory": "/home/SuniRein/Projects/yt-dlp-web",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-DYT_DLP_WEB_PATH=\"/home/SuniRein/Projects/yt-dlp-web/web/dist\"", "-I", "/home/SuniRein/.local/share/xmake/w/webui/nightly/4e0143c97b65425b855ad5fd03038b6a/include", "-I", "/home/SuniRein/.local/share/xmake/n/nlohmann_json/v3.11.3/b4e38c4916bd42c39063f144e29030df/include", "-I", "/home/SuniRein/.local/share/xmake/b/boost/1.87.0/2a0f3f3862e94af797e2f612433056b9/include", "-I", "/home/SuniRein/.local/share/xmake/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-o", "build/.objs/main/linux/x86_64/debug/src/main.cpp.o", "src/main.cpp"],
+  "file": "src/main.cpp"
+},
+{
+  "directory": "/home/SuniRein/Projects/yt-dlp-web",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-DYT_DLP_WEB_PATH=\"/home/SuniRein/Projects/yt-dlp-web/web/dist\"", "-I", "/home/SuniRein/.local/share/xmake/w/webui/nightly/4e0143c97b65425b855ad5fd03038b6a/include", "-I", "/home/SuniRein/.local/share/xmake/n/nlohmann_json/v3.11.3/b4e38c4916bd42c39063f144e29030df/include", "-I", "/home/SuniRein/.local/share/xmake/b/boost/1.87.0/2a0f3f3862e94af797e2f612433056b9/include", "-I", "/home/SuniRein/.local/share/xmake/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-o", "build/.objs/main/linux/x86_64/debug/src/async_process.cpp.o", "src/async_process.cpp"],
+  "file": "src/async_process.cpp"
+},
+{
+  "directory": "/home/SuniRein/Projects/yt-dlp-web",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-DYT_DLP_WEB_PATH=\"/home/SuniRein/Projects/yt-dlp-web/web/dist\"", "-I", "/home/SuniRein/.local/share/xmake/w/webui/nightly/4e0143c97b65425b855ad5fd03038b6a/include", "-I", "/home/SuniRein/.local/share/xmake/n/nlohmann_json/v3.11.3/b4e38c4916bd42c39063f144e29030df/include", "-I", "/home/SuniRein/.local/share/xmake/b/boost/1.87.0/2a0f3f3862e94af797e2f612433056b9/include", "-I", "/home/SuniRein/.local/share/xmake/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-o", "build/.objs/main/linux/x86_64/debug/src/request.cpp.o", "src/request.cpp"],
+  "file": "src/request.cpp"
+},
+{
+  "directory": "/home/SuniRein/Projects/yt-dlp-web",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-DYT_DLP_WEB_PATH=\"/home/SuniRein/Projects/yt-dlp-web/web/dist\"", "-I", "/home/SuniRein/.local/share/xmake/w/webui/nightly/4e0143c97b65425b855ad5fd03038b6a/include", "-I", "/home/SuniRein/.local/share/xmake/n/nlohmann_json/v3.11.3/b4e38c4916bd42c39063f144e29030df/include", "-I", "/home/SuniRein/.local/share/xmake/b/boost/1.87.0/2a0f3f3862e94af797e2f612433056b9/include", "-I", "/home/SuniRein/.local/share/xmake/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-o", "build/.objs/main/linux/x86_64/debug/src/handle.cpp.o", "src/handle.cpp"],
+  "file": "src/handle.cpp"
+}]

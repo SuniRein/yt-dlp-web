@@ -12,21 +12,26 @@ namespace ytweb
 using ytweb::AsyncProcess;
 using ytweb::Request;
 
+// Temp code to run the process.
+
+AsyncProcess* process{};
+
 void handle_submit_url(webui::window::event* event)
 {
-    AsyncProcess& process = AsyncProcess::get_instance();
-
     Request request(event->get_string_view());
 
     if (request.action() == Request::Action::Interrupt)
     {
         send_log(event, "Interrupt the current request.");
-        process.interrupt();
+        if (process)
+        {
+            process->interrupt();
+        }
         return;
     }
 
     // Only one request can be run at a time.
-    if (process.running())
+    if (process && process->running())
     {
         send_log(event, "Another request is running. Please wait.");
         return;
@@ -38,13 +43,16 @@ void handle_submit_url(webui::window::event* event)
     std::string response;  // Put here to keep it alive until the end of the function.
     if (request.action() == Request::Action::Preview)
     {
-        process.launch(request, [&](std::string_view line) { response += line; }, [&]() { event->return_string(response); });
+        process = new AsyncProcess(
+            request.yt_dlp_path(), request.args(), [&](std::string_view line) { response += line; }, [&]() { event->return_string(response); });
     }
     else
     {
         constexpr std::string_view PROGRESS_PREFIX = "[Progress]";
-        process.launch(
-            request,
+
+        process = new AsyncProcess(
+            request.yt_dlp_path(),
+            request.args(),
             [&](std::string_view line)
             {
                 // progress information
@@ -62,7 +70,10 @@ void handle_submit_url(webui::window::event* event)
             [&]() { send_log(event, "Download finished."); });
     }
 
-    process.wait();
+    process->wait();
+
+    delete process;
+    process = nullptr;
 }
 
 void send_log(webui::window::event* event, std::string const& message)
