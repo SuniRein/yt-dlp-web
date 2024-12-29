@@ -6,12 +6,16 @@ import { useMediaDataStore } from '@/store/media-data';
 import type { MediaData } from '@/types/MediaData.types';
 
 import { mount } from '@vue/test-utils';
-import { test, expect } from 'vitest';
+import { test, expect, vi, afterAll } from 'vitest';
 
 import info from '@/dev/media-info.json';
 
 setActivePinia(createPinia());
 const mediaData = useMediaDataStore();
+
+// TODO: A more elegant way to set date locale
+vi.spyOn(Date.prototype, 'toLocaleDateString').mockReturnValue('2024/12/18');
+afterAll(() => vi.restoreAllMocks());
 
 // NDataTable needs to be wrapped in NConfigProvider.
 const app = mount({
