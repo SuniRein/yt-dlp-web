@@ -5,16 +5,14 @@ import FormArea from '@/components/FormArea.vue';
 import OperationArea from '@/components/OperationArea.vue';
 
 import { useLogStore } from '@/store/log';
-import { useMediaDataStore } from '@/store/media-data';
 
 import { formItemInfo } from '@/utils/form-item-info';
 
 const form = useTemplateRef('form');
 
 const log = useLogStore();
-const mediaData = useMediaDataStore();
 
-function handleFormSubmit(action: string) {
+async function handleFormSubmit(action: string) {
     if (!form.value) {
         throw new Error('Form is not availabel.');
     }
@@ -30,12 +28,12 @@ function handleFormSubmit(action: string) {
 
     log.log(`Request: ${JSON.stringify(data, null, 2)}`);
 
-    // Backend call
-    webui.submitUrl(JSON.stringify(data)).then((response) => {
-        if (action === 'preview' && response) {
-            mediaData.value = JSON.parse(response);
-        }
-    });
+    const task = await webui.handleRequest(JSON.stringify(data));
+    log.log(`Run task ${task}.`);
+}
+
+function handleInterrupt(task: number) {
+    webui.handleInterrupt(task);
 }
 </script>
 
@@ -45,6 +43,6 @@ function handleFormSubmit(action: string) {
     <OperationArea
         :download="() => handleFormSubmit('download')"
         :preview="() => handleFormSubmit('preview')"
-        :interrupt="() => handleFormSubmit('interrupt')"
+        :interrupt="() => handleInterrupt(0)"
     />
 </template>

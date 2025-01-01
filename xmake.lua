@@ -5,7 +5,9 @@ add_rules("mode.debug", "mode.release")
 
 add_requires("webui nightly")
 add_requires("nlohmann_json") -- json parser
-add_requires("boost[cmake=false]") -- boost.process, boost.asio
+
+add_requires("boost", { configs = { cmake = false, process = true } }) -- boost.process, boost.asio
+add_defines("BOOST_ASIO_NO_DEPRECATED") -- disable deprecated asio features
 
 target("main", function()
     set_kind("binary")
@@ -25,7 +27,7 @@ if has_config("enable_test") then
         set_default(false)
         set_kind("binary")
 
-        add_files("src/*.cpp|main.cpp") -- exclude main.cpp
+        add_files("src/*.cpp|main.cpp|app.cpp") -- exclude main.cpp
         add_includedirs("src")
 
         add_files("test/*.cpp")

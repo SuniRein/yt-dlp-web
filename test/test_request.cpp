@@ -65,12 +65,6 @@ TEST(Request, ParseValidJSON)
     EXPECT_THAT(request.args(), HasOption("-j"));
 }
 
-TEST(Request, InterruptAction)
-{
-    std::string json = R"({"action": "interrupt"})";
-    EXPECT_EQ(Request(json).action(), Request::Action::Interrupt);
-}
-
 TEST(Request, MissingFields)
 {
     std::string json = R"({"action": "download", "url_input": "https://example.com/video"})";

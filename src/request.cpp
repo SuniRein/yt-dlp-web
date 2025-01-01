@@ -227,13 +227,6 @@ void Request::Impl::parse(std::string_view json)
     // Parse the action.
     std::string action_str = data_.at("action");
 
-    // If action is "interrupt", other fields are not needed.
-    if (action_str == "interrupt")
-    {
-        action = Action::Interrupt;
-        return;
-    }
-
     action = action_str == "preview" ? Action::Preview : Action::Download;
 
     // Generate arguments for yt-dlp
