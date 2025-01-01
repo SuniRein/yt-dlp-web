@@ -27,7 +27,7 @@ if has_config("enable_test") then
         set_default(false)
         set_kind("binary")
 
-        add_files("src/*.cpp|main.cpp") -- exclude main.cpp
+        add_files("src/*.cpp|main.cpp|app.cpp") -- exclude main.cpp
         add_includedirs("src")
 
         add_files("test/*.cpp")

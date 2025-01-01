@@ -3,8 +3,6 @@
 #include "boost/asio/read_until.hpp"
 #include "boost/process/v2/stdio.hpp"
 
-#include "handle.h"  // send_log
-
 namespace ytweb
 {
 
@@ -23,9 +21,9 @@ void AsyncProcess::read_output()
         '\n',
         [this](boost::system::error_code ec, std::size_t bytes_transferred)
         {
-            // If the process is interrupted, stop reading the output and terminate the process.
             if (interrupted_)
             {
+                io_context_.stop();
                 process_->terminate();
                 process_.reset();
                 return;
@@ -41,10 +39,6 @@ void AsyncProcess::read_output()
             {
                 on_linebreak_(std::string(buffer_.begin(), buffer_.end()));
                 on_eof_();
-            }
-            else
-            {
-                send_log(nullptr, "Error: " + ec.message());
             }
         });
 }

@@ -15,7 +15,6 @@ class Request
     {
         Preview,
         Download,
-        Interrupt,
     };
 
     auto action() const -> Action;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <atomic>
-#include <cstddef>
 #include <map>
 #include <memory>
 
@@ -13,7 +12,7 @@ namespace ytweb
 class TaskManager
 {
   public:
-    using TaskId = std::size_t;
+    using TaskId = int;
 
     using CallbackOnLinebreak = std::function<void(TaskId id, std::string_view line)>;
     using CallbackOnEof       = std::function<void(TaskId id)>;
@@ -24,6 +23,8 @@ class TaskManager
     void kill(TaskId id);
     void wait(TaskId id);
     bool is_running(TaskId id) const;
+
+    std::size_t size() const { return tasks_.size(); }
 
   private:
     std::atomic<TaskId> next_task_id_{0};

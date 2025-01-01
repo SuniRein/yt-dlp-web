@@ -5,6 +5,7 @@
 #include "gtest/gtest.h"
 
 #include <string>
+#include <thread>
 
 using namespace std::chrono_literals;
 
@@ -19,7 +20,7 @@ class TaskManager: public ::testing::Test
 
     auto launch()
     {
-        return manager.launch(
+        auto task = manager.launch(
             find_executable("python").string(),
             {YT_DLP_WEB_FAKE_BIN},
             [&](ytweb::TaskManager::TaskId id, std::string_view line)
@@ -29,16 +30,20 @@ class TaskManager: public ::testing::Test
                 response += "\n";
             },
             [&](ytweb::TaskManager::TaskId id) { response += "Task " + std::to_string(id) + " ended\n"; });
+        auto thread = std::thread([this, task] { manager.wait(task); });
+        return std::pair{task, std::move(thread)};
     }
+
+    void TearDown() override { EXPECT_EQ(manager.size(), 0); }
 };
 
 TEST_F(TaskManager, LaunchOneTask)
 {
-    auto task = launch();
+    auto [task, thread] = launch();
     EXPECT_TRUE(manager.is_running(task));
     EXPECT_TRUE(response.empty());
 
-    manager.wait(task);
+    thread.join();
 
     EXPECT_FALSE(manager.is_running(task));
     EXPECT_EQ(response, "Task 0: start running\nTask 0: \nTask 0 ended\n");
@@ -46,21 +51,20 @@ TEST_F(TaskManager, LaunchOneTask)
 
 TEST_F(TaskManager, LaunchTwoTasks)
 {
-    auto task1 = launch();
-    auto task2 = launch();
+    auto [task1, thread1] = launch();
+    auto [task2, thread2] = launch();
 
     EXPECT_TRUE(manager.is_running(task1));
     EXPECT_TRUE(manager.is_running(task2));
     EXPECT_TRUE(response.empty());
 
-    manager.wait(task1);
+    thread1.join();
     EXPECT_FALSE(manager.is_running(task1));
-    EXPECT_TRUE(manager.is_running(task2));
     EXPECT_THAT(response, testing::HasSubstr("Task 0: start running\n"));
     EXPECT_THAT(response, testing::HasSubstr("Task 0: \n"));
     EXPECT_THAT(response, testing::HasSubstr("Task 0 ended\n"));
 
-    manager.wait(task2);
+    thread2.join();
     EXPECT_FALSE(manager.is_running(task2));
     EXPECT_THAT(response, testing::HasSubstr("Task 0: start running\n"));
     EXPECT_THAT(response, testing::HasSubstr("Task 0: \n"));
@@ -69,30 +73,34 @@ TEST_F(TaskManager, LaunchTwoTasks)
 
 TEST_F(TaskManager, KillTask)
 {
-    auto task = launch();
+    auto [task, thread] = launch();
 
     manager.kill(task);
+    thread.join();
+
     EXPECT_FALSE(manager.is_running(task));
     EXPECT_TRUE(response.empty());
 }
 
 TEST_F(TaskManager, KillTaskBeforeWait)
 {
-    auto task = launch();
+    auto [task, thread] = launch();
 
     manager.kill(task);
-    manager.wait(task);
+    thread.join();
     EXPECT_FALSE(manager.is_running(task));
     EXPECT_TRUE(response.empty());
 }
 
 TEST_F(TaskManager, LaunchTwoTasksAndKillOne)
 {
-    auto task1 = launch();
-    auto task2 = launch();
+    auto [task1, thread1] = launch();
+    auto [task2, thread2] = launch();
 
-    manager.wait(task2);
     manager.kill(task1);
+
+    thread1.join();
+    thread2.join();
 
     EXPECT_FALSE(manager.is_running(task1));
     EXPECT_FALSE(manager.is_running(task2));

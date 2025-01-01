@@ -24,8 +24,6 @@ void TaskManager::kill(TaskId task_id)
     if (it != tasks_.end())
     {
         it->second->interrupt();
-        it->second->wait();
-        tasks_.erase(it);
     }
 }
 
@@ -35,7 +33,7 @@ void TaskManager::wait(TaskId task_id)
     if (it != tasks_.end())
     {
         it->second->wait();
-        tasks_.erase(it);
+        tasks_.erase(task_id);
     }
 }
 
