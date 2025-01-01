@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include <filesystem>
+#include <thread>
 
 #include "boost/algorithm/string/join.hpp"
 #include "task_manager.h"
@@ -56,7 +57,10 @@ void App::handle_request(webui::window::event* event)
             [&](TaskId /* id */) { send_log("Download completed."); });
     }
 
-    manager_.wait(task);
+    // Use a detached thread so that the thread id can be returned immediately.
+    std::thread{[this, task] { manager_.wait(task); }}.detach();
+
+    event->return_int(task);
 }
 
 void App::handle_interrupt(webui::window::event* event)
