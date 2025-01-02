@@ -22,10 +22,7 @@ class AsyncProcess
     using CallbackOnEof       = std::function<void()>;
 
     // Launch a process with the given request.
-    AsyncProcess(std::string const&           path,
-        std::vector<std::string> const&       args,
-        std::function<void(std::string_view)> on_linebreak,
-        std::function<void()>                 on_eof);
+    AsyncProcess(std::string_view path, std::vector<std::string> const& args, CallbackOnLinebreak on_linebreak, CallbackOnEof on_eof);
 
     // Wait for the process to finish before destruction.
     ~AsyncProcess() { wait(); }

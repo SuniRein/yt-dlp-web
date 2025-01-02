@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include <filesystem>
+#include <format>
 #include <thread>
 
 #include "boost/algorithm/string/join.hpp"
@@ -22,10 +23,9 @@ void App::handle_request(webui::window::event* event)
 {
     Request request(event->get_string_view());
 
-    send_log("Run command: " + request.yt_dlp_path() + " " + boost::algorithm::join(request.args(), " "));
+    send_log("Run command: {} {}", request.yt_dlp_path(), boost::algorithm::join(request.args(), " "));
 
     TaskId task{};
-
 
     if (request.action() == Request::Action::Preview)
     {
@@ -35,7 +35,7 @@ void App::handle_request(webui::window::event* event)
             request.yt_dlp_path(),
             request.args(),
             [response](TaskId /* id */, std::string_view line) { response->append(line); },
-            [response, this](TaskId /* id */) { show_preview_info(response->data(), response->size()); });
+            [response, this](TaskId /* id */) { show_preview_info(*response); });
     }
     else
     {
@@ -46,14 +46,14 @@ void App::handle_request(webui::window::event* event)
             request.args(),
             [&](TaskId /* id */, std::string_view line)
             {
-                if (line.substr(0, PROGRESS_PREFIX.length()) == PROGRESS_PREFIX)
+                if (line.starts_with(PROGRESS_PREFIX))
                 {
                     line.remove_prefix(PROGRESS_PREFIX.size());
-                    show_download_progress(line.data(), line.size());
+                    show_download_progress(line);
                 }
                 else
                 {
-                    show_download_info(line.data(), line.size());
+                    show_download_info(line);
                 }
             },
             [&](TaskId /* id */) { send_log("Download completed."); });
@@ -68,7 +68,7 @@ void App::handle_request(webui::window::event* event)
 void App::handle_interrupt(webui::window::event* event)
 {
     auto task = static_cast<TaskId>(event->get_int());
-    send_log("Interrupt task " + std::to_string(task));
+    send_log("Interrupt task {}", task);
     manager_.kill(task);
 }
 
@@ -96,24 +96,19 @@ void App::run()
     webui::wait();
 }
 
-void App::send_log(std::string const& message)
+void App::show_download_progress(std::string_view data)
 {
-    window_.run("logMessage(\"" + message + "\");");
+    window_.send_raw("showDownloadProgress", data.data(), data.size());
 }
 
-void App::show_download_progress(char const* data, std::size_t size)
+void App::show_download_info(std::string_view data)
 {
-    window_.send_raw("showDownloadProgress", data, size);
+    window_.send_raw("showDownloadInfo", data.data(), data.size());
 }
 
-void App::show_download_info(char const* data, std::size_t size)
+void App::show_preview_info(std::string_view data)
 {
-    window_.send_raw("showDownloadInfo", data, size);
-}
-
-void App::show_preview_info(char const* data, std::size_t size)
-{
-    window_.send_raw("showPreviewInfo", data, size);
+    window_.send_raw("showPreviewInfo", data.data(), data.size());
 }
 
 }  // namespace ytweb

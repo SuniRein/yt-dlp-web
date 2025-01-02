@@ -1,16 +1,15 @@
-#include "boost/process/v1/search_path.hpp"
 #include "request.h"
 
+#include "boost/process/v2/environment.hpp"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "nlohmann/json.hpp"
 
+#include <format>
 #include <string>
 
 using ytweb::Request;
 using Json = nlohmann::json;
-
-using namespace std::string_literals;
 
 namespace
 {
@@ -25,12 +24,12 @@ auto make_args(std::string_view json)
     return request.args();
 }
 
-MATCHER_P(HasOption, name, "has argument \""s + name + "\"")
+MATCHER_P(HasOption, name, std::format(R"(has argument "{}")", name))
 {
     return std::find(arg.begin(), arg.end(), name) != arg.end();
 }
 
-MATCHER_P2(HasArgumentOption, name, value, "has argument option \""s + name + "\" with value \"" + value + "\"")
+MATCHER_P2(HasArgumentOption, name, value, std::format(R"(has argument option "{}" with value "{}")", name, value))
 {
     auto it = std::find(arg.begin(), arg.end(), name);
     while (it != arg.end())
@@ -72,7 +71,7 @@ TEST(Request, MissingFields)
     Request request(json);
 
     EXPECT_EQ(request.action(), Request::Action::Download);
-    EXPECT_EQ(request.yt_dlp_path(), boost::process::search_path("yt-dlp"));
+    EXPECT_EQ(request.yt_dlp_path(), boost::process::environment::find_executable("yt-dlp"));
     EXPECT_EQ(request.args().front(), "https://example.com/video");
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -11,14 +12,14 @@ namespace ytweb
 class Request
 {
   public:
-    enum class Action
+    enum class Action : std::uint8_t
     {
         Preview,
         Download,
     };
 
     auto action() const -> Action;
-    auto yt_dlp_path() const -> std::string const&;
+    auto yt_dlp_path() const -> std::string_view;
     auto args() const -> std::vector<std::string> const&;
 
     explicit Request(std::string_view json);

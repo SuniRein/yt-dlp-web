@@ -3,7 +3,7 @@
 #include <map>
 #include <string_view>
 
-#include "boost/process/v1/search_path.hpp"
+#include "boost/process/v2/environment.hpp"
 #include "nlohmann/json.hpp"
 
 namespace ytweb
@@ -40,17 +40,17 @@ class Request::Impl
 
 void Request::Impl::check_argument_option(std::string_view key, std::string_view option)
 {
-    if (data_.find(key) != data_.end())
+    if (data_.contains(key))
     {
         args.emplace_back(option);
-        args.emplace_back(data_.at(key).get<std::string>());
+        args.emplace_back(data_[key].get<std::string>());
     }
 }
 
 // The value is an array => make multiple argument options.
 void Request::Impl::check_multiple_argument_option(std::string_view key, std::string_view option)
 {
-    if (data_.find(key) != data_.end())
+    if (data_.contains(key))
     {
         for (auto const& value : data_.at(key))
         {
@@ -62,7 +62,7 @@ void Request::Impl::check_multiple_argument_option(std::string_view key, std::st
 
 void Request::Impl::check_option(std::string_view key, std::string_view option)
 {
-    if (data_.find(key) != data_.end())
+    if (data_.contains(key))
     {
         args.emplace_back(option);
     }
@@ -70,10 +70,10 @@ void Request::Impl::check_option(std::string_view key, std::string_view option)
 
 void Request::Impl::map_option(std::string_view key, std::map<std::string, std::string> const& options)
 {
-    if (data_.find(key) != data_.end())
+    if (data_.contains(key))
     {
         auto value = data_.at(key).get<std::string>();
-        if (options.find(value) != options.end())
+        if (options.contains(value))
         {
             args.emplace_back(options.at(value));
         }
@@ -222,7 +222,7 @@ void Request::Impl::parse(std::string_view json)
     data_ = Json::parse(json);
 
     // If `yt_dlp_path` is not provided, run yt-dlp from `$PATH`
-    yt_dlp_path = data_.value("yt_dlp_path", boost::process::search_path("yt-dlp").string());
+    yt_dlp_path = data_.value("yt_dlp_path", boost::process::environment::find_executable("yt-dlp").string());
 
     // Parse the action.
     std::string action_str = data_.at("action");
@@ -262,7 +262,7 @@ auto Request::action() const -> Action
     return impl_->action;
 }
 
-auto Request::yt_dlp_path() const -> std::string const&
+auto Request::yt_dlp_path() const -> std::string_view
 {
     return impl_->yt_dlp_path;
 }

@@ -30,7 +30,9 @@ class TaskManager: public ::testing::Test
                 response += "\n";
             },
             [&](ytweb::TaskManager::TaskId id) { response += "Task " + std::to_string(id) + " ended\n"; });
-        auto thread = std::thread([this, task] { manager.wait(task); });
+
+        auto thread = std::jthread([this, task] { manager.wait(task); });
+
         return std::pair{task, std::move(thread)};
     }
 

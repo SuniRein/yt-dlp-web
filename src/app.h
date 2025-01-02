@@ -2,6 +2,7 @@
 
 #include "webui.hpp"
 
+#include <format>
 #include "task_manager.h"
 
 namespace ytweb
@@ -27,10 +28,16 @@ class App
     TaskManager manager_;
 
     // Frontend functions
-    void send_log(std::string const& message);
-    void show_download_progress(char const* data, std::size_t size);
-    void show_download_info(char const* data, std::size_t size);
-    void show_preview_info(char const* data, std::size_t size);
+    template<typename... Args>
+    void send_log(std::format_string<Args...> format, Args&&... args)
+    {
+        auto message = std::format(format, std::forward<Args>(args)...);
+        window_.run(std::format(R"(logMessage("{}"))", message));
+    }
+
+    void show_download_progress(std::string_view data);
+    void show_download_info(std::string_view data);
+    void show_preview_info(std::string_view data);
 
     void handle_interrupt(webui::window::event* event);
     void handle_request(webui::window::event* event);

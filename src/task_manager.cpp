@@ -3,7 +3,7 @@
 namespace ytweb
 {
 
-auto TaskManager::launch(std::string const &command, std::vector<std::string> const &args, CallbackOnLinebreak on_linebreak, CallbackOnEof on_eof)
+auto TaskManager::launch(std::string_view command, std::vector<std::string> const& args, CallbackOnLinebreak on_linebreak, CallbackOnEof on_eof)
     -> TaskId
 {
     TaskId task_id = next_task_id_++;
