@@ -24,16 +24,18 @@ void App::handle_request(webui::window::event* event)
 
     send_log("Run command: " + request.yt_dlp_path() + " " + boost::algorithm::join(request.args(), " "));
 
-    TaskId      task{};
-    std::string response;  // Put here to keep it alive until the end of the function.
+    TaskId task{};
+
 
     if (request.action() == Request::Action::Preview)
     {
+        auto response = std::make_shared<std::string>();
+
         task = manager_.launch(
             request.yt_dlp_path(),
             request.args(),
-            [&](TaskId /* id */, std::string_view line) { response += line; },
-            [&](TaskId /* id */) { show_preview_info(response.data(), response.size()); });
+            [response](TaskId /* id */, std::string_view line) { response->append(line); },
+            [response, this](TaskId /* id */) { show_preview_info(response->data(), response->size()); });
     }
     else
     {
