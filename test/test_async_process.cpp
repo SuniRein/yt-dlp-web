@@ -1,64 +1,42 @@
 #include "async_process.h"
 
-#include "boost/process/search_path.hpp"
+#include "boost/process/v2/environment.hpp"
 #include "gtest/gtest.h"
-#include "nlohmann/json.hpp"
-
-#include "request.h"
-
-using ytweb::Request;
-
-using Json = nlohmann::json;
 
 using namespace std::chrono_literals;
+
+using boost::process::environment::find_executable;
 
 class AsyncProcess: public ::testing::Test
 {
   public:
-    inline static bool eof_called_;
+    ytweb::AsyncProcess process{
+        find_executable("python").string(), {YT_DLP_WEB_FAKE_BIN}, [&](std::string_view line) { responce += line; }, [&]() { eof_called = true; }};
 
-    inline static std::unique_ptr<Request> request_;
+    bool eof_called{false};
 
-    static void SetUpTestSuite()
-    {
-        Json json;
-        json["action"]      = "preview";
-        json["url_input"]   = YT_DLP_WEB_FAKE_BIN;
-        json["yt_dlp_path"] = boost::process::search_path("python").string();
-
-        request_ = std::make_unique<Request>(json.dump());
-    }
-
-    void SetUp() override
-    {
-        auto& process = ytweb::AsyncProcess::get_instance();
-        process.launch(*request_, [&](std::string_view line) {}, [&]() { eof_called_ = true; });
-    }
-
-    void TearDown() override {}
+    std::string responce;
 };
 
 TEST_F(AsyncProcess, LaunchAndInterrupt)
 {
-    auto& process = ytweb::AsyncProcess::get_instance();
-
     EXPECT_TRUE(process.running());
 
     process.interrupt();
     process.wait();
 
     EXPECT_FALSE(process.running());
-    EXPECT_FALSE(eof_called_);
+    EXPECT_NE(responce, "start running");
+    EXPECT_FALSE(eof_called);
 }
 
 TEST_F(AsyncProcess, LaunchAndWait)
 {
-    auto& process = ytweb::AsyncProcess::get_instance();
-
     EXPECT_TRUE(process.running());
 
     process.wait();
 
     EXPECT_FALSE(process.running());
-    EXPECT_TRUE(eof_called_);
+    EXPECT_EQ(responce, "start running");
+    EXPECT_TRUE(eof_called);
 }

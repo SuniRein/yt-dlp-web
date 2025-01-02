@@ -5,11 +5,13 @@ import { createPinia } from 'pinia';
 import App from '@/App.vue';
 
 import { useLogStore } from '@/store/log';
+import { useMediaDataStore } from '@/store/media-data';
 import { bytesToSize } from '@/utils/show';
 
 createApp(App).use(createPinia()).use(router).mount('#app');
 
 const log = useLogStore();
+const mediaData = useMediaDataStore();
 
 function showDownloadProgress(rawData: Uint8Array) {
     const data = new TextDecoder().decode(rawData);
@@ -25,14 +27,7 @@ function showDownloadProgress(rawData: Uint8Array) {
     );
 }
 
-declare global {
-    interface Window {
-        logMessage: (message: string) => void;
-        showDownloadProgress: (rawData: Uint8Array) => void;
-        showDownloadInfo: (rawData: Uint8Array) => void;
-    }
-}
-
 window.logMessage = (message: string) => log.log(message);
 window.showDownloadProgress = showDownloadProgress;
 window.showDownloadInfo = (rawData: Uint8Array) => log.log(new TextDecoder().decode(rawData));
+window.showPreviewInfo = (rawData: Uint8Array) => (mediaData.value = JSON.parse(new TextDecoder().decode(rawData)));
