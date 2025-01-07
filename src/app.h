@@ -1,9 +1,9 @@
 #pragma once
 
+#include "task_manager.h"
 #include "webui.hpp"
 
 #include <format>
-#include "task_manager.h"
 
 namespace ytweb
 {
@@ -28,7 +28,7 @@ class App
     TaskManager manager_;
 
     // Frontend functions
-    template<typename... Args>
+    template <typename... Args>
     void send_log(std::format_string<Args...> format, Args&&... args)
     {
         auto message = std::format(format, std::forward<Args>(args)...);
@@ -43,4 +43,4 @@ class App
     void handle_request(webui::window::event* event);
 };
 
-}  // namespace ytweb
+} // namespace ytweb

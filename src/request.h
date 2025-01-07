@@ -30,4 +30,4 @@ class Request
     std::unique_ptr<Impl> impl_;
 };
 
-}  // namespace ytweb
+} // namespace ytweb

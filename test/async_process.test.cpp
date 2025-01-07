@@ -1,17 +1,22 @@
 #include "async_process.h"
 
 #include "boost/process/v2/environment.hpp"
+
 #include "gtest/gtest.h"
 
 using namespace std::chrono_literals;
 
 using boost::process::environment::find_executable;
 
-class AsyncProcess: public ::testing::Test
+class AsyncProcess : public ::testing::Test
 {
   public:
     ytweb::AsyncProcess process{
-        find_executable("python").string(), {YT_DLP_WEB_FAKE_BIN}, [&](std::string_view line) { responce += line; }, [&]() { eof_called = true; }};
+        find_executable("python").string(),
+        {YT_DLP_WEB_FAKE_BIN},
+        [&](std::string_view line) { responce += line; },
+        [&]() { eof_called = true; }
+    };
 
     bool eof_called{false};
 

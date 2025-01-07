@@ -3,16 +3,20 @@
 namespace ytweb
 {
 
-auto TaskManager::launch(std::string_view command, std::vector<std::string> const& args, CallbackOnLinebreak on_linebreak, CallbackOnEof on_eof)
-    -> TaskId
+auto TaskManager::launch(
+    std::string_view command,
+    std::vector<std::string> const& args,
+    CallbackOnLinebreak on_linebreak,
+    CallbackOnEof on_eof
+) -> TaskId
 {
     TaskId task_id = next_task_id_++;
 
     auto task = std::make_unique<AsyncProcess>(
-        command,
-        args,
+        command, args,
         [task_id, on_linebreak = std::move(on_linebreak)](std::string_view line) { on_linebreak(task_id, line); },
-        [task_id, on_eof = std::move(on_eof), this]() { on_eof(task_id); });
+        [task_id, on_eof = std::move(on_eof), this]() { on_eof(task_id); }
+    );
     tasks_.emplace(task_id, std::move(task));
 
     return task_id;
@@ -43,4 +47,4 @@ bool TaskManager::is_running(TaskId task_id) const
     return it != tasks_.end() && it->second->running();
 }
 
-}  // namespace ytweb
+} // namespace ytweb

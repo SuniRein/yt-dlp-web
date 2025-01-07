@@ -1,14 +1,13 @@
 #include "app.h"
 
-#include <filesystem>
-#include <format>
-#include <thread>
-
 #include "boost/algorithm/string/join.hpp"
+#include "request.h"
 #include "task_manager.h"
 #include "webui.hpp"
 
-#include "request.h"
+#include <filesystem>
+#include <format>
+#include <thread>
 
 namespace ytweb
 {
@@ -32,20 +31,18 @@ void App::handle_request(webui::window::event* event)
         auto response = std::make_shared<std::string>();
 
         task = manager_.launch(
-            request.yt_dlp_path(),
-            request.args(),
+            request.yt_dlp_path(), request.args(),
             [response](TaskId /* id */, std::string_view line) { response->append(line); },
-            [response, this](TaskId /* id */) { show_preview_info(*response); });
+            [response, this](TaskId /* id */) { show_preview_info(*response); }
+        );
     }
     else
     {
         constexpr std::string_view PROGRESS_PREFIX = "[Progress]";
 
         task = manager_.launch(
-            request.yt_dlp_path(),
-            request.args(),
-            [&](TaskId /* id */, std::string_view line)
-            {
+            request.yt_dlp_path(), request.args(),
+            [&](TaskId /* id */, std::string_view line) {
                 if (line.starts_with(PROGRESS_PREFIX))
                 {
                     line.remove_prefix(PROGRESS_PREFIX.size());
@@ -56,7 +53,8 @@ void App::handle_request(webui::window::event* event)
                     show_download_info(line);
                 }
             },
-            [&](TaskId /* id */) { send_log("Download completed."); });
+            [&](TaskId /* id */) { send_log("Download completed."); }
+        );
     }
 
     // Use a detached thread so that the thread id can be returned immediately.
@@ -111,4 +109,4 @@ void App::show_preview_info(std::string_view data)
     window_.send_raw("showPreviewInfo", data.data(), data.size());
 }
 
-}  // namespace ytweb
+} // namespace ytweb

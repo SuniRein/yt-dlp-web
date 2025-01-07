@@ -1,9 +1,9 @@
 #include "task_manager.h"
 
 #include "boost/process/v2/environment.hpp"
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-
 #include <string>
 #include <thread>
 
@@ -11,7 +11,7 @@ using namespace std::chrono_literals;
 
 using boost::process::environment::find_executable;
 
-class TaskManager: public ::testing::Test
+class TaskManager : public ::testing::Test
 {
   public:
     ytweb::TaskManager manager;
@@ -21,22 +21,24 @@ class TaskManager: public ::testing::Test
     auto launch()
     {
         auto task = manager.launch(
-            find_executable("python").string(),
-            {YT_DLP_WEB_FAKE_BIN},
-            [&](ytweb::TaskManager::TaskId id, std::string_view line)
-            {
+            find_executable("python").string(), {YT_DLP_WEB_FAKE_BIN},
+            [&](ytweb::TaskManager::TaskId id, std::string_view line) {
                 response += "Task " + std::to_string(id) + ": ";
                 response += line;
                 response += "\n";
             },
-            [&](ytweb::TaskManager::TaskId id) { response += "Task " + std::to_string(id) + " ended\n"; });
+            [&](ytweb::TaskManager::TaskId id) { response += "Task " + std::to_string(id) + " ended\n"; }
+        );
 
         auto thread = std::jthread([this, task] { manager.wait(task); });
 
         return std::pair{task, std::move(thread)};
     }
 
-    void TearDown() override { EXPECT_EQ(manager.size(), 0); }
+    void TearDown() override
+    {
+        EXPECT_EQ(manager.size(), 0);
+    }
 };
 
 TEST_F(TaskManager, LaunchOneTask)

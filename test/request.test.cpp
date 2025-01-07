@@ -1,10 +1,10 @@
 #include "request.h"
 
 #include "boost/process/v2/environment.hpp"
-#include "gmock/gmock.h"
-#include "gtest/gtest.h"
 #include "nlohmann/json.hpp"
 
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 #include <format>
 #include <string>
 
@@ -43,18 +43,18 @@ MATCHER_P2(HasArgumentOption, name, value, std::format(R"(has argument option "{
     return false;
 }
 
-}  // anonymous namespace
+} // anonymous namespace
 
 TEST(Request, ParseValidJSON)
 {
-    std::string json = R"({
+    std::string json = R"json({
         "action": "preview",
         "yt_dlp_path": "/usr/bin/yt-dlp",
         "url_input": "https://example.com/video",
         "audio_only": true,
         "quality": "high",
         "output_path": "/tmp/output"
-    })";
+    })json";
 
     Request request(json);
 
@@ -66,7 +66,7 @@ TEST(Request, ParseValidJSON)
 
 TEST(Request, MissingFields)
 {
-    std::string json = R"({"action": "download", "url_input": "https://example.com/video"})";
+    std::string json = R"json({"action": "download", "url_input": "https://example.com/video"})json";
 
     Request request(json);
 
@@ -77,13 +77,13 @@ TEST(Request, MissingFields)
 
 TEST(Request, MissingAction)
 {
-    std::string json = R"({"yt_dlp_path": "/usr/bin/yt-dlp", "url_input": "https://example.com/video"})";
+    std::string json = R"json({"yt_dlp_path": "/usr/bin/yt-dlp", "url_input": "https://example.com/video"})json";
     EXPECT_THROW(Request request(json), Json::out_of_range);
 }
 
 TEST(Request, MissingURLInput)
 {
-    std::string json = R"({"action": "download", "yt_dlp_path": "/usr/bin/yt-dlp"})";
+    std::string json = R"json({"action": "download", "yt_dlp_path": "/usr/bin/yt-dlp"})json";
     EXPECT_THROW(Request request(json), Json::out_of_range);
 }
 
@@ -95,10 +95,10 @@ TEST(Request, InvalidJSON)
 
 TEST(Request, CookiesOptions)
 {
-    auto args = make_args(R"({
+    auto args = make_args(R"json({
         "cookies_from_browser": "chrome",
         "cookies_from_file": "/tmp/cookies.txt"
-    })");
+    })json");
 
     EXPECT_THAT(args, HasArgumentOption("--cookies-from-browser", "chrome"));
     EXPECT_THAT(args, HasArgumentOption("--cookies", "/tmp/cookies.txt"));
@@ -106,12 +106,12 @@ TEST(Request, CookiesOptions)
 
 TEST(Request, CommonNetworkOptions)
 {
-    auto args = make_args(R"({
+    auto args = make_args(R"json({
         "proxy": "socks5://127.0.0.1:7890",
         "socket_timeout": "10",
         "source_address": "1.2.3.4",
         "enable_file_urls": true
-    })");
+    })json");
 
     EXPECT_THAT(args, HasArgumentOption("--proxy", "socks5://127.0.0.1:7890"));
     EXPECT_THAT(args, HasArgumentOption("--socket-timeout", "10"));
@@ -127,7 +127,7 @@ TEST(Request, ForceIpProtocolOption)
 
 TEST(Request, CommonVideoSelectionOptions)
 {
-    auto args = make_args(R"({
+    auto args = make_args(R"json({
         "playlist_indices": "1,2:3,-6:-1,-5::0",
         "age_limit": "18",
         "max_download_number": "10",
@@ -135,7 +135,7 @@ TEST(Request, CommonVideoSelectionOptions)
         "break_on_existing": true,
         "break_per_input": true,
         "skip_playlist_after_errors": "8"
-    })");
+    })json");
 
     EXPECT_THAT(args, HasArgumentOption("--playlist-items", "1,2:3,-6:-1,-5::0"));
     EXPECT_THAT(args, HasArgumentOption("--age-limit", "18"));
@@ -161,12 +161,12 @@ TEST(Request, DateOption)
 
 TEST(Request, FiltersOption)
 {
-    auto args = make_args(R"({
+    auto args = make_args(R"json({
         "filters": [
             "!is_live",
             "like_count>?100 & description~='(?i)\\bcats \\& dogs\\b'"
         ]
-    })");
+    })json");
 
     EXPECT_THAT(args, HasArgumentOption("--match-filters", "!is_live"));
     EXPECT_THAT(args, HasArgumentOption("--match-filters", R"(like_count>?100 & description~='(?i)\bcats \& dogs\b')"));
@@ -174,12 +174,12 @@ TEST(Request, FiltersOption)
 
 TEST(Request, StopFiltersOption)
 {
-    auto args = make_args(R"({
+    auto args = make_args(R"json({
         "stop_filters": [
             "duration > 600",
             "duration < 3600"
         ]
-    })");
+    })json");
 
     EXPECT_THAT(args, HasArgumentOption("--break-match-filters", "duration > 600"));
     EXPECT_THAT(args, HasArgumentOption("--break-match-filters", "duration < 3600"));
@@ -193,7 +193,7 @@ TEST(Request, IsPlaylistOption)
 
 TEST(Request, DownloadOptions)
 {
-    auto args = make_args(R"({
+    auto args = make_args(R"json({
         "concurrent_fragments": "4",
         "limit_rate": "1M",
         "throttle_rate": "100",
@@ -225,7 +225,7 @@ TEST(Request, DownloadOptions)
             "aria2c:--max-connection-per-server=5",
             "curl:--proxy socks5://127.0.0.1:7890"
         ]
-    })");
+    })json");
 
     EXPECT_THAT(args, HasArgumentOption("--concurrent-fragments", "4"));
     EXPECT_THAT(args, HasArgumentOption("--limit-rate", "1M"));
@@ -254,7 +254,9 @@ TEST(Request, DownloadOptions)
 
 TEST(Request, FilesystemOptions)
 {
-    EXPECT_THAT(make_args(R"({"batch_file": "/tmp/batch_file.txt"})"), HasArgumentOption("--batch-file", "/tmp/batch_file.txt"));
+    EXPECT_THAT(
+        make_args(R"({"batch_file": "/tmp/batch_file.txt"})"), HasArgumentOption("--batch-file", "/tmp/batch_file.txt")
+    );
     EXPECT_THAT(make_args(R"({"overwrite": "never"})"), HasOption("--no-overwrites"));
     EXPECT_THAT(make_args(R"({"overwrite": "always"})"), HasOption("--force-overwrites"));
     EXPECT_THAT(make_args(R"({"no_continue": true})"), HasOption("--no-continue"));
@@ -273,7 +275,7 @@ TEST(Request, FilesystemOptions)
 
 TEST(Request, OutputOptions)
 {
-    auto args = make_args(R"({
+    auto args = make_args(R"json({
         "output_path": [
             "home:~/Downloads",
             "temp:~/tmp"
@@ -286,7 +288,7 @@ TEST(Request, OutputOptions)
         "restrict_filename": true,
         "windows_filename": true,
         "trim_filename": "50"
-    })");
+    })json");
 
     EXPECT_THAT(args, HasArgumentOption("-P", "home:~/Downloads"));
     EXPECT_THAT(args, HasArgumentOption("-P", "temp:~/tmp"));
