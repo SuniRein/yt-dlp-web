@@ -25,6 +25,12 @@ class Request
     explicit Request(std::string_view json);
     ~Request();
 
+    Request(Request const&);
+    Request& operator=(Request const&);
+
+    Request(Request&&) = default;
+    Request& operator=(Request&&) = default;
+
   private:
     class Impl;
     std::unique_ptr<Impl> impl_;

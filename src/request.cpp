@@ -263,4 +263,17 @@ Request::Request(std::string_view json) : impl_(std::make_unique<Impl>())
 
 Request::~Request() = default;
 
+Request::Request(Request const& other) : impl_(std::make_unique<Impl>(*other.impl_))
+{
+}
+
+Request& Request::operator=(Request const& other)
+{
+    if (this != &other)
+    {
+        *impl_ = *other.impl_;
+    }
+    return *this;
+}
+
 } // namespace ytweb
