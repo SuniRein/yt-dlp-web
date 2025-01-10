@@ -70,7 +70,7 @@ const buttonSettings = {
                 <NButtonGroup>
                     <NButton v-bind="buttonSettings" @click="router.push({ name: 'home' })">Home</NButton>
                     <NButton v-bind="buttonSettings" @click="router.push({ name: 'preview' })">Preview</NButton>
-                    <NButton v-bind="buttonSettings" @click="router.push({ name: 'downloading' })">Downloading</NButton>
+                    <NButton v-bind="buttonSettings" @click="router.push({ name: 'task' })">Task</NButton>
                     <NButton v-bind="buttonSettings" @click="router.push({ name: 'log' })">Log</NButton>
                     <NButton v-bind="buttonSettings" @click="router.push({ name: 'settings' })">Settings</NButton>
                 </NButtonGroup>

@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import PreviewView from '@/views/PreviewView.vue';
 import LogView from '@/views/LogView.vue';
+import TaskView from '@/views/TaskView.vue';
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -27,9 +28,9 @@ const router = createRouter({
             redirect: '/',
         },
         {
-            path: '/downloading',
-            name: 'downloading',
-            redirect: '/',
+            path: '/task',
+            name: 'task',
+            component: TaskView,
         },
     ],
 });
