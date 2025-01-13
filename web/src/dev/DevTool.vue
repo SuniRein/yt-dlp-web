@@ -47,7 +47,7 @@ const buttonSettings = {
 
 function addTask() {
     tasks.append({
-        id: Math.max(...Array.from(tasks.value.keys())) + 1,
+        id: Math.max(...Array.from(tasks.value.keys()), -1) + 1, // -1 if initial tasks is empty
         request: {
             action: 'preview',
             url_input: 'https://example.com',
