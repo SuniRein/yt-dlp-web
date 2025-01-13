@@ -5,6 +5,7 @@ declare global {
         showDownloadInfo: (rawData: Uint8Array) => void;
         showPreviewInfo: (rawData: Uint8Array) => void;
         reportCompletion: (id: number) => void;
+        reportInterruption: (id: number) => void;
     }
 }
 

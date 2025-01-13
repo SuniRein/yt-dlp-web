@@ -72,8 +72,10 @@ void App::handle_request(webui::window::event* event)
 void App::handle_interrupt(webui::window::event* event)
 {
     auto task = static_cast<TaskId>(event->get_int());
-    send_log("Interrupt task {}", task);
     manager_.kill(task);
+
+    send_log("Interrupt task {}", task);
+    report_interruption(task);
 }
 
 void App::init()
@@ -118,6 +120,11 @@ void App::show_preview_info(std::string_view data)
 void App::report_completion(TaskId id)
 {
     window_.run(std::format(R"js(reportCompletion({}))js", id));
+}
+
+void App::report_interruption(TaskId id)
+{
+    window_.run(std::format(R"js(reportInterruption({}))js", id));
 }
 
 } // namespace ytweb

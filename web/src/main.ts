@@ -33,4 +33,6 @@ window.logMessage = (message: string) => log.log(message);
 window.showDownloadProgress = showDownloadProgress;
 window.showDownloadInfo = (rawData: Uint8Array) => log.log(new TextDecoder().decode(rawData));
 window.showPreviewInfo = (rawData: Uint8Array) => (mediaData.value = JSON.parse(new TextDecoder().decode(rawData)));
+
 window.reportCompletion = (id: number) => tasks.setStatus(id, 'done');
+window.reportInterruption = (id: number) => tasks.setStatus(id, 'interrupted');

@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 type Request = Record<string, string | string[]>;
 
-export const taskStatus = ['running', 'done', 'error'] as const;
+export const taskStatus = ['running', 'done', 'error', 'interrupted'] as const;
 
 export type TaskStatus = (typeof taskStatus)[number];
 
