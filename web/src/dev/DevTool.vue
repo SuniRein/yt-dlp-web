@@ -47,9 +47,9 @@ const buttonSettings = {
 
 function addTask() {
     tasks.append({
-        id: tasks.value.size + 1,
+        id: Math.max(...Array.from(tasks.value.keys())) + 1,
         request: {
-            action: 'Preview',
+            action: 'preview',
             url_input: 'https://example.com',
         },
         status: taskStatus[0],
@@ -57,15 +57,15 @@ function addTask() {
 }
 
 const taskSelectOptions = computed(() =>
-    Array.from({ length: tasks.value.size }, (_, index) => ({
-        label: `Task ${index + 1}`,
-        value: index + 1,
+    Array.from(tasks.value.keys()).map((key) => ({
+        label: `Task ${key}`,
+        value: key,
     })),
 );
 
 const taskStatusOptions = taskStatus.map((status) => ({ label: capitalize(status), value: status }));
 
-const taskSelected = ref(1);
+const taskSelected = ref(0);
 const taskStatusSelected = ref<TaskStatus>(taskStatus[0]);
 </script>
 

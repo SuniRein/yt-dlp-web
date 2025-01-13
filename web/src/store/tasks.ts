@@ -14,14 +14,14 @@ export interface Task {
 }
 
 export const useTasksStore = defineStore('tasks', () => {
-    const value = ref<Map<number, Omit<Task, "ID">>>(new Map());
+    const value = ref<Map<Task['id'], Omit<Task, 'id'>>>(new Map());
 
     function append(task: Task) {
         value.value.set(task.id, task);
     }
 
-    function setStatus(id: number, status: TaskStatus) {
-        const task = value.value.get(id)
+    function setStatus(id: Task['id'], status: TaskStatus) {
+        const task = value.value.get(id);
         if (task) {
             task.status = status;
         }

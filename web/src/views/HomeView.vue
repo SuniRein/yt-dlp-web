@@ -30,7 +30,7 @@ async function handleFormSubmit(action: string) {
 
     log.log(`Request: ${JSON.stringify(data, null, 2)}`);
 
-    const task = await webui.handleRequest(JSON.stringify(data));
+    const task = parseInt(await webui.handleRequest(JSON.stringify(data)));
     log.log(`Run task ${task}.`);
 
     tasks.append({

@@ -33,7 +33,10 @@ void App::handle_request(webui::window::event* event)
         task = manager_.launch(
             request.yt_dlp_path(), request.args(),
             [response](TaskId /* id */, std::string_view line) { response->append(line); },
-            [response, this](TaskId /* id */) { show_preview_info(*response); }
+            [response, this](TaskId id) {
+                show_preview_info(*response);
+                report_completion(id);
+            }
         );
     }
     else
@@ -42,7 +45,7 @@ void App::handle_request(webui::window::event* event)
 
         task = manager_.launch(
             request.yt_dlp_path(), request.args(),
-            [&](TaskId /* id */, std::string_view line) {
+            [&, this](TaskId /* id */, std::string_view line) {
                 if (line.starts_with(PROGRESS_PREFIX))
                 {
                     line.remove_prefix(PROGRESS_PREFIX.size());
@@ -53,7 +56,10 @@ void App::handle_request(webui::window::event* event)
                     show_download_info(line);
                 }
             },
-            [&](TaskId /* id */) { send_log("Download completed."); }
+            [&, this](TaskId id) {
+                send_log("Download completed.");
+                report_completion(id);
+            }
         );
     }
 
@@ -107,6 +113,11 @@ void App::show_download_info(std::string_view data)
 void App::show_preview_info(std::string_view data)
 {
     window_.send_raw("showPreviewInfo", data.data(), data.size());
+}
+
+void App::report_completion(TaskId id)
+{
+    window_.run(std::format(R"js(reportCompletion({}))js", id));
 }
 
 } // namespace ytweb
