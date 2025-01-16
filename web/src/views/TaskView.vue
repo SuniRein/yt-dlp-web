@@ -1,28 +1,67 @@
 <script setup lang="ts">
 import { computed, capitalize, h } from 'vue';
-import { useTasksStore, type TaskStatus } from '@/store/tasks';
-import { NDataTable, NButton, NIcon } from 'naive-ui';
+
+import { NDataTable, NButton, NIcon, NProgress } from 'naive-ui';
 import InterruptIcon from '@vicons/fluent/Stop16Regular';
+
+import { useTasksStore } from '@/store/tasks';
+import { bytesToSize } from '@/utils/show';
 
 const tasks = useTasksStore();
 
-interface TaskRow {
-    ID: number;
-    Description: string;
-    Status: Capitalize<TaskStatus>;
-}
+const tableData = computed(() => Array.from(tasks.value.entries()).map(([id, task]) => ({ id, ...task })));
+type Row = (typeof tableData.value)[0];
 
 const tableColumns = [
-    ...['ID', 'Description', 'Status'].map((key) => ({ key, title: key })),
+    {
+        title: 'ID',
+        key: 'id',
+    },
+    {
+        title: 'Type',
+        key: 'type',
+        render: (row: Row) => capitalize(row.type),
+    },
+    {
+        title: 'URL',
+        key: 'url',
+        render: (row: Row) => row.request.url_input,
+    },
+    {
+        title: 'Status',
+        key: 'status',
+        render: (row: Row) => capitalize(row.status),
+    },
+    {
+        title: 'Progress',
+        key: 'Progress',
+        render(row: Row) {
+            if (row.progress === undefined) {
+                return '';
+            }
+
+            const progress = (row.progress.downloaded_bytes / row.progress.total_bytes) * 100;
+            const progressRounded = Math.round(progress * 100) / 100; // Round to 2 decimal places
+
+            return h(NProgress, { percentage: progressRounded });
+        },
+    },
+    {
+        title: 'Speed',
+        key: 'speed',
+        render(row: Row) {
+            return row.progress !== undefined ? `${bytesToSize(row.progress.speed)} / s` : '';
+        },
+    },
     {
         title: 'Action',
         key: 'Action',
-        render(row: TaskRow) {
+        render(row: Row) {
             return h(
                 NButton,
                 {
                     text: true,
-                    onClick: () => webui.handleInterrupt(row.ID),
+                    onClick: () => webui.handleInterrupt(row.id),
                 },
                 {
                     default: () => h(NIcon, { component: InterruptIcon }),
@@ -31,16 +70,6 @@ const tableColumns = [
         },
     },
 ];
-
-const tableData = computed<TaskRow[]>(() =>
-    Array.from(tasks.value.entries()).map(([id, task]) => {
-        return {
-            ID: id,
-            Description: `${task.request.action}: ${task.request.url_input}`,
-            Status: capitalize(task.status),
-        };
-    }),
-);
 </script>
 
 <template>

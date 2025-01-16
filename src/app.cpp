@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include "boost/algorithm/string/join.hpp"
+#include "nlohmann/json.hpp"
 #include "request.h"
 #include "task_manager.h"
 #include "webui.hpp"
@@ -15,6 +16,8 @@ namespace ytweb
 namespace fs = std::filesystem;
 
 static fs::path const INDEX_PATH = YT_DLP_WEB_PATH;
+
+using Json = nlohmann::json;
 
 using TaskId = TaskManager::TaskId;
 
@@ -41,22 +44,34 @@ void App::handle_request(webui::window::event* event)
     }
     else
     {
-        constexpr std::string_view PROGRESS_PREFIX = "[Progress]";
 
         task = manager_.launch(
             request.yt_dlp_path(), request.args(),
-            [&, this](TaskId /* id */, std::string_view line) {
+            [this](TaskId id, std::string_view line) {
+                constexpr std::string_view PROGRESS_PREFIX = "[Progress]";
+
                 if (line.starts_with(PROGRESS_PREFIX))
                 {
                     line.remove_prefix(PROGRESS_PREFIX.size());
-                    show_download_progress(line);
+
+                    try
+                    {
+                        auto progress = Json::parse(line);
+                        progress["task_id"] = id;
+
+                        show_download_progress(progress.dump());
+                    }
+                    catch (Json::parse_error const& e)
+                    {
+                        send_log("Error parsing downloading progress at task {}: {}", id, e.what());
+                    }
                 }
                 else
                 {
                     show_download_info(line);
                 }
             },
-            [&, this](TaskId id) {
+            [this](TaskId id) {
                 send_log("Download completed.");
                 report_completion(id);
             }

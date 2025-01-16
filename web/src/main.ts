@@ -6,8 +6,7 @@ import App from '@/App.vue';
 
 import { useLogStore } from '@/store/log';
 import { useMediaDataStore } from '@/store/media-data';
-import { useTasksStore } from '@/store/tasks';
-import { bytesToSize } from '@/utils/show';
+import { useTasksStore, type DownloadProgress } from '@/store/tasks';
 
 createApp(App).use(createPinia()).use(router).mount('#app');
 
@@ -17,16 +16,11 @@ const tasks = useTasksStore();
 
 function showDownloadProgress(rawData: Uint8Array) {
     const data = new TextDecoder().decode(rawData);
-    const json = JSON.parse(data);
 
-    const filename = json.filename;
-    const downloaded_bytes = bytesToSize(json.downloaded_bytes);
-    const total_bytes = bytesToSize(json.total_bytes);
-    const speed = bytesToSize(json.speed);
-    const progress = (json.downloaded_bytes / json.total_bytes) * 100;
-    log.log(
-        `Downloading ${filename}: ${downloaded_bytes} / ${total_bytes} (${progress.toFixed(2)}%) Speed: ${speed}/s`,
-    );
+    // TODO: Check if the data is valid
+    const progress = JSON.parse(data) as DownloadProgress & { task_id: number };
+    const id = progress.task_id;
+    tasks.setProgress(id, progress);
 }
 
 window.logMessage = (message: string) => log.log(message);

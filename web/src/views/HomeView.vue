@@ -5,7 +5,7 @@ import FormArea from '@/components/FormArea.vue';
 import OperationArea from '@/components/OperationArea.vue';
 
 import { useLogStore } from '@/store/log';
-import { useTasksStore } from '@/store/tasks';
+import { useTasksStore, type TaskType } from '@/store/tasks';
 
 import { formItemInfo } from '@/utils/form-item-info';
 
@@ -14,7 +14,7 @@ const form = useTemplateRef('form');
 const log = useLogStore();
 const tasks = useTasksStore();
 
-async function handleFormSubmit(action: string) {
+async function handleFormSubmit(action: TaskType) {
     if (!form.value) {
         throw new Error('Form is not availabel.');
     }
@@ -35,7 +35,8 @@ async function handleFormSubmit(action: string) {
 
     tasks.append({
         id: task,
-        request: data,
+        type: action,
+        request: form.value.data,
         status: 'running',
     });
 }
