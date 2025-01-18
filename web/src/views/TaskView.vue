@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, capitalize, h } from 'vue';
+import { computed, capitalize, h, ref } from 'vue';
 
-import { NDataTable, NButton, NIcon, NProgress } from 'naive-ui';
+import { NDataTable, NButton, NIcon, NProgress, NModal, NGrid, NGi } from 'naive-ui';
 import InterruptIcon from '@vicons/fluent/Stop16Regular';
 
 import { useTasksStore } from '@/store/tasks';
@@ -55,7 +55,7 @@ const tableColumns = [
     },
     {
         title: 'Action',
-        key: 'Action',
+        key: 'action',
         render(row: Row) {
             return h(
                 NButton,
@@ -64,14 +64,104 @@ const tableColumns = [
                     onClick: () => webui.handleInterrupt(row.id),
                 },
                 {
-                    default: () => h(NIcon, { component: InterruptIcon }),
+                    default: h(NIcon, { component: InterruptIcon }),
                 },
             );
         },
     },
+    {
+        title: '',
+        key: 'details',
+        render(row: Row) {
+            return h(
+                NButton,
+                {
+                    text: true,
+                    onClick: () => (activedTaskId.value = row.id),
+                },
+                'Details',
+            );
+        },
+    },
 ];
+
+const activedTaskId = ref<number | null>(null);
+const activedTask = computed(() => tasks.value.get(activedTaskId.value ?? 0));
+
+function closeTaskDetails() {
+    activedTaskId.value = null;
+}
+
+const taskDetails = computed(() => {
+    if (!activedTask.value) {
+        return [];
+    }
+
+    const details = [
+        {
+            name: 'Type',
+            value: capitalize(activedTask.value.type),
+        },
+        {
+            name: 'URL',
+            value: activedTask.value.request.url_input,
+        },
+        {
+            name: 'Status',
+            value: capitalize(activedTask.value.status),
+        },
+        {
+            name: 'Request',
+            value: h('pre', JSON.stringify(activedTask.value.request, null, 2)),
+        },
+    ];
+
+    if (activedTask.value.progress) {
+        details.push(
+            {
+                name: 'Filename',
+                value: activedTask.value.progress.filename,
+            },
+            {
+                name: 'Progress',
+                value: `${(activedTask.value.progress.downloaded_bytes / activedTask.value.progress.total_bytes) * 100}%`,
+            },
+            {
+                name: 'Speed',
+                value: `${bytesToSize(activedTask.value.progress.speed)}/s`,
+            },
+        );
+    }
+
+    return details;
+});
 </script>
 
 <template>
     <NDataTable :columns="tableColumns" :data="tableData" />
+
+    <NModal
+        preset="card"
+        display-directive="show"
+        style="width: 70%"
+        :show="activedTaskId !== null"
+        :title="`Task ${activedTaskId}`"
+        :on-esc="closeTaskDetails"
+        :on-mask-click="closeTaskDetails"
+        :on-close="closeTaskDetails"
+    >
+        <NGrid cols="6" y-gap="16" x-gap="16">
+            <template v-for="detail in taskDetails" :key="detail.name">
+                <NGi span="1" style="text-align: right">
+                    <b>{{ detail.name }}</b>
+                </NGi>
+
+                <NGi span="5">
+                    <component v-if="typeof detail.value === 'object'" :is="detail.value" />
+
+                    <span v-else> {{ detail.value }} </span>
+                </NGi>
+            </template>
+        </NGrid>
+    </NModal>
 </template>
