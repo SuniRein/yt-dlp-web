@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, capitalize, h, ref } from 'vue';
 
-import { NDataTable, NButton, NIcon, NProgress, NTag, NTooltip, NModal, NGrid, NGi } from 'naive-ui';
+import { NDataTable, NButton, NSwitch, NIcon, NProgress, NTag, NTooltip, NModal, NGrid, NGi } from 'naive-ui';
 import InterruptIcon from '@vicons/fluent/Stop16Regular';
 import DetailIcon from '@vicons/fluent/ChevronRight16Regular';
 
@@ -10,7 +10,12 @@ import { bytesToSize } from '@/utils/show';
 
 const tasks = useTasksStore();
 
-const tableData = computed(() => Array.from(tasks.value.entries()).map(([id, task]) => ({ id, ...task })));
+const showPreviewTasks = ref(__DEV__);
+
+const tableData = computed(() => {
+    const data = Array.from(tasks.value.entries()).map(([id, task]) => ({ id, ...task }));
+    return showPreviewTasks.value ? data : data.filter((task) => task.type === 'download');
+});
 type Row = (typeof tableData.value)[0];
 
 function renderStatus(status: Row['status']) {
@@ -54,16 +59,20 @@ function renderInterruptButton(id: number) {
     );
 }
 
-const tableColumns = [
+const tableColumns = computed(() => [
     {
         title: 'ID',
         key: 'id',
     },
-    {
-        title: 'Type',
-        key: 'type',
-        render: (row: Row) => renderType(row.type),
-    },
+    ...(showPreviewTasks.value
+        ? [
+              {
+                  title: 'Type',
+                  key: 'type',
+                  render: (row: Row) => renderType(row.type),
+              },
+          ]
+        : []),
     {
         title: 'URL',
         key: 'url',
@@ -118,7 +127,7 @@ const tableColumns = [
         },
         width: 24,
     },
-];
+]);
 
 const activedTaskId = ref<number | null>(null);
 const activedTask = computed(() => tasks.value.get(activedTaskId.value ?? 0));
@@ -133,10 +142,14 @@ const taskDetails = computed(() => {
     }
 
     const details = [
-        {
-            name: 'Type',
-            value: renderType(activedTask.value.type),
-        },
+        ...(showPreviewTasks.value
+            ? [
+                  {
+                      name: 'Type',
+                      value: renderType(activedTask.value.type),
+                  },
+              ]
+            : []),
         {
             name: 'URL',
             value: activedTask.value.request.url_input,
@@ -203,4 +216,11 @@ const taskDetails = computed(() => {
             </template>
         </NGrid>
     </NModal>
+
+    <NTooltip>
+        <template #trigger>
+            <NSwitch v-model:value="showPreviewTasks" style="position: fixed; right: 16px; bottom: 16px" />
+        </template>
+        Show Preview Tasks
+    </NTooltip>
 </template>
