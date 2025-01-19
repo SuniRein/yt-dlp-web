@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, capitalize, h, ref } from 'vue';
 
-import { NDataTable, NButton, NSwitch, NIcon, NProgress, NTag, NTooltip, NModal, NGrid, NGi } from 'naive-ui';
+import { NDataTable, NButton, NSwitch, NIcon, NProgress, NTag, NTooltip, NModal, NGrid, NGi, NEmpty } from 'naive-ui';
 import InterruptIcon from '@vicons/fluent/Stop16Regular';
 import DetailIcon from '@vicons/fluent/ChevronRight16Regular';
 
@@ -190,7 +190,11 @@ const taskDetails = computed(() => {
 </script>
 
 <template>
-    <NDataTable :columns="tableColumns" :data="tableData" />
+    <NDataTable :columns="tableColumns" :data="tableData">
+        <template #empty>
+            <NEmpty description="No tasks." />
+        </template>
+    </NDataTable>
 
     <NModal
         preset="card"
