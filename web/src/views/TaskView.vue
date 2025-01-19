@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, capitalize, h, ref } from 'vue';
 
-import { NDataTable, NButton, NIcon, NProgress, NModal, NGrid, NGi } from 'naive-ui';
+import { NDataTable, NButton, NIcon, NProgress, NTag, NTooltip, NModal, NGrid, NGi } from 'naive-ui';
 import InterruptIcon from '@vicons/fluent/Stop16Regular';
+import DetailIcon from '@vicons/fluent/ChevronRight16Regular';
 
 import { useTasksStore } from '@/store/tasks';
 import { bytesToSize } from '@/utils/show';
@@ -12,6 +13,47 @@ const tasks = useTasksStore();
 const tableData = computed(() => Array.from(tasks.value.entries()).map(([id, task]) => ({ id, ...task })));
 type Row = (typeof tableData.value)[0];
 
+function renderStatus(status: Row['status']) {
+    const typeMap = {
+        running: 'info',
+        done: 'success',
+        error: 'error',
+        interrupted: 'warning',
+    } as const;
+
+    return h(NTag, { type: typeMap[status], round: true, bordered: false }, { default: () => capitalize(status) });
+}
+
+function renderType(type: Row['type']) {
+    const typeMap = {
+        download: 'success',
+        preview: 'warning',
+    } as const;
+
+    return h(NTag, { type: typeMap[type], round: true, bordered: false }, { default: () => capitalize(type) });
+}
+
+function renderInterruptButton(id: number) {
+    return h(
+        NTooltip,
+        {},
+        {
+            trigger: () =>
+                h(
+                    NButton,
+                    {
+                        text: true,
+                        style: { fontSize: '16px', color: 'red' },
+                        disabled: tasks.value.get(id)?.status !== 'running',
+                        onClick: () => webui.handleInterrupt(id),
+                    },
+                    { default: () => h(NIcon, { component: InterruptIcon }) },
+                ),
+            default: () => 'Interrupt',
+        },
+    );
+}
+
 const tableColumns = [
     {
         title: 'ID',
@@ -20,7 +62,7 @@ const tableColumns = [
     {
         title: 'Type',
         key: 'type',
-        render: (row: Row) => capitalize(row.type),
+        render: (row: Row) => renderType(row.type),
     },
     {
         title: 'URL',
@@ -30,7 +72,7 @@ const tableColumns = [
     {
         title: 'Status',
         key: 'status',
-        render: (row: Row) => capitalize(row.status),
+        render: (row: Row) => renderStatus(row.status),
     },
     {
         title: 'Progress',
@@ -43,31 +85,20 @@ const tableColumns = [
             const progress = (row.progress.downloaded_bytes / row.progress.total_bytes) * 100;
             const progressRounded = Math.round(progress * 100) / 100; // Round to 2 decimal places
 
-            return h(NProgress, { percentage: progressRounded });
+            return h(NProgress, { percentage: progressRounded, indicatorPlacement: 'inside' });
         },
     },
     {
         title: 'Speed',
         key: 'speed',
         render(row: Row) {
-            return row.progress !== undefined ? `${bytesToSize(row.progress.speed)} / s` : '';
+            return row.progress !== undefined ? `${bytesToSize(row.progress.speed)}/s` : '';
         },
     },
     {
         title: 'Action',
         key: 'action',
-        render(row: Row) {
-            return h(
-                NButton,
-                {
-                    text: true,
-                    onClick: () => webui.handleInterrupt(row.id),
-                },
-                {
-                    default: h(NIcon, { component: InterruptIcon }),
-                },
-            );
-        },
+        render: (row: Row) => renderInterruptButton(row.id),
     },
     {
         title: '',
@@ -77,11 +108,15 @@ const tableColumns = [
                 NButton,
                 {
                     text: true,
+                    style: { fontSize: '24px' },
                     onClick: () => (activedTaskId.value = row.id),
                 },
-                'Details',
+                {
+                    default: () => h(NIcon, { component: DetailIcon }),
+                },
             );
         },
+        width: 24,
     },
 ];
 
@@ -93,14 +128,14 @@ function closeTaskDetails() {
 }
 
 const taskDetails = computed(() => {
-    if (!activedTask.value) {
+    if (activedTaskId.value === null || !activedTask.value) {
         return [];
     }
 
     const details = [
         {
             name: 'Type',
-            value: capitalize(activedTask.value.type),
+            value: renderType(activedTask.value.type),
         },
         {
             name: 'URL',
@@ -108,7 +143,11 @@ const taskDetails = computed(() => {
         },
         {
             name: 'Status',
-            value: capitalize(activedTask.value.status),
+            value: renderStatus(activedTask.value.status),
+        },
+        {
+            name: 'Action',
+            value: renderInterruptButton(activedTaskId.value),
         },
         {
             name: 'Request',
@@ -124,7 +163,7 @@ const taskDetails = computed(() => {
             },
             {
                 name: 'Progress',
-                value: `${(activedTask.value.progress.downloaded_bytes / activedTask.value.progress.total_bytes) * 100}%`,
+                value: `${((activedTask.value.progress.downloaded_bytes / activedTask.value.progress.total_bytes) * 100).toFixed(2)}%`,
             },
             {
                 name: 'Speed',
