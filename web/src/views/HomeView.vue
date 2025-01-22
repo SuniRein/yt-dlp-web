@@ -5,14 +5,16 @@ import FormArea from '@/components/FormArea.vue';
 import OperationArea from '@/components/OperationArea.vue';
 
 import { useLogStore } from '@/store/log';
+import { useTasksStore, type TaskType } from '@/store/tasks';
 
 import { formItemInfo } from '@/utils/form-item-info';
 
 const form = useTemplateRef('form');
 
 const log = useLogStore();
+const tasks = useTasksStore();
 
-async function handleFormSubmit(action: string) {
+async function handleFormSubmit(action: TaskType) {
     if (!form.value) {
         throw new Error('Form is not availabel.');
     }
@@ -28,21 +30,20 @@ async function handleFormSubmit(action: string) {
 
     log.log(`Request: ${JSON.stringify(data, null, 2)}`);
 
-    const task = await webui.handleRequest(JSON.stringify(data));
+    const task = parseInt(await webui.handleRequest(JSON.stringify(data)));
     log.log(`Run task ${task}.`);
-}
 
-function handleInterrupt(task: number) {
-    webui.handleInterrupt(task);
+    tasks.append({
+        id: task,
+        type: action,
+        request: form.value.data,
+        status: 'running',
+    });
 }
 </script>
 
 <template>
     <FormArea :info="formItemInfo" ref="form" />
 
-    <OperationArea
-        :download="() => handleFormSubmit('download')"
-        :preview="() => handleFormSubmit('preview')"
-        :interrupt="() => handleInterrupt(0)"
-    />
+    <OperationArea :download="() => handleFormSubmit('download')" :preview="() => handleFormSubmit('preview')" />
 </template>

@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include "boost/algorithm/string/join.hpp"
+#include "nlohmann/json.hpp"
 #include "request.h"
 #include "task_manager.h"
 #include "webui.hpp"
@@ -15,6 +16,8 @@ namespace ytweb
 namespace fs = std::filesystem;
 
 static fs::path const INDEX_PATH = YT_DLP_WEB_PATH;
+
+using Json = nlohmann::json;
 
 using TaskId = TaskManager::TaskId;
 
@@ -33,27 +36,45 @@ void App::handle_request(webui::window::event* event)
         task = manager_.launch(
             request.yt_dlp_path(), request.args(),
             [response](TaskId /* id */, std::string_view line) { response->append(line); },
-            [response, this](TaskId /* id */) { show_preview_info(*response); }
+            [response, this](TaskId id) {
+                show_preview_info(*response);
+                report_completion(id);
+            }
         );
     }
     else
     {
-        constexpr std::string_view PROGRESS_PREFIX = "[Progress]";
 
         task = manager_.launch(
             request.yt_dlp_path(), request.args(),
-            [&](TaskId /* id */, std::string_view line) {
+            [this](TaskId id, std::string_view line) {
+                constexpr std::string_view PROGRESS_PREFIX = "[Progress]";
+
                 if (line.starts_with(PROGRESS_PREFIX))
                 {
                     line.remove_prefix(PROGRESS_PREFIX.size());
-                    show_download_progress(line);
+
+                    try
+                    {
+                        auto progress = Json::parse(line);
+                        progress["task_id"] = id;
+
+                        show_download_progress(progress.dump());
+                    }
+                    catch (Json::parse_error const& e)
+                    {
+                        send_log("Error parsing downloading progress at task {}: {}", id, e.what());
+                    }
                 }
                 else
                 {
                     show_download_info(line);
                 }
             },
-            [&](TaskId /* id */) { send_log("Download completed."); }
+            [this](TaskId id) {
+                send_log("Download completed.");
+                report_completion(id);
+            }
         );
     }
 
@@ -66,8 +87,10 @@ void App::handle_request(webui::window::event* event)
 void App::handle_interrupt(webui::window::event* event)
 {
     auto task = static_cast<TaskId>(event->get_int());
-    send_log("Interrupt task {}", task);
     manager_.kill(task);
+
+    send_log("Interrupt task {}", task);
+    report_interruption(task);
 }
 
 void App::init()
@@ -107,6 +130,16 @@ void App::show_download_info(std::string_view data)
 void App::show_preview_info(std::string_view data)
 {
     window_.send_raw("showPreviewInfo", data.data(), data.size());
+}
+
+void App::report_completion(TaskId id)
+{
+    window_.run(std::format(R"js(reportCompletion({}))js", id));
+}
+
+void App::report_interruption(TaskId id)
+{
+    window_.run(std::format(R"js(reportInterruption({}))js", id));
 }
 
 } // namespace ytweb

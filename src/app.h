@@ -39,6 +39,9 @@ class App
     void show_download_info(std::string_view data);
     void show_preview_info(std::string_view data);
 
+    void report_completion(TaskManager::TaskId id);
+    void report_interruption(TaskManager::TaskId id);
+
     void handle_interrupt(webui::window::event* event);
     void handle_request(webui::window::event* event);
 };
