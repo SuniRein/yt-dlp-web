@@ -8,11 +8,14 @@ import { useLogStore } from '@/store/log';
 import { useTasksStore, type TaskType } from '@/store/tasks';
 
 import { formItemInfo } from '@/utils/form-item-info';
+import { useNotification } from '@/utils/notification';
 
 const form = useTemplateRef('form');
 
 const log = useLogStore();
 const tasks = useTasksStore();
+
+const notification = useNotification();
 
 async function handleFormSubmit(action: TaskType) {
     if (!form.value) {
@@ -32,6 +35,13 @@ async function handleFormSubmit(action: TaskType) {
 
     const task = parseInt(await webui.handleRequest(JSON.stringify(data)));
     log.log(`Run task ${task}.`);
+
+    notification.info({
+        title: `Created task ${task}`,
+        description: `The task is running, please wait.`,
+        duration: 3000,
+        keepAliveOnHover: true,
+    });
 
     tasks.append({
         id: task,
