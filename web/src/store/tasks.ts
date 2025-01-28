@@ -34,6 +34,10 @@ export const useTasksStore = defineStore('tasks', () => {
         value.value.set(task.id, task);
     }
 
+    function remove(id: Task['id']) {
+        value.value.delete(id);
+    }
+
     function setStatus(id: Task['id'], status: TaskStatus) {
         const task = value.value.get(id);
         if (task) {
@@ -51,6 +55,7 @@ export const useTasksStore = defineStore('tasks', () => {
     return {
         value,
         append,
+        remove,
         setStatus,
         setProgress,
     };

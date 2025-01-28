@@ -8,6 +8,7 @@ import RetryIcon from '@vicons/fluent/ArrowClockwise16Regular';
 
 import { useTasksStore } from '@/store/tasks';
 import { bytesToSize } from '@/utils/show';
+import { retryTask } from '@/utils/retry-task';
 
 const tasks = useTasksStore();
 
@@ -72,7 +73,7 @@ function renderRetryIcon(row: Row) {
                         text: true,
                         style: { fontSize: '16px', color: 'green' },
                         disabled: row.status !== 'error' && row.status !== 'interrupted',
-                        onClick: () => console.log('retry', row.id),
+                        onClick: () => retryTask(row.id),
                     },
                     { default: () => h(NIcon, { component: RetryIcon }) },
                 ),
