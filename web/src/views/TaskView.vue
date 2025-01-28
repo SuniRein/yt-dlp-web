@@ -4,6 +4,7 @@ import { computed, capitalize, h, ref } from 'vue';
 import { NDataTable, NButton, NSwitch, NIcon, NProgress, NTag, NTooltip, NModal, NGrid, NGi, NEmpty } from 'naive-ui';
 import InterruptIcon from '@vicons/fluent/Stop16Regular';
 import DetailIcon from '@vicons/fluent/ChevronRight16Regular';
+import RetryIcon from '@vicons/fluent/ArrowClockwise16Regular';
 
 import { useTasksStore } from '@/store/tasks';
 import { bytesToSize } from '@/utils/show';
@@ -38,7 +39,7 @@ function renderType(type: Row['type']) {
     return h(NTag, { type: typeMap[type], round: true, bordered: false }, { default: () => capitalize(type) });
 }
 
-function renderInterruptButton(id: number) {
+function renderInterruptButton(row: Row) {
     return h(
         NTooltip,
         {},
@@ -49,14 +50,39 @@ function renderInterruptButton(id: number) {
                     {
                         text: true,
                         style: { fontSize: '16px', color: 'red' },
-                        disabled: tasks.value.get(id)?.status !== 'running',
-                        onClick: () => webui.handleInterrupt(id),
+                        disabled: row.status !== 'running',
+                        onClick: () => webui.handleInterrupt(row.id),
                     },
                     { default: () => h(NIcon, { component: InterruptIcon }) },
                 ),
             default: () => 'Interrupt',
         },
     );
+}
+
+function renderRetryIcon(row: Row) {
+    return h(
+        NTooltip,
+        {},
+        {
+            trigger: () =>
+                h(
+                    NButton,
+                    {
+                        text: true,
+                        style: { fontSize: '16px', color: 'green' },
+                        disabled: row.status !== 'error' && row.status !== 'interrupted',
+                        onClick: () => console.log('retry', row.id),
+                    },
+                    { default: () => h(NIcon, { component: RetryIcon }) },
+                ),
+            default: () => 'Retry',
+        },
+    );
+}
+
+function renderAction(row: Row) {
+    return h('div', {}, [renderInterruptButton(row), renderRetryIcon(row)]);
 }
 
 const tableColumns = computed(() => [
@@ -107,7 +133,7 @@ const tableColumns = computed(() => [
     {
         title: 'Action',
         key: 'action',
-        render: (row: Row) => renderInterruptButton(row.id),
+        render: (row: Row) => renderAction(row),
     },
     {
         title: '',
@@ -160,7 +186,7 @@ const taskDetails = computed(() => {
         },
         {
             name: 'Action',
-            value: renderInterruptButton(activedTaskId.value),
+            value: renderAction({ ...activedTask.value, id: activedTaskId.value }),
         },
         {
             name: 'Request',
