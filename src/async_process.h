@@ -1,52 +1,74 @@
 #pragma once
 
+#include "boost/asio/io_context.hpp"
+#include "boost/asio/readable_pipe.hpp"
+#include "boost/process/v2/process.hpp"
+
 #include <atomic>
 #include <functional>
 #include <memory>
 #include <string_view>
 
-#include "boost/asio.hpp"
-#include "boost/process.hpp"
-
-#include "request.h"
-
 namespace ytweb
 {
 
-namespace bp   = boost::process;
+namespace bp = boost::process;
 namespace asio = boost::asio;
 
 class AsyncProcess
 {
   public:
-    static AsyncProcess& get_instance()
+    using CallbackOnLinebreak = std::function<void(std::string_view)>;
+    using CallbackOnEof = std::function<void()>;
+
+    // Launch a process with the given request.
+    AsyncProcess(
+        std::string_view path,
+        std::vector<std::string> const& args,
+        CallbackOnLinebreak on_linebreak,
+        CallbackOnEof on_eof
+    );
+
+    // Wait for the process to finish before destruction.
+    ~AsyncProcess()
     {
-        static AsyncProcess instance;
-        return instance;
+        wait();
     }
 
-    void launch(Request const& request, std::function<void(std::string_view)> on_linebreak, std::function<void()> on_eof);
+    // Disable copy and move operations.
+    AsyncProcess(AsyncProcess const&) = delete;
+    AsyncProcess& operator=(AsyncProcess const&) = delete;
+    AsyncProcess(AsyncProcess&&) noexcept = delete;
+    AsyncProcess& operator=(AsyncProcess&&) noexcept = delete;
 
+    // Block until the process is finished.
     void wait();
 
-    void interrupt() { interrupted_ = true; }
+    // Send a signal to interrupt the process.
+    // Note: you should call `wait()` after `interrupt()` to make sure the process is terminated properly.
+    void interrupt()
+    {
+        interrupted_ = true;
+    }
 
-    bool running() const { return yt_dlp_process_ != nullptr; }
+    // Check if the process is running.
+    bool running() const
+    {
+        return process_ != nullptr;
+    }
 
   private:
-    AsyncProcess() = default;
-
-    asio::io_context                io_context_;
-    asio::streambuf                 buffer_;
-    std::unique_ptr<bp::async_pipe> pipe_;
-    std::unique_ptr<bp::child>      yt_dlp_process_;
+    asio::io_context io_context_;
+    std::vector<char> buffer_;
+    asio::readable_pipe pipe_{io_context_};
+    std::unique_ptr<bp::process> process_;
 
     // callback functions when reading output
-    std::function<void(std::string_view)> on_linebreak_;
-    std::function<void()>                 on_eof_;
+    CallbackOnLinebreak on_linebreak_;
+    CallbackOnEof on_eof_;
 
     // flag that indicates the process is interrupted
-    std::atomic<bool> interrupted_{};
+    std::atomic<bool> interrupted_{false};
 
     // Allocate a task in `io_context` to read a line.
     // If there is no error, call `on_linebreak_` and read the next line.
@@ -55,4 +77,4 @@ class AsyncProcess
     void read_output();
 };
 
-}  // namespace ytweb
+} // namespace ytweb

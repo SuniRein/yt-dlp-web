@@ -2,4 +2,6 @@
 
 import time
 
+print("start running")
+
 time.sleep(0.01)

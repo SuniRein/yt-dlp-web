@@ -1,0 +1,32 @@
+BasedOnStyle: Microsoft
+
+AlignAfterOpenBracket: BlockIndent
+
+BinPackParameters: false
+
+AllowShortLambdasOnASingleLine: true
+
+BreakAfterAttributes: Always
+BreakBeforeConceptDeclarations: Always
+BreakTemplateDeclarations: Yes
+
+FixNamespaceComments: true
+ShortNamespaceLines: 0
+
+NamespaceIndentation: Inner
+
+IncludeBlocks: Regroup
+IncludeIsMainRegex: (.test)?$
+
+SortUsingDeclarations: Lexicographic
+
+IndentPPDirectives: AfterHash
+PPIndentWidth: 1
+
+PackConstructorInitializers: NextLine
+
+QualifierAlignment: Custom
+QualifierOrder: [inline, static, constexpr, type, const, volatile]
+
+PointerAlignment: Left
+ReferenceAlignment: Pointer

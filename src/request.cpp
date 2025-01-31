@@ -1,10 +1,10 @@
 #include "request.h"
 
+#include "boost/process/v2/environment.hpp"
+#include "nlohmann/json.hpp"
+
 #include <map>
 #include <string_view>
-
-#include "boost/process/v1/search_path.hpp"
-#include "nlohmann/json.hpp"
 
 namespace ytweb
 {
@@ -14,8 +14,8 @@ using Json = nlohmann::json;
 class Request::Impl
 {
   public:
-    Action                   action{};
-    std::string              yt_dlp_path;
+    Action action{};
+    std::string yt_dlp_path;
     std::vector<std::string> args;
 
     void parse(std::string_view json);
@@ -40,17 +40,17 @@ class Request::Impl
 
 void Request::Impl::check_argument_option(std::string_view key, std::string_view option)
 {
-    if (data_.find(key) != data_.end())
+    if (data_.contains(key))
     {
         args.emplace_back(option);
-        args.emplace_back(data_.at(key).get<std::string>());
+        args.emplace_back(data_[key].get<std::string>());
     }
 }
 
 // The value is an array => make multiple argument options.
 void Request::Impl::check_multiple_argument_option(std::string_view key, std::string_view option)
 {
-    if (data_.find(key) != data_.end())
+    if (data_.contains(key))
     {
         for (auto const& value : data_.at(key))
         {
@@ -62,7 +62,7 @@ void Request::Impl::check_multiple_argument_option(std::string_view key, std::st
 
 void Request::Impl::check_option(std::string_view key, std::string_view option)
 {
-    if (data_.find(key) != data_.end())
+    if (data_.contains(key))
     {
         args.emplace_back(option);
     }
@@ -70,10 +70,10 @@ void Request::Impl::check_option(std::string_view key, std::string_view option)
 
 void Request::Impl::map_option(std::string_view key, std::map<std::string, std::string> const& options)
 {
-    if (data_.find(key) != data_.end())
+    if (data_.contains(key))
     {
         auto value = data_.at(key).get<std::string>();
-        if (options.find(value) != options.end())
+        if (options.contains(value))
         {
             args.emplace_back(options.at(value));
         }
@@ -127,11 +127,7 @@ void Request::Impl::set_network_options()
     check_argument_option("proxy", "--proxy");
     check_argument_option("socket_timeout", "--socket-timeout");
     check_argument_option("source_address", "--source-address");
-    map_option("force_ip_protocol",
-        {
-            {"ipv4", "--force-ipv4"},
-            {"ipv6", "--force-ipv6"}
-    });
+    map_option("force_ip_protocol", {{"ipv4", "--force-ipv4"}, {"ipv6", "--force-ipv6"}});
     check_option("enable_file_urls", "--enable-file-urls");
 }
 
@@ -145,11 +141,7 @@ void Request::Impl::set_video_selection_options()
     check_argument_option("date_after", "--dateafter");
     check_multiple_argument_option("filters", "--match-filters");
     check_multiple_argument_option("stop_filters", "--break-match-filters");
-    map_option("is_playlist",
-        {
-            {"yes", "--yes-playlist"},
-            { "no",  "--no-playlist"}
-    });
+    map_option("is_playlist", {{"yes", "--yes-playlist"}, {"no", "--no-playlist"}});
     check_argument_option("age_limit", "--age-limit");
     check_argument_option("max_download_number", "--max-downloads");
     check_argument_option("download_archive", "--download-archive");
@@ -175,11 +167,7 @@ void Request::Impl::set_download_options()
     check_option("playlist_random", "--playlist-random");
     check_option("lazy_playlist", "--lazy-playlist");
     check_option("xattr_set_filesize", "--xattr-set-filesize");
-    map_option("hls_use_mpegts",
-        {
-            {"yes",    "--hls-use-mpegts"},
-            { "no", "--no-hls-use-mpegts"}
-    });
+    map_option("hls_use_mpegts", {{"yes", "--hls-use-mpegts"}, {"no", "--no-hls-use-mpegts"}});
     check_multiple_argument_option("download_sections", "--download-section");
     check_multiple_argument_option("downloader", "--downloader");
     check_multiple_argument_option("download_args", "--downloader-args");
@@ -198,11 +186,7 @@ void Request::Impl::set_output_options()
 void Request::Impl::set_filesystem_options()
 {
     check_argument_option("batch_file", "--batch-file");
-    map_option("overwrite",
-        {
-            { "never",    "--no-overwrites"},
-            {"always", "--force-overwrites"}
-    });
+    map_option("overwrite", {{"never", "--no-overwrites"}, {"always", "--force-overwrites"}});
     check_option("no_continue", "--no-continue");
     check_option("no_part", "--no-part");
     check_option("no_mtime", "--no-mtime");
@@ -222,17 +206,10 @@ void Request::Impl::parse(std::string_view json)
     data_ = Json::parse(json);
 
     // If `yt_dlp_path` is not provided, run yt-dlp from `$PATH`
-    yt_dlp_path = data_.value("yt_dlp_path", boost::process::search_path("yt-dlp").string());
+    yt_dlp_path = data_.value("yt_dlp_path", boost::process::environment::find_executable("yt-dlp").string());
 
     // Parse the action.
     std::string action_str = data_.at("action");
-
-    // If action is "interrupt", other fields are not needed.
-    if (action_str == "interrupt")
-    {
-        action = Action::Interrupt;
-        return;
-    }
 
     action = action_str == "preview" ? Action::Preview : Action::Download;
 
@@ -269,7 +246,7 @@ auto Request::action() const -> Action
     return impl_->action;
 }
 
-auto Request::yt_dlp_path() const -> std::string const&
+auto Request::yt_dlp_path() const -> std::string_view
 {
     return impl_->yt_dlp_path;
 }
@@ -279,11 +256,24 @@ auto Request::args() const -> std::vector<std::string> const&
     return impl_->args;
 }
 
-Request::Request(std::string_view json): impl_(std::make_unique<Impl>())
+Request::Request(std::string_view json) : impl_(std::make_unique<Impl>())
 {
     impl_->parse(json);
 }
 
 Request::~Request() = default;
 
-}  // namespace ytweb
+Request::Request(Request const& other) : impl_(std::make_unique<Impl>(*other.impl_))
+{
+}
+
+Request& Request::operator=(Request const& other)
+{
+    if (this != &other)
+    {
+        *impl_ = *other.impl_;
+    }
+    return *this;
+}
+
+} // namespace ytweb

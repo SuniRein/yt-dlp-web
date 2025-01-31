@@ -1,0 +1,9 @@
+InheritParentConfig: true
+
+Checks:
+  - -cppcoreguidelines-avoid-const-or-ref-data-members
+  - -cppcoreguidelines-avoid-goto
+  - -hicpp-avoid-goto
+  - -modernize-type-traits
+  - -readability-function-cognitive-complexity
+  - -readability-identifier-naming

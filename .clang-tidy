@@ -1,0 +1,50 @@
+Checks:
+  - abseil*
+  - boost*
+  - bugprone*
+  - cert*
+  - clang-analyzer*
+  - concurrency*
+  - cppcoreguidelines*
+  - google*
+  - hicpp*
+  - llvm*
+  - misc*
+  - modernize*
+  - performance*
+  - portability*
+  - readability*
+
+  - -llvmlibc*
+  - -bugprone-easily-swappable-parameters
+  - -cert-err58-cpp
+  - -cppcoreguidelines-non-private-member-variables-in-classes
+  - -cppcoreguidelines-owning-memory
+  - -readability-identifier-length
+  - -misc-non-private-member-variables-in-classes
+  - -modernize-use-nodiscard
+  - -modernize-use-trailing-return-type
+
+CheckOptions:
+  bugprone-narrowing-conversions.IgnoreConversionFromTypes: size_t;ptrdiff_t;size_type;difference_type
+  cppcoreguidelines-narrowing-conversions.IgnoreConversionFromTypes: size_t;ptrdiff_t;size_type;difference_type
+
+  # Naming
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.MethodCase: lower_case
+  readability-identifier-naming.PrivateMemberSuffix: _
+  readability-identifier-naming.PrivateMemberCase: lower_case
+  readability-identifier-naming.ProtectedMemberSuffix: _
+  readability-identifier-naming.ProtectedMemberCase: lower_case
+  readability-identifier-naming.PublicMemberCase: lower_case
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: CamelCase
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.TypeAliasCase: CamelCase
+  readability-identifier-naming.TypeAliasIgnoredRegexp: i[0-9]+|u[0-9]+
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.ConstantCase: UPPER_CASE
+  readability-identifier-naming.LocalConstantCase: UPPER_CASE
