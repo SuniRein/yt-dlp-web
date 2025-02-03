@@ -17,7 +17,7 @@ import {
 import DevIcon from '@vicons/fluent/DeveloperBoard20Filled';
 
 import { useMediaDataStore } from '@/store/media-data';
-import { useLogStore } from '@/store/log';
+import { useLogStore, logLevels } from '@/store/log';
 import { useDisplayModeStore } from '@/store/display-mode';
 import { useTasksStore, taskStatus, taskTypes } from '@/store/tasks';
 import mediaInfo from '@/dev/media-info.json';
@@ -28,6 +28,9 @@ const mediaData = useMediaDataStore();
 const log = useLogStore();
 const displayMode = useDisplayModeStore();
 const tasks = useTasksStore();
+
+const logLevelOptions = logLevels.map((level) => ({ label: capitalize(level), value: level }));
+const logLevelSelected = ref(logLevels[0]);
 
 const logDemo = `Send Request: ${JSON.stringify(
     {
@@ -110,10 +113,11 @@ const taskTypeSelected = ref(taskTypes[0]);
             </NCollapseItem>
 
             <NCollapseItem title="Log">
-                <NButtonGroup>
-                    <NButton v-bind="buttonSettings" @click="log.log('debug', logDemo)">Add Demo Log</NButton>
-                    <NButton v-bind="buttonSettings" @click="log.clear()">Clear Log</NButton>
-                </NButtonGroup>
+                <NInputGroup>
+                    <NSelect :options="logLevelOptions" v-model:value="logLevelSelected" />
+                    <NButton @click="log.log(logLevelSelected, logDemo)">Add Demo Log</NButton>
+                    <NButton @click="log.clear()">Clear Log</NButton>
+                </NInputGroup>
             </NCollapseItem>
 
             <NCollapseItem title="Tasks">
