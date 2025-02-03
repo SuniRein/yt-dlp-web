@@ -1,9 +1,8 @@
 #pragma once
 
+#include "logger.h"
 #include "task_manager.h"
 #include "webui.hpp"
-
-#include <format>
 
 namespace ytweb
 {
@@ -27,13 +26,7 @@ class App
 
     TaskManager manager_;
 
-    // Frontend functions
-    template <typename... Args>
-    void send_log(std::format_string<Args...> format, Args&&... args)
-    {
-        auto message = std::format(format, std::forward<Args>(args)...);
-        window_.run(std::format(R"(logMessage("{}"))", message));
-    }
+    Logger logger_{window_};
 
     void show_download_progress(std::string_view data);
     void show_download_info(std::string_view data);
