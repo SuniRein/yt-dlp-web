@@ -31,10 +31,10 @@ async function handleFormSubmit(action: TaskType) {
         ...form.value.data,
     };
 
-    log.log(`Request: ${JSON.stringify(data, null, 2)}`);
+    log.log('debug', `Request: ${JSON.stringify(data, null, 2)}`);
 
     const task = parseInt(await webui.handleRequest(JSON.stringify(data)));
-    log.log(`Run task ${task}.`);
+    log.log('info', `Run task ${task}.`);
 
     notification.info({
         title: `Created task ${task}`,

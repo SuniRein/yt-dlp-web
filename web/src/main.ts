@@ -4,7 +4,7 @@ import { createPinia } from 'pinia';
 
 import App from '@/App.vue';
 
-import { useLogStore } from '@/store/log';
+import { useLogStore, logLevels, type LogLevel } from '@/store/log';
 import { useMediaDataStore } from '@/store/media-data';
 import { useTasksStore, type DownloadProgress } from '@/store/tasks';
 
@@ -27,9 +27,17 @@ function showDownloadProgress(rawData: Uint8Array) {
     tasks.setProgress(id, progress);
 }
 
-window.logMessage = (message: string) => log.log(message);
+window.logMessage = (level: string, message: string) => {
+    if (!logLevels.includes(level as LogLevel)) {
+        console.error(`Invalid log level: ${level}. The message will not be logged.`);
+        return;
+    }
+
+    log.log(level as LogLevel, message);
+};
+
 window.showDownloadProgress = showDownloadProgress;
-window.showDownloadInfo = (rawData: Uint8Array) => log.log(new TextDecoder().decode(rawData));
+window.showDownloadInfo = (rawData: Uint8Array) => log.log('info', new TextDecoder().decode(rawData));
 window.showPreviewInfo = (rawData: Uint8Array) => (mediaData.value = JSON.parse(new TextDecoder().decode(rawData)));
 
 window.reportCompletion = (id: number) => {
