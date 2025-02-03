@@ -25,7 +25,7 @@ void App::handle_request(webui::window::event* event)
 {
     Request request(event->get_string_view());
 
-    send_log("Run command: {} {}", request.yt_dlp_path(), boost::algorithm::join(request.args(), " "));
+    logger_.info("Run command: {} {}", request.yt_dlp_path(), boost::algorithm::join(request.args(), " "));
 
     TaskId task{};
 
@@ -63,7 +63,7 @@ void App::handle_request(webui::window::event* event)
                     }
                     catch (Json::parse_error const& e)
                     {
-                        send_log("Error parsing downloading progress at task {}: {}", id, e.what());
+                        logger_.error("Error parsing downloading progress at task {}: {}", id, e.what());
                     }
                 }
                 else
@@ -72,7 +72,7 @@ void App::handle_request(webui::window::event* event)
                 }
             },
             [this](TaskId id) {
-                send_log("Download completed.");
+                logger_.info("Download completed.");
                 report_completion(id);
             }
         );
@@ -89,7 +89,7 @@ void App::handle_interrupt(webui::window::event* event)
     auto task = static_cast<TaskId>(event->get_int());
     manager_.kill(task);
 
-    send_log("Interrupt task {}", task);
+    logger_.info("Interrupt task {}", task);
     report_interruption(task);
 }
 
