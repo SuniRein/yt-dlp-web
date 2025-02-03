@@ -5,16 +5,19 @@ import FormArea from '@/components/FormArea.vue';
 import OperationArea from '@/components/OperationArea.vue';
 
 import { useLogStore } from '@/store/log';
-import { useMediaDataStore } from '@/store/media-data';
+import { useTasksStore, type TaskType } from '@/store/tasks';
 
 import { formItemInfo } from '@/utils/form-item-info';
+import { useNotification } from '@/utils/notification';
 
 const form = useTemplateRef('form');
 
 const log = useLogStore();
-const mediaData = useMediaDataStore();
+const tasks = useTasksStore();
 
-function handleFormSubmit(action: string) {
+const notification = useNotification();
+
+async function handleFormSubmit(action: TaskType) {
     if (!form.value) {
         throw new Error('Form is not availabel.');
     }
@@ -30,11 +33,21 @@ function handleFormSubmit(action: string) {
 
     log.log(`Request: ${JSON.stringify(data, null, 2)}`);
 
-    // Backend call
-    webui.submitUrl(JSON.stringify(data)).then((response) => {
-        if (action === 'preview' && response) {
-            mediaData.value = JSON.parse(response);
-        }
+    const task = parseInt(await webui.handleRequest(JSON.stringify(data)));
+    log.log(`Run task ${task}.`);
+
+    notification.info({
+        title: `Created task ${task}`,
+        description: `The task is running, please wait.`,
+        duration: 3000,
+        keepAliveOnHover: true,
+    });
+
+    tasks.append({
+        id: task,
+        type: action,
+        request: form.value.data,
+        status: 'running',
     });
 }
 </script>
@@ -42,9 +55,5 @@ function handleFormSubmit(action: string) {
 <template>
     <FormArea :info="formItemInfo" ref="form" />
 
-    <OperationArea
-        :download="() => handleFormSubmit('download')"
-        :preview="() => handleFormSubmit('preview')"
-        :interrupt="() => handleFormSubmit('interrupt')"
-    />
+    <OperationArea :download="() => handleFormSubmit('download')" :preview="() => handleFormSubmit('preview')" />
 </template>

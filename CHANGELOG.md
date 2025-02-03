@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.0 - 2024-1-22
+
+### Added
+
+- Multiple tasks can be run simultaneously.
+- A task view is added to show and manage all running tasks.
+
+### Fixed
+
+- Error in preview media info due to memory leak in backend.
+
+### Internal
+
+- Upgrade C++ backend to use C++20.
+- Add clang-format and clang-tidy to enforce code style.
+
 ## [0.2.0] - 2024-12-29
 
 ### Added
@@ -12,14 +28,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added extensive options provided by `yt-dlp`.
 - Implemented frontend input validation for certain input options.
 - UI improvements for better user experience.
-    - Header navigation bar.
-    - Automatic dark mode and a display mode switch.
-    - Make preview and log area a single page view.
-    - A '\*' symbol will be displayed when an input is required.
-    - Real-time validation for user input.
-    - Auto focus on the first invalid input field when submitted.
-    - Hover-to-show description text.
-    - Dev tools for developers.
+  - Header navigation bar.
+  - Automatic dark mode and a display mode switch.
+  - Make preview and log area a single page view.
+  - A '\*' symbol will be displayed when an input is required.
+  - Real-time validation for user input.
+  - Auto focus on the first invalid input field when submitted.
+  - Hover-to-show description text.
+  - Dev tools for developers.
 - Using floating buttons to interactive.
 
 ### Changed

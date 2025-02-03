@@ -39,5 +39,6 @@ declare namespace webui {
 
     /// The following is user-defined.
 
-    export function submitUrl(data: string): Promise<string | null>;
+    export function handleRequest(data: string): Promise<string>;
+    export function handleInterrupt(taskId: number): void;
 }

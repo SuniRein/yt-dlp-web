@@ -29,8 +29,8 @@ const menuOptions = [
         label: 'Preview',
     },
     {
-        key: 'downloading',
-        label: 'Downloading',
+        key: 'task',
+        label: 'Task',
     },
     {
         key: 'log',
