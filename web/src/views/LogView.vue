@@ -22,7 +22,7 @@ const log = useLogStore();
         </NFloatButton>
 
         <div style="margin: auto 16px" data-test="log-content">
-            <pre>{{ log.value }}</pre>
+            <pre>{{ log.str }}</pre>
         </div>
     </div>
 </template>
