@@ -111,7 +111,7 @@ const taskTypeSelected = ref(taskTypes[0]);
 
             <NCollapseItem title="Log">
                 <NButtonGroup>
-                    <NButton v-bind="buttonSettings" @click="log.log(logDemo)">Add Demo Log</NButton>
+                    <NButton v-bind="buttonSettings" @click="log.log('debug', logDemo)">Add Demo Log</NButton>
                     <NButton v-bind="buttonSettings" @click="log.clear()">Clear Log</NButton>
                 </NButtonGroup>
             </NCollapseItem>

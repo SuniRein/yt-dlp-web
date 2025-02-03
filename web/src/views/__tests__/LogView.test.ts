@@ -13,11 +13,11 @@ test('log message', async () => {
     const log = useLogStore();
 
     const message = 'Hello, World!';
-    log.log(message);
+    log.log('info', message);
     await wrapper.vm.$nextTick();
 
     const content = wrapper.get('[data-test="log-content"]');
-    expect(content.text()).toContain(message);
+    expect(content.text()).toContain(`[Info] ${message}`);
 });
 
 test('new log message does not replace old log message', async () => {
@@ -25,16 +25,16 @@ test('new log message does not replace old log message', async () => {
     const log = useLogStore();
 
     const firstMessage = 'Hello, World!';
-    log.log(firstMessage);
+    log.log('info', firstMessage);
     await wrapper.vm.$nextTick();
 
     const secondMessage = 'Goodbye, World!';
-    log.log(secondMessage);
+    log.log('debug', secondMessage);
     await wrapper.vm.$nextTick();
 
     const content = wrapper.get('[data-test="log-content"]');
-    expect(content.text()).toContain(firstMessage);
-    expect(content.text()).toContain(secondMessage);
+    expect(content.text()).toContain(`[Info] ${firstMessage}`);
+    expect(content.text()).toContain(`[Debug] ${secondMessage}`);
 });
 
 test('clear log', async () => {
@@ -42,7 +42,7 @@ test('clear log', async () => {
     const log = useLogStore();
 
     const message = 'Hello, World!';
-    log.log(message);
+    log.log('error', message);
     await wrapper.vm.$nextTick();
 
     const clearButton = wrapper.get('[data-test="log-clear-button"]');
@@ -51,5 +51,5 @@ test('clear log', async () => {
     const content = wrapper.get('[data-test="log-content"]');
     expect(content.text()).toBe('');
 
-    expect(log.value).toBe('');
+    expect(log.str).toBe('');
 });
