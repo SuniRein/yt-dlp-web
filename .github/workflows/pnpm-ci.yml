@@ -2,7 +2,7 @@ name: pnpm-CI
 
 on:
   pull_request:
-    branches: [main, dev]
+    branches: [main]
     paths:
       - "web/**"
       - ".github/workflows/pnpm-ci.yml"
