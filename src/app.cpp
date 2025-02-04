@@ -25,8 +25,6 @@ void App::handle_request(webui::window::event* event)
 {
     Request request(event->get_string_view());
 
-    logger_.info("Run command: {} {}", request.yt_dlp_path(), boost::algorithm::join(request.args(), " "));
-
     TaskId task{};
 
     if (request.action() == Request::Action::Preview)
@@ -37,6 +35,7 @@ void App::handle_request(webui::window::event* event)
             request.yt_dlp_path(), request.args(),
             [response](TaskId /* id */, std::string_view line) { response->append(line); },
             [response, this](TaskId id) {
+                logger_.info("[Task {}] Preview completed.", id);
                 show_preview_info(*response);
                 report_completion(id);
             }
@@ -63,20 +62,29 @@ void App::handle_request(webui::window::event* event)
                     }
                     catch (Json::parse_error const& e)
                     {
-                        logger_.error("Error parsing downloading progress at task {}: {}", id, e.what());
+                        logger_.error("[Task {}] Error parsing downloading progress: {}", id, e.what());
                     }
                 }
                 else
                 {
-                    show_download_info(line);
+                    if (!line.empty())
+                    {
+                        logger_.debug("[Task {}] {}", id, line);
+                        show_download_info(line);
+                    }
                 }
             },
             [this](TaskId id) {
-                logger_.info("Download completed.");
+                logger_.info("[Task {}] Download completed.", id);
                 report_completion(id);
             }
         );
     }
+
+    logger_.info("[Task {}] Successfully parsed request.", task);
+    logger_.debug(
+        "[Task {}] Run command: {} {}", task, request.yt_dlp_path(), boost::algorithm::join(request.args(), " ")
+    );
 
     // Use a detached thread so that the thread id can be returned immediately.
     std::thread{[this, task] { manager_.wait(task); }}.detach();
@@ -89,7 +97,7 @@ void App::handle_interrupt(webui::window::event* event)
     auto task = static_cast<TaskId>(event->get_int());
     manager_.kill(task);
 
-    logger_.info("Interrupt task {}", task);
+    logger_.info("[Task {}] Interrupted.", task);
     report_interruption(task);
 }
 
