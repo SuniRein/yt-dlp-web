@@ -50,7 +50,7 @@ const columns = [
         title: 'Message',
         key: 'message',
         render(row: Row) {
-            return h('pre', { style: { margin: 0 } }, row.message);
+            return h('pre', { style: { margin: 0, whiteSpace: 'pre-wrap' } }, row.message);
         },
     },
 ];
