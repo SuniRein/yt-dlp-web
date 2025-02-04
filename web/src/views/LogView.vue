@@ -3,6 +3,7 @@ import { h, capitalize, computed } from 'vue';
 import { NFloatButton, NIcon, NDataTable, NTag, NEmpty } from 'naive-ui';
 import { useLogStore } from '@/store/log';
 import ClearIcon from '@vicons/fluent/Broom16Regular';
+import SorterIcon from '@vicons/fluent/ArrowSortDownLines16Regular';
 
 const log = useLogStore();
 
@@ -22,7 +23,20 @@ const columns = [
         title: 'Time',
         key: 'time',
         render(row: Row) {
-            return new Date(row.time).toLocaleString();
+            return row.time.toLocaleString();
+        },
+
+        sorter: (row1: Row, row2: Row) => row1.time.getTime() - row2.time.getTime(),
+        renderSorterIcon({ order }: { order: 'descend' | 'ascend' | false }) {
+            if (order === 'ascend') {
+                return h(NIcon, { component: SorterIcon });
+            }
+
+            if (order === 'descend') {
+                return h(NIcon, { component: SorterIcon, style: { transform: 'rotate(180deg)' } });
+            }
+
+            return h(NIcon, { component: SorterIcon, style: { opacity: 0.5 } });
         },
     },
     {
