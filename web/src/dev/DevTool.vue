@@ -22,6 +22,8 @@ import { useDisplayModeStore } from '@/store/display-mode';
 import { useTasksStore, taskStatus, taskTypes } from '@/store/tasks';
 import mediaInfo from '@/dev/media-info.json';
 
+import { showDownloadingLog } from '@/dev/download-log';
+
 const showModel = ref(false);
 
 const mediaData = useMediaDataStore();
@@ -118,6 +120,8 @@ const taskTypeSelected = ref(taskTypes[0]);
                     <NButton @click="log.log(logLevelSelected, logDemo)">Add Demo Log</NButton>
                     <NButton @click="log.clear()">Clear Log</NButton>
                 </NInputGroup>
+
+                <NButton v-bind="buttonSettings" @click="showDownloadingLog()">Simulate the download process</NButton>
             </NCollapseItem>
 
             <NCollapseItem title="Tasks">
