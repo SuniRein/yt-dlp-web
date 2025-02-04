@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { h, capitalize, computed } from 'vue';
 import { NFloatButton, NIcon, NDataTable, NTag, NEmpty } from 'naive-ui';
-import { useLogStore } from '@/store/log';
+import { useLogStore, logLevels } from '@/store/log';
 import ClearIcon from '@vicons/fluent/Broom16Regular';
 import SorterIcon from '@vicons/fluent/ArrowSortDownLines16Regular';
 
@@ -44,6 +44,11 @@ const columns = [
         key: 'level',
         render(row: Row) {
             return renderLevel(row.level);
+        },
+
+        filterOptions: logLevels.map((value) => ({ label: capitalize(value), value })),
+        filter(value: string | number, row: Row) {
+            return row.level === value;
         },
     },
     {
