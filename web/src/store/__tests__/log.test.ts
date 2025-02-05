@@ -17,7 +17,7 @@ afterEach(() => {
 test('log info', () => {
     const log = useLogStore();
 
-    log.log('info', 'Hello, World!');
+    log.info('Hello, World!');
 
     expect(log.store).toHaveLength(1);
     expect(log.store[0]).toEqual({
@@ -30,7 +30,7 @@ test('log info', () => {
 test('log warning', () => {
     const log = useLogStore();
 
-    log.log('warning', 'Hello, World!');
+    log.warning('Hello, World!');
 
     expect(log.store).toHaveLength(1);
     expect(log.store[0]).toEqual({
@@ -43,8 +43,8 @@ test('log warning', () => {
 test('log multiple messages', () => {
     const log = useLogStore();
 
-    log.log('error', 'Hello, World!');
-    log.log('debug', 'Another Hello, World!');
+    log.error('Hello, World!');
+    log.debug('Another Hello, World!');
 
     expect(log.store).toHaveLength(2);
     expect(log.store[0]).toEqual({
@@ -62,7 +62,7 @@ test('log multiple messages', () => {
 test('clear log', () => {
     const log = useLogStore();
 
-    log.log('warning', 'Hello, World!');
+    log.warning('Hello, World!');
     log.clear();
 
     expect(log.store).toHaveLength(0);
