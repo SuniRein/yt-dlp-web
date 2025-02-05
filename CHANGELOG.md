@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased - 2025-2-5
+
+### Added
+
+- Four log levels: debug, info, warning, and error.
+- Added timestamp information to the logs.
+- Enabled automatic line wrapping for long log entries.
+
+### Changed
+
+- Displayed logs in a table format.
+  - Enabled sorting logs by time.
+  - Enabled filtering logs by level.
+- More detailed log messages when users perform actions.
+  - Handled exceptions and logged error messages when the frontend sends an invalid request.
+  - Added a warning when sending an interrupt request to a non-running task.
+
+### Fixed
+
+- Fixed a bug where the task status was incorrectly displayed as interrupted when restarting a failed task.
+
 ## 0.3.0 - 2024-1-22
 
 ### Added
