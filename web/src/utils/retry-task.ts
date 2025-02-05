@@ -8,7 +8,7 @@ export async function retryTask(id: Task['id']) {
 
     const task = tasks.value.get(id);
     if (!task) {
-        log.log('warning', `Try to retry task ${id}, but not found.`);
+        log.warning(`Try to retry task ${id}, but not found.`);
         return;
     }
 
@@ -17,7 +17,7 @@ export async function retryTask(id: Task['id']) {
     const newId = parseInt(await webui.handleRequest(JSON.stringify({ ...task.request, action: task.type })));
     tasks.append({ ...task, id: newId, status: 'running' });
 
-    log.log('info', `Retried task ${id} -> task ${newId}.`);
+    log.info(`Retried task ${id} -> task ${newId}.`);
 
     useNotification().info({
         title: `Task ${id} has been retried.`,

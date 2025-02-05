@@ -19,7 +19,7 @@ const wrapper = app.getComponent(LogView);
 
 test('log message', async () => {
     const message = 'Hello, World!';
-    log.log('info', message);
+    log.info(message);
     await wrapper.vm.$nextTick();
 
     const content = wrapper.get('[data-test="log-content"]');
@@ -29,7 +29,7 @@ test('log message', async () => {
 
 test('new log message does not replace old log message', async () => {
     const secondMessage = 'Goodbye, World!';
-    log.log('debug', secondMessage);
+    log.debug(secondMessage);
     await wrapper.vm.$nextTick();
 
     const content = wrapper.get('[data-test="log-content"]');

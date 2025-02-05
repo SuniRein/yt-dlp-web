@@ -13,19 +13,43 @@ export interface Log {
 export const useLogStore = defineStore('log', () => {
     const store = ref<Log[]>([]);
 
+    function clear() {
+        store.value = [];
+    }
+
+    function log(level: LogLevel, message: string) {
+        store.value.push({
+            time: new Date(),
+            level,
+            message,
+        });
+    }
+
+    function debug(message: string) {
+        log('debug', message);
+    }
+
+    function info(message: string) {
+        log('info', message);
+    }
+
+    function warning(message: string) {
+        log('warning', message);
+    }
+
+    function error(message: string) {
+        log('error', message);
+    }
+
     return {
         store,
 
-        clear() {
-            store.value = [];
-        },
+        clear,
+        log,
 
-        log(level: LogLevel, message: string) {
-            store.value.push({
-                time: new Date(),
-                level,
-                message,
-            });
-        },
+        debug,
+        info,
+        warning,
+        error,
     };
 });
