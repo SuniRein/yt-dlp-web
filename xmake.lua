@@ -10,11 +10,13 @@ add_requires("nlohmann_json") -- json parser
 add_requires("boost", { configs = { cmake = false, process = true } }) -- boost.process, boost.asio
 add_defines("BOOST_ASIO_NO_DEPRECATED") -- disable deprecated asio features
 
+add_requires("syscmdline")
+
 target("main", function()
     set_kind("binary")
     add_files("src/*.cpp")
     add_defines('YT_DLP_WEB_PATH="$(projectdir)/web/dist"')
-    add_packages("webui", "nlohmann_json", "boost")
+    add_packages("webui", "nlohmann_json", "boost", "syscmdline")
 end)
 
 option("enable_test", function()
@@ -33,7 +35,7 @@ if has_config("enable_test") then
 
         add_files("test/*.cpp")
 
-        add_packages("webui", "nlohmann_json", "boost")
+        add_packages("nlohmann_json", "boost")
         add_packages("gtest")
 
         -- fake yt-dlp executable for testing
