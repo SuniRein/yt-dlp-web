@@ -1,6 +1,7 @@
 #include "request.h"
 
 #include "boost/process/v2/environment.hpp"
+#include "exception.h"
 #include "nlohmann/json.hpp"
 
 #include <map>
@@ -203,18 +204,39 @@ void Request::Impl::set_filesystem_options()
 
 void Request::Impl::parse(std::string_view json)
 {
-    data_ = Json::parse(json);
+    try
+    {
+        data_ = Json::parse(json);
+    }
+    catch (Json::parse_error const& e)
+    {
+        throw ParseError(e.what());
+    }
 
     // If `yt_dlp_path` is not provided, run yt-dlp from `$PATH`
     yt_dlp_path = data_.value("yt_dlp_path", boost::process::environment::find_executable("yt-dlp").string());
 
     // Parse the action.
-    std::string action_str = data_.at("action");
-
-    action = action_str == "preview" ? Action::Preview : Action::Download;
+    try
+    {
+        std::string action_str = data_.at("action").get<std::string>();
+        action = (action_str == "preview" ? Action::Preview : Action::Download);
+    }
+    catch (Json::out_of_range const& e)
+    {
+        throw ParseError("Action is not provided.");
+    }
 
     // Generate arguments for yt-dlp
-    args.emplace_back(data_.at("url_input").get<std::string>());
+    try
+    {
+        std::string url_input = data_.at("url_input").get<std::string>();
+        args.emplace_back(url_input);
+    }
+    catch (Json::out_of_range const& e)
+    {
+        throw ParseError("URL input is not provided.");
+    }
 
     set_cookies_options();
     set_network_options();
