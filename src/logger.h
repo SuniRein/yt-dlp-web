@@ -1,9 +1,15 @@
 #pragma once
 
+#include "nlohmann/json.hpp"
 #include "webui.hpp"
 
 #include <format>
 #include <string_view>
+
+namespace ytweb
+{
+
+using Json = nlohmann::json;
 
 class Logger
 {
@@ -42,7 +48,13 @@ class Logger
     template <typename... Args>
     void log(std::string_view level, std::format_string<Args...> format, Args&&... args)
     {
-        auto message = std::format(format, std::forward<Args>(args)...);
-        window_->run(std::format(R"js(logMessage("{}", "{}"))js", level, message));
+        Json json;
+        json.emplace("level", level);
+        json.emplace("message", std::format(format, std::forward<Args>(args)...));
+
+        std::string raw = json.dump();
+        window_->send_raw("logMessage", raw.data(), raw.size());
     }
 };
+
+} // namespace ytweb
