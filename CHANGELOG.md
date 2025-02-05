@@ -24,7 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed a bug where the task status was incorrectly displayed as interrupted when restarting a failed task.
+- The task status was incorrectly displayed as interrupted when restarting a failed task.
+- Quote in log message lead to decoding error. #27
 
 ## 0.3.0 - 2024-1-22
 
