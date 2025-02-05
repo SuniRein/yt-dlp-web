@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include "boost/algorithm/string/join.hpp"
+#include "exception.h"
 #include "nlohmann/json.hpp"
 #include "request.h"
 #include "task_manager.h"
@@ -8,6 +9,7 @@
 
 #include <filesystem>
 #include <format>
+#include <optional>
 #include <thread>
 
 namespace ytweb
@@ -23,16 +25,27 @@ using TaskId = TaskManager::TaskId;
 
 void App::handle_request(webui::window::event* event)
 {
-    Request request(event->get_string_view());
+    logger_.debug("Received request: {}", event->get_string_view());
+
+    std::optional<Request> request;
+    try
+    {
+        request.emplace(event->get_string_view());
+    }
+    catch (ParseError const& e)
+    {
+        logger_.error("Error parsing request: {}", e.what());
+        return;
+    }
 
     TaskId task{};
 
-    if (request.action() == Request::Action::Preview)
+    if (request->action() == Request::Action::Preview)
     {
         auto response = std::make_shared<std::string>();
 
         task = manager_.launch(
-            request.yt_dlp_path(), request.args(),
+            request->yt_dlp_path(), request->args(),
             [response](TaskId /* id */, std::string_view line) { response->append(line); },
             [response, this](TaskId id) {
                 logger_.info("[Task {}] Preview completed.", id);
@@ -43,9 +56,8 @@ void App::handle_request(webui::window::event* event)
     }
     else
     {
-
         task = manager_.launch(
-            request.yt_dlp_path(), request.args(),
+            request->yt_dlp_path(), request->args(),
             [this](TaskId id, std::string_view line) {
                 constexpr std::string_view PROGRESS_PREFIX = "[Progress]";
 
@@ -83,7 +95,7 @@ void App::handle_request(webui::window::event* event)
 
     logger_.info("[Task {}] Successfully parsed request.", task);
     logger_.debug(
-        "[Task {}] Run command: {} {}", task, request.yt_dlp_path(), boost::algorithm::join(request.args(), " ")
+        "[Task {}] Run command: {} {}", task, request->yt_dlp_path(), boost::algorithm::join(request->args(), " ")
     );
 
     // Use a detached thread so that the thread id can be returned immediately.
