@@ -1,6 +1,6 @@
 declare global {
     interface Window {
-        logMessage: (level: string, message: string) => void;
+        logMessage: (rawData: Uint8Array) => void;
         showDownloadProgress: (rawData: Uint8Array) => void;
         showDownloadInfo: (rawData: Uint8Array) => void;
         showPreviewInfo: (rawData: Uint8Array) => void;

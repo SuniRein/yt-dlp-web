@@ -27,9 +27,17 @@ function showDownloadProgress(rawData: Uint8Array) {
     tasks.setProgress(id, progress);
 }
 
-window.logMessage = (level: string, message: string) => {
+window.logMessage = (rawData: Uint8Array) => {
+    const str = new TextDecoder().decode(rawData);
+
+    const { level, message } = JSON.parse(str);
+    if (level === undefined || message === undefined || typeof level !== 'string' || typeof message !== 'string') {
+        log.error(`Invalid log message: ${str}`);
+        return;
+    }
+
     if (!logLevels.includes(level as LogLevel)) {
-        console.error(`Invalid log level: ${level}. The message will not be logged.`);
+        log.error(`Invalid log level: ${level}.`);
         return;
     }
 
