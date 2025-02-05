@@ -1,6 +1,7 @@
 #include "request.h"
 
 #include "boost/process/v2/environment.hpp"
+#include "exception.h"
 #include "nlohmann/json.hpp"
 
 #include "gmock/gmock.h"
@@ -8,6 +9,7 @@
 #include <format>
 #include <string>
 
+using ytweb::ParseError;
 using ytweb::Request;
 using Json = nlohmann::json;
 
@@ -78,19 +80,19 @@ TEST(Request, MissingFields)
 TEST(Request, MissingAction)
 {
     std::string json = R"json({"yt_dlp_path": "/usr/bin/yt-dlp", "url_input": "https://example.com/video"})json";
-    EXPECT_THROW(Request request(json), Json::out_of_range);
+    EXPECT_THROW(Request request(json), ParseError);
 }
 
 TEST(Request, MissingURLInput)
 {
     std::string json = R"json({"action": "download", "yt_dlp_path": "/usr/bin/yt-dlp"})json";
-    EXPECT_THROW(Request request(json), Json::out_of_range);
+    EXPECT_THROW(Request request(json), ParseError);
 }
 
 TEST(Request, InvalidJSON)
 {
     std::string json = "invalid_json";
-    EXPECT_THROW(Request request(json), Json::parse_error);
+    EXPECT_THROW(Request request(json), ParseError);
 }
 
 TEST(Request, CookiesOptions)
