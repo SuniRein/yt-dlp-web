@@ -37,7 +37,7 @@ window.logMessage = (level: string, message: string) => {
 };
 
 window.showDownloadProgress = showDownloadProgress;
-window.showDownloadInfo = (rawData: Uint8Array) => log.log('info', new TextDecoder().decode(rawData));
+window.showDownloadInfo = () => {};
 window.showPreviewInfo = (rawData: Uint8Array) => (mediaData.value = JSON.parse(new TextDecoder().decode(rawData)));
 
 window.reportCompletion = (id: number) => {
