@@ -107,10 +107,19 @@ void App::handle_request(webui::window::event* event)
 void App::handle_interrupt(webui::window::event* event)
 {
     auto task = static_cast<TaskId>(event->get_int());
-    manager_.kill(task);
+    logger_.info("[Task {}] Received interrupt request.", task);
 
-    logger_.info("[Task {}] Interrupted.", task);
-    report_interruption(task);
+    if (manager_.is_running(task))
+    {
+        manager_.kill(task);
+
+        logger_.info("[Task {}] Interrupted.", task);
+        report_interruption(task);
+    }
+    else
+    {
+        logger_.info("[Task {}] The task is not running, so it can't be interrupted.", task);
+    }
 }
 
 void App::init()
