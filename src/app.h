@@ -1,6 +1,7 @@
 #pragma once
 
 #include "logger.h"
+#include "runtime.h"
 #include "task_manager.h"
 #include "webui.hpp"
 
@@ -19,8 +20,15 @@ class App
     void init();
     void run();
 
+    void set_runtime(Runtime runtime)
+    {
+        runtime_ = runtime;
+    }
+
   private:
     App() = default;
+
+    Runtime runtime_{Runtime::Webview};
 
     webui::window window_;
 

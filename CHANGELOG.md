@@ -5,13 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2025-2-5
+## Unreleased - 2025-2-6
 
 ### Added
 
 - Four log levels: debug, info, warning, and error.
 - Added timestamp information to the logs.
 - Enabled automatic line wrapping for long log entries.
+- Used [SysCmdLine](https://github.com/SineStriker/syscmdline) to parse cmdline arguments.
+- Enabled specifying runtime environment by cmdline argument "--runtime". Useful aliases "--browser" and "--webview" are provided.
 
 ### Changed
 
