@@ -142,7 +142,7 @@ void App::init()
 
 void App::run()
 {
-    window_.show_browser("index.html", AnyBrowser);
+    window_.show_browser("index.html", static_cast<unsigned int>(runtime_));
     webui::wait();
 }
 
