@@ -15,8 +15,15 @@ add_requires("syscmdline")
 target("main", function()
     set_kind("binary")
     add_files("src/*.cpp")
-    add_defines('YT_DLP_WEB_PATH="$(projectdir)/web/dist"')
     add_packages("webui", "nlohmann_json", "boost", "syscmdline")
+
+    after_build(function(target)
+        if is_mode("debug") then
+            local server_dir = path.join(target:targetdir(), "server")
+            os.tryrm(server_dir)
+            os.ln("$(projectdir)/web/dist", server_dir)
+        end
+    end)
 end)
 
 option("enable_test", function()
