@@ -17,8 +17,6 @@ namespace ytweb
 
 namespace fs = std::filesystem;
 
-static fs::path const INDEX_PATH = YT_DLP_WEB_PATH;
-
 using Json = nlohmann::json;
 
 using TaskId = TaskManager::TaskId;
@@ -124,20 +122,29 @@ void App::handle_interrupt(webui::window::event* event)
 
 void App::init()
 {
-    // Check if the index.html file exists.
-    if (!fs::exists(INDEX_PATH) || !fs::is_directory(INDEX_PATH))
-    {
-        throw std::runtime_error("Path not exist: " + INDEX_PATH.string());
-    }
-    if (!fs::exists(INDEX_PATH / "index.html") || !fs::is_regular_file(INDEX_PATH / "index.html"))
-    {
-        throw std::runtime_error("index.html not exist in: " + INDEX_PATH.string());
-    }
-
-    window_.set_root_folder(INDEX_PATH.string());
-
     window_.bind("handleRequest", [](webui::window::event* event) { App::instance().handle_request(event); });
     window_.bind("handleInterrupt", [](webui::window::event* event) { App::instance().handle_interrupt(event); });
+}
+
+void App::set_server_dir(std::filesystem::path const& server_dir)
+{
+    if (!fs::exists(server_dir))
+    {
+        throw ytweb::PathError("Path not exist: {}", server_dir.string());
+    }
+
+    if (!fs::is_directory(server_dir))
+    {
+        throw ytweb::PathError("Path is not a directory: {}", server_dir.string());
+    }
+
+    auto index = server_dir / "index.html";
+    if (!fs::exists(index) || !fs::is_regular_file(index))
+    {
+        throw ytweb::PathError("index.html not found in the server directory: {}", server_dir.string());
+    }
+
+    window_.set_root_folder(server_dir.string());
 }
 
 void App::run()

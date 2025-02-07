@@ -5,6 +5,8 @@
 #include "task_manager.h"
 #include "webui.hpp"
 
+#include <filesystem>
+
 namespace ytweb
 {
 
@@ -24,6 +26,8 @@ class App
     {
         runtime_ = runtime;
     }
+
+    void set_server_dir(std::filesystem::path const& server_dir);
 
   private:
     App() = default;
