@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2025-2-6
+## Unreleased - 2025-2-7
 
 ### Added
 
@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled automatic line wrapping for long log entries.
 - Used [SysCmdLine](https://github.com/SineStriker/syscmdline) to parse cmdline arguments.
 - Enabled specifying runtime environment by cmdline argument "--runtime". Useful aliases "--browser" and "--webview" are provided.
+- Enabled specifying web file path by cmdline argument "--server-path".
 
 ### Changed
 
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - More detailed log messages when users perform actions.
   - Handled exceptions and logged error messages when the frontend sends an invalid request.
   - Added a warning when sending an interrupt request to a non-running task.
+- Macro "YT_DLP_WEB_PATH" is removed, replaced by a soft link created on building.
 
 ### Fixed
 
