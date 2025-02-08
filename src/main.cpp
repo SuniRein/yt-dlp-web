@@ -1,4 +1,5 @@
 #include "app.h"
+#include "boost/algorithm/string/join.hpp"
 #include "exception.h"
 #include "runtime.h"
 #include "syscmdline/parser.h"
@@ -42,7 +43,9 @@ int main()
                                 "Default is the 'server' directory in the same directory as the executable."
     );
     server_dir_option.setRequired(false);
-    server_dir_option.addArgument(SCL::Argument("path").default_value("server"));
+
+    auto server_dir = std::filesystem::absolute(SCL::appDirectory()) / "server";
+    server_dir_option.addArgument(SCL::Argument("path").default_value(server_dir.string()));
 
     SCL::Command root_command("yt-dlp-web");
     root_command.addHelpOption();
