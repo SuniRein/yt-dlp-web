@@ -15,7 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Used [SysCmdLine](https://github.com/SineStriker/syscmdline) to parse cmdline arguments.
 - Enabled specifying runtime environment by cmdline argument "--runtime". Useful aliases "--browser" and "--webview" are provided.
 - Enabled specifying web file path by cmdline argument "--server-path".
-- Auto create a release with deb format package when push a tag.
+- Auto create a release when pushing a tag.
+  - Linux deb format.
+  - Linux tar.gz format.
 
 ### Changed
 
