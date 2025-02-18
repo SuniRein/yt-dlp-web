@@ -1,0 +1,163 @@
+name: release-windows
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  xmake-build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set XMAKE_GLOBALDIR
+        shell: powershell
+        run: Add-Content -Path $env:GITHUB_ENV -Value "XMAKE_GLOBALDIR=$($env:runner_workspace)/xmake-global"
+
+      - name: Install Xmake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+          actions-cache-folder: ".xmake-cache"
+
+      - name: Update Xmake repo
+        run: xmake repo --update
+
+      - name: Cache packages from Xrepo
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
+          key: ${{ runner.os }}-xrepo-${{ hashFiles('**/xmake.lua') }}
+
+      - name: Download packages
+        run: xmake config -y -vD --mode=release
+
+      - name: Xmake build
+        run: xmake build
+
+      - name: Show build products
+        run: |
+          Get-ChildItem -Path build -Recurse | ForEach-Object {
+            $indent = "  " * $_.FullName.Split('\').Count
+            Write-Host "$indent$($_.Name)"
+          }
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-xmake-main
+          path: build/windows/x64/release/main.exe
+          overwrite: true
+          compression-level: 0
+
+  pnpm-build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+          cache-dependency-path: "./web/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-pnpm-dist
+          path: ./web/dist
+          overwrite: true
+
+  package-zip:
+    runs-on: ubuntu-latest
+
+    needs:
+      - xmake-build
+      - pnpm-build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set package info
+        run: |
+          echo "PACKAGE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "PACKAGE_ARCH=amd64" >> $GITHUB_ENV
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: ./yt-dlp-web
+          pattern: build*
+
+      - name: Organize file structure
+        run: |
+          cd yt-dlp-web
+
+          mv build-pnpm-dist server
+          mv build-xmake-main/main.exe .
+          rmdir build-xmake-main
+
+      - name: Show file structure
+        run: tree yt-dlp-web
+
+      - name: Compression
+        run: zip -r yt-dlp-web_windows_${PACKAGE_VERSION}_${PACKAGE_ARCH}.zip yt-dlp-web
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-zip
+          path: ./yt-dlp-web_windows_${{ env.PACKAGE_VERSION }}_${{ env.PACKAGE_ARCH }}.zip
+          overwrite: true
+
+  release:
+    runs-on: ubuntu-latest
+
+    needs:
+      - package-zip
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make release directory
+        run: mkdir release -p
+
+      - name: Download windows zip
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-zip
+          path: windows-zip
+      - name: List files in windows zip
+        run: tree windows-zip
+      - name: Copy windows zip to release
+        run: cp windows-zip/* release
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/yt-dlp-web_windows_*.zip
