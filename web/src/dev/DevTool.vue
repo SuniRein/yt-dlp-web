@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { ref, computed, capitalize } from 'vue';
+import { capitalize,computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import {
     NButton,
     NButtonGroup,
-    NFloatButton,
-    NSelect,
-    NSlider,
-    NInputGroup,
-    NIcon,
-    NModal,
     NCollapse,
     NCollapseItem,
+    NFloatButton,
+    NIcon,
+    NInputGroup,
+    NModal,
+    NSelect,
+    NSlider,
 } from 'naive-ui';
 import DevIcon from '@vicons/fluent/DeveloperBoard20Filled';
 
-import { useMediaDataStore } from '@/store/media-data';
-import { useLogStore, logLevels } from '@/store/log';
-import { useDisplayModeStore } from '@/store/display-mode';
-import { useTasksStore, taskStatus, taskTypes } from '@/store/tasks';
+import { showDownloadingLog } from '@/dev/download-log';
 import mediaInfo from '@/dev/media-info.json';
 
-import { showDownloadingLog } from '@/dev/download-log';
+import { useDisplayModeStore } from '@/store/display-mode';
+import { logLevels,useLogStore } from '@/store/log';
+import { useMediaDataStore } from '@/store/media-data';
+import { taskStatus, taskTypes,useTasksStore } from '@/store/tasks';
 
 const showModel = ref(false);
 

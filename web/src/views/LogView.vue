@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { h, capitalize, computed } from 'vue';
-import { NFloatButton, NIcon, NDataTable, NTag, NEmpty } from 'naive-ui';
-import { useLogStore, logLevels } from '@/store/log';
-import ClearIcon from '@vicons/fluent/Broom16Regular';
+import { capitalize, computed, h } from 'vue';
+
+import { NDataTable, NEmpty, NFloatButton, NIcon, NTag } from 'naive-ui';
 import SorterIcon from '@vicons/fluent/ArrowSortDownLines16Regular';
+import ClearIcon from '@vicons/fluent/Broom16Regular';
+
+import { logLevels, useLogStore } from '@/store/log';
 
 const log = useLogStore();
 

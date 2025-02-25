@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NFloatButtonGroup, NFloatButton, NIcon, NTooltip } from 'naive-ui';
+import { NFloatButton, NFloatButtonGroup, NIcon, NTooltip } from 'naive-ui';
 import DownloadIcon from '@vicons/fluent/ArrowDownload16Regular';
 import PreviewIcon from '@vicons/fluent/PreviewLink16Regular';
 

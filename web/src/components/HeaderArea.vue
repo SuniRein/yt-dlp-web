@@ -2,11 +2,10 @@
 import { computed, h } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 
-import { NLayoutHeader, NButton, NFlex, NMenu, NSwitch } from 'naive-ui';
 import type { MenuOption } from 'naive-ui';
-
-import LightIcon from '@vicons/fluent/WeatherSunny16Regular';
+import { NButton, NFlex, NLayoutHeader, NMenu, NSwitch } from 'naive-ui';
 import DarkIcon from '@vicons/fluent/WeatherMoon16Filled';
+import LightIcon from '@vicons/fluent/WeatherSunny16Regular';
 
 import { useDisplayModeStore } from '@/store/display-mode';
 

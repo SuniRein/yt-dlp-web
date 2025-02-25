@@ -1,9 +1,13 @@
-import LogView from '@/views/LogView.vue';
-import { NConfigProvider } from 'naive-ui';
-import { useLogStore } from '@/store/log';
-import { test, expect } from 'vitest';
-import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
+import { expect, test } from 'vitest';
+
+import { createPinia, setActivePinia } from 'pinia';
+
+import { NConfigProvider } from 'naive-ui';
+
+import { useLogStore } from '@/store/log';
+
+import LogView from '@/views/LogView.vue';
 
 setActivePinia(createPinia());
 

@@ -1,15 +1,17 @@
-import FormItem from '@/components/FormItem.vue';
-import type {
-    TextFormItem,
-    DynamicFormItem,
-    SelectFormItem,
-    CheckboxFormItem,
-    FormItemValidator,
-} from '@/types/FormItem.types';
-import { describe, test, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
-import type { VueWrapper } from '@vue/test-utils';
+import { mount, type VueWrapper } from '@vue/test-utils';
+import { describe, expect, test } from 'vitest';
+
 import { nextTick } from 'vue';
+
+import FormItem from '@/components/FormItem.vue';
+
+import type {
+    CheckboxFormItem,
+    DynamicFormItem,
+    FormItemValidator,
+    SelectFormItem,
+    TextFormItem,
+} from '@/types/FormItem.types';
 
 class FormItemWrapper {
     protected wrapper!: VueWrapper<InstanceType<typeof FormItem>>;

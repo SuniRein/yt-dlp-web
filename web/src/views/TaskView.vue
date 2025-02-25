@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { computed, capitalize, h, ref } from 'vue';
+import { capitalize, computed, h, ref } from 'vue';
 
-import { NDataTable, NButton, NSwitch, NIcon, NProgress, NTag, NTooltip, NModal, NGrid, NGi, NEmpty } from 'naive-ui';
-import InterruptIcon from '@vicons/fluent/Stop16Regular';
-import DetailIcon from '@vicons/fluent/ChevronRight16Regular';
+import { NButton, NDataTable, NEmpty,NGi, NGrid, NIcon, NModal, NProgress, NSwitch, NTag, NTooltip } from 'naive-ui';
 import RetryIcon from '@vicons/fluent/ArrowClockwise16Regular';
+import DetailIcon from '@vicons/fluent/ChevronRight16Regular';
+import InterruptIcon from '@vicons/fluent/Stop16Regular';
 
 import { useTasksStore } from '@/store/tasks';
-import { bytesToSize } from '@/utils/show';
+
 import { retryTask } from '@/utils/retry-task';
+import { bytesToSize } from '@/utils/show';
 
 const tasks = useTasksStore();
 

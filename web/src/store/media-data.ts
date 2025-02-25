@@ -1,5 +1,6 @@
-import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { defineStore } from 'pinia';
+
 import type { MediaData } from '@/types/MediaData.types';
 
 export const useMediaDataStore = defineStore('mediaData', () => {

@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed, useTemplateRef, ref, onMounted, nextTick } from 'vue';
-import { NInput, NDynamicInput, NSelect, NCheckbox, NFormItem, NTooltip } from 'naive-ui';
+import { computed, nextTick, onMounted, ref, useTemplateRef } from 'vue';
+
 import type { FormItemRule } from 'naive-ui';
+import { NCheckbox, NDynamicInput, NFormItem, NInput, NSelect, NTooltip } from 'naive-ui';
+
 import type {
-    TextFormItem,
-    DynamicFormItem,
-    SelectFormItem,
     CheckboxFormItem,
+    DynamicFormItem,
     FormItemInfo,
+    SelectFormItem,
+    TextFormItem,
 } from '@/types/FormItem.types';
 
 const props = defineProps<FormItemInfo>();

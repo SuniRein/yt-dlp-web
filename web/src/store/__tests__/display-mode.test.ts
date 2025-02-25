@@ -1,6 +1,8 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
+import { createPinia,setActivePinia } from 'pinia';
+
 import { useDisplayModeStore } from '@/store/display-mode';
-import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { setActivePinia, createPinia } from 'pinia';
 
 beforeEach(() => {
     setActivePinia(createPinia());

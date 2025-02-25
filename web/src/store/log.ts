@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { defineStore } from 'pinia';
 
 export const logLevels = ['debug', 'info', 'warning', 'error'] as const;
 export type LogLevel = (typeof logLevels)[number];

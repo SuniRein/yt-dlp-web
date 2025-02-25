@@ -1,8 +1,8 @@
-import type { NotificationApiInjection } from "naive-ui/es/notification/src/NotificationProvider";
+import type { NotificationApi } from 'naive-ui';
 
-let notification: NotificationApiInjection | null = null;
+let notification: NotificationApi | null = null;
 
-export function registerNotificationApi(api: NotificationApiInjection) {
+export function registerNotificationApi(api: NotificationApi) {
     if (notification) {
         throw new Error('Notification API is already registered');
     }

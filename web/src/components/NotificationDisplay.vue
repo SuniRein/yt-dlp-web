@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
+
 import { useNotification } from 'naive-ui';
 
 import { registerNotificationApi } from '@/utils/notification';

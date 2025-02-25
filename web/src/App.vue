@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, type DefineComponent } from 'vue';
+import { computed, type DefineComponent, onMounted, ref } from 'vue';
 import { RouterView } from 'vue-router';
-import { NConfigProvider, NGlobalStyle, lightTheme, darkTheme, NNotificationProvider } from 'naive-ui';
+
+import { darkTheme, lightTheme, NConfigProvider, NGlobalStyle, NNotificationProvider } from 'naive-ui';
 
 import HeaderArea from '@/components/HeaderArea.vue';
 import NotificationDisplay from '@/components/NotificationDisplay.vue';

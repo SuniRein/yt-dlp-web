@@ -1,12 +1,13 @@
 import { createApp } from 'vue';
-import router from '@/router';
 import { createPinia } from 'pinia';
 
 import App from '@/App.vue';
 
-import { useLogStore, logLevels, type LogLevel } from '@/store/log';
+import router from '@/router';
+
+import { type LogLevel, logLevels, useLogStore } from '@/store/log';
 import { useMediaDataStore } from '@/store/media-data';
-import { useTasksStore, type DownloadProgress } from '@/store/tasks';
+import { type DownloadProgress, useTasksStore } from '@/store/tasks';
 
 import notificationApi from '@/utils/notification-api';
 

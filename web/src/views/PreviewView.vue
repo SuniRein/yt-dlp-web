@@ -1,28 +1,26 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+import type { DataTableColumns } from 'naive-ui';
 import {
-    // Clear Button
-    NFloatButton,
-    NIcon,
-
     // Preview Content
     NCard,
-    NImage,
-    NGrid,
-    NGi,
-    NDivider,
-    NStatistic,
-    NEllipsis,
-
     // Preview Table
     NDataTable,
+    NDivider,
+    NEllipsis,
+    // Clear Button
+    NFloatButton,
+    NGi,
+    NGrid,
+    NIcon,
+    NImage,
+    NStatistic,
 } from 'naive-ui';
-import type { DataTableColumns } from 'naive-ui';
-
 import ClearIcon from '@vicons/fluent/Broom16Regular';
 
 import { useMediaDataStore } from '@/store/media-data';
+
 import { bytesToSize } from '@/utils/show';
 
 const data = useMediaDataStore();

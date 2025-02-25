@@ -5,7 +5,7 @@ import FormArea from '@/components/FormArea.vue';
 import OperationArea from '@/components/OperationArea.vue';
 
 import { useLogStore } from '@/store/log';
-import { useTasksStore, type TaskType } from '@/store/tasks';
+import { type TaskType,useTasksStore } from '@/store/tasks';
 
 import { formItemInfo } from '@/utils/form-item-info';
 import { useNotification } from '@/utils/notification';

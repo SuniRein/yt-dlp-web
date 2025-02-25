@@ -1,6 +1,8 @@
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+
+import { createPinia,setActivePinia } from 'pinia';
+
 import { useLogStore } from '@/store/log';
-import { test, expect, beforeEach, afterEach, vi } from 'vitest';
-import { setActivePinia, createPinia } from 'pinia';
 
 const date = new Date(2021, 0, 1, 0, 0, 0);
 

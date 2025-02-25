@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed, useTemplateRef } from 'vue';
+
+import { NCard,NForm } from 'naive-ui';
+
 import FormItem from '@/components/FormItem.vue';
+
 import type { FormItemSet } from '@/types/FormItem.types';
-import { NForm, NCard } from 'naive-ui';
 
 type FormItemInst = InstanceType<typeof FormItem>;
 

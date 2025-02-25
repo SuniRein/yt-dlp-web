@@ -1,14 +1,17 @@
-import PreviewView from '@/views/PreviewView.vue';
+import { mount } from '@vue/test-utils';
+import { afterAll,expect, test, vi } from 'vitest';
+
+import { createPinia,setActivePinia } from 'pinia';
+
 import { NConfigProvider } from 'naive-ui';
 
-import { setActivePinia, createPinia } from 'pinia';
-import { useMediaDataStore } from '@/store/media-data';
+import info from '@/dev/media-info.json';
+
 import type { MediaData } from '@/types/MediaData.types';
 
-import { mount } from '@vue/test-utils';
-import { test, expect, vi, afterAll } from 'vitest';
+import { useMediaDataStore } from '@/store/media-data';
 
-import info from '@/dev/media-info.json';
+import PreviewView from '@/views/PreviewView.vue';
 
 setActivePinia(createPinia());
 const mediaData = useMediaDataStore();

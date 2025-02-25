@@ -1,8 +1,10 @@
 /* eslint-disable vitest/expect-expect */
 
-import * as Validator from '@/utils/form-item-validator';
+import { describe, expect,test } from 'vitest';
+
 import type { FormItemValidator } from '@/types/FormItem.types';
-import { describe, test, expect } from 'vitest';
+
+import * as Validator from '@/utils/form-item-validator';
 
 function verifyValid(validator: FormItemValidator, values: string[]) {
     values.forEach((value) => {

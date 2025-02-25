@@ -1,8 +1,10 @@
+import { mount } from '@vue/test-utils';
+import { beforeAll, describe, expect, test } from 'vitest';
+
 import FormArea from '@/components/FormArea.vue';
 import FormItem from '@/components/FormItem.vue';
+
 import type { FormItemValidator } from '@/types/FormItem.types';
-import { describe, test, expect, beforeAll } from 'vitest';
-import { mount } from '@vue/test-utils';
 
 function createWrapper() {
     const wrapper = mount(FormArea, {
