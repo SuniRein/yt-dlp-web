@@ -4,7 +4,7 @@ AlignAfterOpenBracket: BlockIndent
 
 BinPackParameters: false
 
-AllowShortLambdasOnASingleLine: true
+AllowShortLambdasOnASingleLine: All
 
 BreakAfterAttributes: Always
 BreakBeforeConceptDeclarations: Always
@@ -16,6 +16,11 @@ ShortNamespaceLines: 0
 NamespaceIndentation: Inner
 
 IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: ^[<"](gtest/|gmock/|boost/|nlohmann/|syscmdline/|webui)
+    Priority: 2
+  - Regex: <[[:alnum:]._]+>
+    Priority: 3
 IncludeIsMainRegex: (.test)?$
 
 SortUsingDeclarations: Lexicographic

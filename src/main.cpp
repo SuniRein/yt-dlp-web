@@ -1,7 +1,8 @@
 #include "app.h"
-#include "boost/algorithm/string/join.hpp"
 #include "exception.h"
 #include "runtime.h"
+
+#include "boost/algorithm/string/join.hpp"
 #include "syscmdline/parser.h"
 #include "syscmdline/system.h"
 
@@ -13,24 +14,26 @@ int main()
 {
     SCL::Option runtime_option({"--runtime", "-r"}, "Set the runtime to use.");
     runtime_option.setRequired(false);
-    runtime_option.addArgument(SCL::Argument("runtime")
-                                   .expect({
-                                       "no",
-                                       "browser",
-                                       "chrome",
-                                       "firefox",
-                                       "edge",
-                                       "safari",
-                                       "chromium",
-                                       "opera",
-                                       "brave",
-                                       "vivaldi",
-                                       "epic",
-                                       "yandex",
-                                       "chromium",
-                                       "webview",
-                                   })
-                                   .default_value("webview"));
+    runtime_option.addArgument(
+        SCL::Argument("runtime")
+            .expect({
+                "no",
+                "browser",
+                "chrome",
+                "firefox",
+                "edge",
+                "safari",
+                "chromium",
+                "opera",
+                "brave",
+                "vivaldi",
+                "epic",
+                "yandex",
+                "chromium",
+                "webview",
+            })
+            .default_value("webview")
+    );
 
     SCL::Option browser_option({"--browser", "-b"}, "Show in browser. Alias for '--runtime browser'.");
     browser_option.setRequired(false);

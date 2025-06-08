@@ -31,7 +31,8 @@ void AsyncProcess::read_output()
 
             if (!ec)
             {
-                on_linebreak_(std::string_view(buffer_.begin(), buffer_.begin() + bytes_transferred - 1)
+                on_linebreak_(
+                    std::string_view(buffer_.begin(), buffer_.begin() + bytes_transferred - 1)
                 ); // -1 to exclude '\n'
 
                 buffer_.erase(buffer_.begin(), buffer_.begin() + bytes_transferred);

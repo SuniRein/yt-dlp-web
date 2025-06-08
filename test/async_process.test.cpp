@@ -1,7 +1,6 @@
 #include "async_process.h"
 
 #include "boost/process/v2/environment.hpp"
-
 #include "gtest/gtest.h"
 
 using namespace std::chrono_literals;
