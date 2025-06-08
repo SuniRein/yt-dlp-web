@@ -2,7 +2,6 @@
 #include "exception.h"
 #include "runtime.h"
 
-#include "boost/algorithm/string/join.hpp"
 #include "syscmdline/parser.h"
 #include "syscmdline/system.h"
 
